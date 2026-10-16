@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Режими ЧПУ</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --d-bg:#efeff4; --d-card:#fff; --d-text:#111; --d-hint:#8a8a90; --d-link:#2481cc;
+  --d-btn:#2481cc; --d-btn-text:#fff; --d-sep:rgba(0,0,0,.09); --d-field:#f2f2f6;
+  --bg:var(--tg-theme-secondary-bg-color,var(--d-bg));
+  --card:var(--tg-theme-section-bg-color,var(--tg-theme-bg-color,var(--d-card)));
+  --text:var(--tg-theme-text-color,var(--d-text));
+  --hint:var(--tg-theme-hint-color,var(--d-hint));
+  --link:var(--tg-theme-link-color,var(--d-link));
+  --btn:var(--tg-theme-button-color,var(--d-btn));
+  --btn-text:var(--tg-theme-button-text-color,var(--d-btn-text));
+  --danger:var(--tg-theme-destructive-text-color,#e5484d);
+  --sep:var(--tg-theme-section-separator-color,var(--d-sep));
+  --field:var(--tg-theme-secondary-bg-color,var(--d-field));
+  --ok:#2f9e57; --warn:#d99100; --bad:#e5484d;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --d-bg:#0e0f12; --d-card:#1b1d22; --d-text:#f2f2f4; --d-hint:#8d9099; --d-link:#5aa9ff;
+         --d-btn:#3a8dde; --d-sep:rgba(255,255,255,.08); --d-field:#25282e; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+body.noscroll{overflow:hidden}
+header{padding:12px 16px 4px;max-width:640px;margin:0 auto}
+header h1{font-size:19px;margin:0}
+header .sub{color:var(--hint);font-size:12px}
+main{padding:6px 12px 16px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border-radius:14px;padding:12px 14px;margin:0 0 12px}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--hint);margin:2px 0 10px;font-weight:600}
+.field{display:block;margin:0 0 10px;min-width:0}
+.field > span{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--hint);margin:0 0 4px}
+input,select,textarea{width:100%;font:inherit;color:var(--text);background:var(--field);border:1px solid transparent;
+  border-radius:10px;padding:10px 12px;outline:none;-webkit-appearance:none;appearance:none;min-width:0}
+select{padding-right:30px;background-repeat:no-repeat;background-position:right 10px center;background-size:12px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238a8a90' stroke-width='2'/%3E%3C/svg%3E")}
+input:focus,select:focus,textarea:focus{border-color:var(--btn)}
+textarea{resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 8px}
+.seg{display:flex;background:var(--field);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;color:var(--text);padding:8px 2px;border-radius:8px;font:inherit;font-size:13px;cursor:pointer}
+.seg button.on{background:var(--btn);color:var(--btn-text)}
+.btn{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:600;background:var(--btn);color:var(--btn-text);cursor:pointer;text-align:center}
+.btn.sec{background:var(--field);color:var(--link)}
+.btn.danger{background:var(--field);color:var(--danger)}
+.btn.block{display:block;width:100%}
+.btn:disabled{opacity:.5}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btns .btn{flex:1 1 40%}
+.link{border:0;background:none;color:var(--link);font:inherit;padding:0;cursor:pointer}
+.link.sm{font-size:13px;margin-left:auto}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.big{background:var(--field);border-radius:12px;padding:9px 11px;min-width:0}
+.big .l{font-size:12px;color:var(--hint)}
+.big .v{font-size:25px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.15;letter-spacing:-.01em}
+.big .u{font-size:12px;color:var(--hint)}
+.big.wide{grid-column:1/-1}
+.meta{font-size:13px;color:var(--hint);margin-top:10px;line-height:1.55}
+.msgs{list-style:none;padding:0;margin:10px 0 0}
+.msgs li{font-size:13px;padding:8px 10px;border-radius:10px;margin-bottom:6px;background:var(--field);border-left:3px solid var(--link)}
+.msgs li.w{border-left-color:var(--warn)}
+.msgs li.b{border-left-color:var(--bad)}
+.ver{border-radius:12px;padding:10px 12px;margin:0 0 10px;font-size:14px;background:var(--field);border-left:3px solid var(--ok)}
+.ver.ok{border-left-color:var(--warn)} .ver.bad{border-left-color:var(--bad)}
+.ver .btn{margin-top:8px;padding:8px 12px;font-size:14px}
+.reshead{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+.reshead h2{margin:0}
+.tag{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--field);color:var(--hint)}
+.tag.ok{color:var(--ok)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:0;background:var(--card);color:var(--text);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;white-space:nowrap;cursor:pointer}
+.chip.on{background:var(--btn);color:var(--btn-text)}
+.toolbar{display:flex;gap:8px;margin:0 0 10px}
+.toolbar input{flex:1}
+.toolbar .btn{flex:none}
+.item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--sep);cursor:pointer}
+.item:last-child{border-bottom:0}
+.item .tx{min-width:0;flex:1}
+.item .t{font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.item .s{font-size:13px;color:var(--hint)}
+.item .r{color:var(--hint);font-size:13px;text-align:right;white-space:nowrap}
+.hint{font-size:13px;color:var(--hint);margin:2px 0 10px}
+.empty{text-align:center;color:var(--hint);padding:22px 10px}
+.rate{display:flex;gap:6px;margin:0 0 10px}
+.rate button{flex:1;border:1px solid transparent;background:var(--field);color:var(--text);border-radius:10px;padding:9px 4px;font:inherit;font-size:13px;cursor:pointer}
+.rate button.on{border-color:var(--btn);font-weight:600}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--field);padding:7px 10px;border-radius:8px;margin:6px 0}
+.photo{border:1px dashed var(--hint);border-radius:12px;padding:10px 12px;margin:0 0 12px}
+.photo .st{font-size:13px;color:var(--hint);margin-top:6px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--hint);border-top-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--sep);
+  padding:4px 4px calc(4px + env(safe-area-inset-bottom));z-index:10}
+nav.tabs button{flex:1;border:0;background:none;color:var(--hint);font:inherit;font-size:11px;padding:5px 0;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+nav.tabs .ic{font-size:20px;line-height:1.1}
+nav.tabs button.on{color:var(--btn);font-weight:600}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:none}
+.sheet.open{display:block}
+.panel{position:absolute;left:0;right:0;bottom:0;top:5vh;max-width:640px;margin:0 auto;background:var(--bg);border-radius:16px 16px 0 0;display:flex;flex-direction:column;animation:up .2s ease-out}
+.panel-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--sep)}
+.panel-head b{font-size:16px}
+.panel-head .x{margin-left:auto;border:0;background:var(--field);color:var(--text);width:32px;height:32px;border-radius:50%;font-size:15px;cursor:pointer;flex:none}
+.panel-body{overflow-y:auto;padding:12px;flex:1;-webkit-overflow-scrolling:touch;padding-bottom:calc(28px + env(safe-area-inset-bottom))}
+@keyframes up{from{transform:translateY(30px)}to{transform:none}}
+@media (prefers-reduced-motion: reduce){.panel{animation:none}}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:rgba(25,25,28,.94);color:#fff;
+  padding:10px 14px;border-radius:12px;font-size:14px;z-index:40;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+.toast.err{background:#b3261e}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<header><h1 id="ttl">Режими різання</h1><div class="sub" id="sub">Завантаження…</div></header>
+<main id="view"><div class="empty"><span class="spin"></span>Завантаження бази…</div></main>
+<nav class="tabs">
+  <button data-act="tab" data-tab="calc"><span class="ic">🧮</span>Розрахунок</button>
+  <button data-act="tab" data-tab="tools"><span class="ic">🔩</span>Фрези</button>
+  <button data-act="tab" data-tab="mats"><span class="ic">🧱</span>Матеріали</button>
+  <button data-act="tab" data-tab="hist"><span class="ic">🕘</span>Історія</button>
+  <button data-act="tab" data-tab="settings"><span class="ic">⚙️</span>Налашт.</button>
+</nav>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+
+// ================== Telegram ==================
+const tg = window.Telegram && window.Telegram.WebApp;
+const IN_TG = !!(tg && tg.initData);
+const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
+const CLOUD = tgv('6.9') && !!tg.CloudStorage;
+const APP_VER = '1.0';
+
+// Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
+const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.135.0/+esm';
+const MODEL = 'claude-opus-5-5';
+
+// ================== Довідники ==================
+// Колонки подачі на зуб — як у таблиці FrezyCNC: 0.5 / 1–2 / 3–4 / 5–6 / 8–10 / 12–16 мм
+const FZ_D = [0.5, 1.5, 3.5, 5.5, 9, 14];
+const FZ_LABELS = ['0.5', '1–2', '3–4', '5–6', '8–10', '12–16'];
+
+// V — для твердосплавної фрези. Для HSS множиться на 0.45 (це і є значення таблиці FrezyCNC для металів).
+const PRESET_MATS = [
+  { id:'p_wood', name:'Дерево, фанера, МДФ, ДСП', vmin:200, vmax:450, fz:[0.02,0.035,0.055,0.09,0.12,0.18],
+    apSlot:1.0, apSide:2.0, apEngr:3, plunge:0.3, kc:50,
+    note:'Глибина за прохід — не більше 2D, для довгих фрез (L > 6D) — не більше 1D. Розкрій — зустрічним фрезеруванням (FrezyCNC).' },
+  { id:'p_plastic', name:'Пластик (ПНД, ПП, капролон, ПЕТ)', vmin:300, vmax:400, fz:[0.02,0.06,0.15,0.20,0.30,0.40],
+    apSlot:0.5, apSide:1.5, apEngr:2, plunge:0.4, kc:150,
+    note:'1-заходні фрези з полірованою канавкою. Якщо пластик плавиться — збільш подачу або зменш оберти.' },
+  { id:'p_acryl', name:'Оргскло (акрил, ПММА)', vmin:100, vmax:150, fz:[0.02,0.05,0.10,0.18,0.25,0.30],
+    apSlot:0.5, apSide:1.0, apEngr:2, plunge:0.35, kc:150,
+    note:'Попутне фрезерування, 1-заходна фреза, бажано обдув повітрям або СОЖ (FrezyCNC).' },
+  { id:'p_pvc', name:'ПВХ спінений (до 10 мм)', vmin:180, vmax:300, fz:[0.03,0.08,0.15,0.20,0.30,0.40],
+    apSlot:1.0, apSide:2.0, apEngr:3, plunge:0.35, kc:80,
+    note:'Зустрічне фрезерування, 1-заходна фреза. Практика FrezyCNC: Ø3.175, 18–24 тис. об/хв, 50–60 мм/с.' },
+  { id:'p_comp', name:'Композит (алюкобонд)', vmin:150, vmax:250, fz:[0.02,0.05,0.10,0.15,0.20,0.25],
+    apSlot:1.0, apSide:1.0, apEngr:0.5, plunge:0.3, kc:300,
+    note:'Зустрічне фрезерування, 1-заходна фреза. Практика FrezyCNC: Ø3.175, 15–18 тис. об/хв, 30–40 мм/с.' },
+  { id:'p_alu', name:'Алюміній (Д16, АД31)', vmin:150, vmax:300, fz:[0.01,0.02,0.035,0.04,0.075,0.12],
+    apSlot:0.2, apSide:0.5, apEngr:0.3, plunge:0.15, kc:800,
+    note:'Обдув або СОЖ обовʼязково, 1–2-заходна фреза з полірованою канавкою. V тут для твердосплаву (у FrezyCNC 80–100 м/хв — це рівень HSS).' },
+  { id:'p_brass', name:'Латунь, бронза', vmin:100, vmax:150, fz:[0.01,0.02,0.03,0.04,0.07,0.10],
+    apSlot:0.15, apSide:0.3, apEngr:0.3, plunge:0.15, kc:780,
+    note:'Бажано СОЖ. Практика FrezyCNC: 2-заходна Ø2, 15 тис. об/хв, 12 мм/с, по 0.5 мм за прохід.' },
+  { id:'p_mag', name:'Магній', vmin:150, vmax:180, fz:[0.01,0.02,0.035,0.04,0.075,0.12],
+    apSlot:0.2, apSide:0.5, apEngr:0.5, plunge:0.15, kc:400,
+    note:'⚠️ Дрібна стружка магнію горюча! Не гасити водою — тримай поруч сухий пісок або вогнегасник класу D.' },
+  { id:'p_steel', name:'Сталь конструкційна', vmin:70, vmax:110, fz:[0.005,0.01,0.015,0.02,0.03,0.05],
+    apSlot:0.1, apSide:0.3, apEngr:0.1, plunge:0.1, kc:2000,
+    note:'Твердосплав з покриттям TiAlN/AlTiN, 3–4 зуби, врізання по спіралі або під кутом. V тут для твердосплаву (у FrezyCNC 35–50 — рівень HSS).' },
+  { id:'p_inox', name:'Нержавіюча сталь', vmin:50, vmax:90, fz:[0.004,0.008,0.012,0.018,0.025,0.04],
+    apSlot:0.08, apSide:0.25, apEngr:0.08, plunge:0.08, kc:2400,
+    note:'Не давай фрезі «терти» — нержавійка нагартовується. СОЖ, покриття AlTiN. (Значення — загальна практика, не з FrezyCNC.)' },
+  { id:'p_iron', name:'Чавун', vmin:70, vmax:110, fz:[0.005,0.015,0.02,0.03,0.04,0.06],
+    apSlot:0.1, apSide:0.3, apEngr:0.15, plunge:0.1, kc:1100,
+    note:'Без СОЖ, з відсмоктуванням пилу. V тут для твердосплаву (у FrezyCNC 40–60 — рівень HSS).' },
+  { id:'p_ti', name:'Титан', vmin:40, vmax:60, fz:[0.005,0.01,0.02,0.03,0.04,0.07],
+    apSlot:0.05, apSide:0.2, apEngr:0.05, plunge:0.08, kc:1700,
+    note:'Лише жорсткий верстат і рясна СОЖ. V тут для твердосплаву (у FrezyCNC 20–30 — рівень HSS).' },
+];
+
+const TOOL_TYPES = {
+  flat:'Кінцева спіральна', ball:'Сферична (кругла)', taperball:'Конічна сферична', vbit:'V-гравер',
+  engr:'Конічний гравер (плоский кінчик)', rough:'Кукурудза (чорнова)', comp:'Компресійна',
+  straight:'Пазова з прямими ножами', surf:'Торцева (вирівнювання)', drill:'Свердло',
+};
+const TOOL_SHORT = { flat:'Спіральна', ball:'Сфера', taperball:'Конус-сфера', vbit:'V-гравер', engr:'Гравер',
+  rough:'Кукурудза', comp:'Компресія', straight:'Пазова', surf:'Торцева', drill:'Свердло' };
+
+const OPS = {
+  slot:   { n:'Розкрій / паз на всю ширину', s:'Розкрій', ae:1.0,  ap:'apSlot', fzK:1.0 },
+  pocket: { n:'Виборка (кишеня)',            s:'Виборка', ae:0.45, ap:'apSlot', fzK:1.0 },
+  contour:{ n:'Контур — зняття збоку',       s:'Контур',  ae:0.3,  ap:'apSide', fzK:1.0 },
+  finish: { n:'Чистовий прохід по стінці',   s:'Чистова', ae:0.1,  ap:'apSide', apK:1.5, fzK:0.75 },
+  r3d:    { n:'3D чорнова',                  s:'3D чорн.', ae:0.4, ap:'apSlot', apK:0.75, fzK:1.0 },
+  f3d:    { n:'3D чистова',                  s:'3D чист.', ae:0.08, ap:null,    fzK:0.8 },
+  engrave:{ n:'Гравіювання / V-різьба',      s:'Гравіювання', ae:null, ap:'apEngr', fzK:0.5 },
+  face:   { n:'Вирівнювання площини',        s:'Вирівнювання', ae:0.7, ap:'face', fzK:1.0 },
+  drill:  { n:'Свердління',                  s:'Свердління', ae:null, ap:'drill', fzK:0.5 },
+};
+const OPS_BY_TYPE = {
+  flat:['slot','contour','pocket','finish','r3d'], rough:['slot','pocket','contour','r3d'],
+  comp:['slot','contour','pocket','finish'], straight:['slot','contour','pocket','finish'],
+  ball:['r3d','f3d','slot'], taperball:['f3d','r3d'], vbit:['engrave'], engr:['engrave'],
+  surf:['face','pocket'], drill:['drill'],
+};
+const MODES = {
+  safe:{ n:'Обережно', v:0.15, fz:0.85, ap:0.8 },
+  norm:{ n:'Норма',    v:0.5,  fz:1.0,  ap:1.0 },
+  fast:{ n:'Продуктивно', v:0.9, fz:1.12, ap:1.15 },
+};
+const RIGID = {
+  light:{ n:'Легкий (хобі, алюмінієвий профіль)', ap:0.6,  fz:0.85 },
+  mid:  { n:'Середній (сталева рама)',            ap:0.85, fz:0.95 },
+  heavy:{ n:'Важкий промисловий',                 ap:1.0,  fz:1.0 },
+};
+const TM = { carbide:{ n:'Твердосплав', v:1, fz:1 }, hss:{ n:'HSS (Р6М5, швидкоріз)', v:0.45, fz:0.8 } };
+const HELIX = { '':'—', up:'Вгору (up-cut)', down:'Вниз (down-cut)', comp:'Компресійна', straight:'Прямі ножі' };
+const RATE = { good:{ e:'✅', n:'Добре' }, ok:{ e:'⚠️', n:'Можна краще' }, bad:{ e:'❌', n:'Погано' } };
+const HIST_MAX = 300;
+
+// ================== Утиліти ==================
+const $ = (s, r = document) => r.querySelector(s);
+const view = $('#view'), sheet = $('#sheet');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const num = v => { const x = parseFloat(String(v ?? '').replace(/\s/g, '').replace(',', '.')); return isFinite(x) ? x : NaN; };
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const fmt = (x, d = 0) => Number.isFinite(x) ?Number(x).toLocaleString('uk-UA', { maximumFractionDigits: d }) : '—';
+const r100 = x => Math.round(x / 100) * 100;
+const r10 = x => Math.round(x / 10) * 10;
+const rAp = x => x >= 10 ? Math.round(x * 10) / 10 : Math.round(x * 100) / 100;
+const fmtDate = ts => new Date(ts).toLocaleDateString('uk-UA', { day:'2-digit', month:'2-digit', year:'2-digit' });
+const plural = (n, one, few, many) => { const a = Math.abs(n) % 100, b = a % 10;
+  if (a > 10 && a < 20) return many; if (b > 1 && b < 5) return few; if (b === 1) return one; return many; };
+const opt = (v, label, sel) => `<option value="${esc(v)}"${sel ? ' selected' : ''}>${esc(label)}</option>`;
+const optsFrom = (obj, cur) => Object.entries(obj).map(([k, v]) => opt(k, typeof v === 'string' ? v : v.n, k === cur)).join('');
+class UserErr extends Error {}
+
+let toastT;
+function toast(msg, err) {
+  const t = $('#toast'); t.textContent = msg; t.classList.toggle('err', !!err); t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), err ? 4500 : 2200);
+}
+function haptic(type) { try { if (tgv('6.1')) tg.HapticFeedback.notificationOccurred(type); } catch (e) {} }
+function ask(msg) {
+  return new Promise(res => { if (tgv('6.2')) tg.showConfirm(msg, ok => res(!!ok)); else res(window.confirm(msg)); });
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); toast('Скопійовано'); return; } catch (e) {}
+  const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0';
+  document.body.appendChild(ta); ta.select(); let ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove();
+  if (ok) toast('Скопійовано');
+  else openSheet('Скопіюй текст', `<textarea rows="12" readonly>${esc(text)}</textarea>`);
+}
+
+// ================== Сховище ==================
+// У Telegram — хмара Telegram (CloudStorage, синхронізується між пристроями), поза ним — localStorage.
+const LS = 'cnccalc:';
+const local = {
+  get: k => { try { return localStorage.getItem(LS + k); } catch (e) { return null; } },
+  set: (k, v) => { try { localStorage.setItem(LS + k, v); } catch (e) {} },
+  del: k => { try { localStorage.removeItem(LS + k); } catch (e) {} },
+  keys: () => { const o = []; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i);
+    if (k && k.startsWith(LS)) o.push(k.slice(LS.length)); } } catch (e) {} return o; },
+};
+const cloud = {
+  call: (m, ...a) => new Promise((res, rej) => {
+    try { tg.CloudStorage[m](...a, (err, val) => err ? rej(err) : res(val)); } catch (e) { rej(e); }
+  }),
+  keys() { return this.call('getKeys'); },
+  getMany(keys) { return this.call('getItems', keys); },
+  set(k, v) { return this.call('setItem', k, v); },
+  del(k) { return this.call('removeItem', k); },
+};
+const Store = {
+  mode: CLOUD ? 'cloud' : 'local',
+  async loadAll() {
+    const out = {};
+    if (this.mode === 'cloud') {
+      try {
+        const keys = await cloud.keys();
+        for (let i = 0; i < keys.length; i += 50) Object.assign(out, await cloud.getMany(keys.slice(i, i + 50)));
+        return out;
+      } catch (e) { console.warn('CloudStorage', e); this.mode = 'local'; toast('Хмара Telegram недоступна — працюю локально', true); }
+    }
+    for (const k of local.keys()) out[k] = local.get(k);
+    return out;
+  },
+  async set(k, val) {
+    const v = typeof val === 'string' ? val : JSON.stringify(val);
+    if (v.length > 4096) { toast('Запис завеликий — скороти нотатку', true); return false; }
+    local.set(k, v);
+    if (this.mode === 'cloud') { try { await cloud.set(k, v); } catch (e) { toast('Не вдалося зберегти в хмару Telegram', true); return false; } }
+    return true;
+  },
+  async del(k) {
+    local.del(k);
+    if (this.mode === 'cloud') { try { await cloud.del(k); } catch (e) {} }
+  },
+};
+
+// ================== База ==================
+// Ключі: t_<id> фреза, m_<id> матеріал (свій або змінений з довідника), s_<id> верстат, h_<id> історія, cfg, apikey
+const DB = { tools:{}, matOv:{}, machines:{}, hist:{}, cfg:{}, apiKey:'' };
+
+function defaultMachine() {
+  return { id: genId(), name: 'Мій фрезер', rpmMin: 6000, rpmMax: 24000, rpmRated: 18000, powerKw: 6,
+    feedMax: 15000, rigid: 'mid', note: 'Заміни на дані свого верстата (паспорт шпинделя та верстата).' };
+}
+async function loadDB() {
+  const entries = await Store.loadAll();
+  for (const [k, v] of Object.entries(entries || {})) {
+    if (v == null || v === '') continue;
+    if (k === 'apikey') { DB.apiKey = v; continue; }
+    let o; try { o = JSON.parse(v); } catch (e) { continue; }
+    if (k === 'cfg') DB.cfg = o || {};
+    else if (k.startsWith('t_')) DB.tools[o.id] = o;
+    else if (k.startsWith('m_')) DB.matOv[o.id] = o;
+    else if (k.startsWith('s_')) DB.machines[o.id] = o;
+    else if (k.startsWith('h_')) DB.hist[o.id] = o;
+  }
+  if (!Object.keys(DB.machines).length) { const m = defaultMachine(); DB.machines[m.id] = m; await Store.set('s_' + m.id, m); }
+}
+function allMats(withHidden) {
+  const out = [];
+  for (const p of PRESET_MATS) {
+    const ov = DB.matOv[p.id];
+    const m = ov ? { ...p, ...ov, preset: true, edited: !!ov.vmin } : { ...p, preset: true };
+    if (withHidden || !m.hidden) out.push(m);
+  }
+  const mine = Object.values(DB.matOv).filter(m => !m.id.startsWith('p_') && (withHidden || !m.hidden))
+    .map(m => ({ ...m, preset: false })).sort((a, b) => a.name.localeCompare(b.name, 'uk'));
+  return [...mine, ...out];
+}
+const getMat = id => allMats(true).find(m => m.id === id);
+function sortedTools() {
+  return Object.values(DB.tools).sort((a, b) => (b.lastUsed || 0) - (a.lastUsed || 0) || String(a.name).localeCompare(String(b.name), 'uk'));
+}
+function toolAutoName(t) {
+  return `${TOOL_SHORT[t.type] || 'Фреза'} Ø${fmt(num(t.d), 3)} ${num(t.z) || 1}з${num(t.lc) ? ' L' + fmt(num(t.lc), 1) : ''}`;
+}
+function toolDesc(t) {
+  const z = num(t.z) || 1;
+  return [TOOL_TYPES[t.type], `Ø${fmt(num(t.d), 3)} мм`, `${z} ${plural(z, 'зуб', 'зуби', 'зубів')}`,
+    num(t.lc) ? `різальна ${fmt(num(t.lc), 1)} мм` : '', num(t.lo) ? `виліт ${fmt(num(t.lo), 1)} мм` : '',
+    (t.type === 'vbit' || t.type === 'engr' || t.type === 'taperball') && num(t.angle) ? `${fmt(num(t.angle), 1)}°` : '',
+    (TM[t.tm] || TM.carbide).n, t.coat || ''].filter(Boolean).join(' · ');
+}
+
+// ================== Стан екрана ==================
+const S = {
+  tab: 'calc', machineId: '', toolId: '', matId: 'p_wood', op: 'slot', mode: 'norm', depth: '18', engrDepth: '1',
+  manual: { type:'flat', d:'6', z:'2', lc:'22', tm:'carbide', angle:'90', tip:'0.2' },
+  useVer: null, qTools: '', qHist: '', hRate: '', showHidden: false,
+};
+function initState() {
+  const c = DB.cfg || {};
+  for (const k of ['machineId', 'toolId', 'matId', 'op', 'mode', 'depth', 'engrDepth']) if (c[k] != null) S[k] = String(c[k]);
+  if (c.manual) Object.assign(S.manual, c.manual);
+  if (!DB.machines[S.machineId]) S.machineId = Object.keys(DB.machines)[0];
+  if (S.toolId !== '__manual' && !DB.tools[S.toolId]) S.toolId = sortedTools()[0]?.id || '__manual';
+  if (!getMat(S.matId) || getMat(S.matId).hidden) S.matId = allMats()[0]?.id;
+  if (!MODES[S.mode]) S.mode = 'norm';
+}
+let cfgT;
+function saveCfgSoon() {
+  clearTimeout(cfgT);
+  cfgT = setTimeout(() => {
+    DB.cfg = { ...DB.cfg, machineId: S.machineId, toolId: S.toolId, matId: S.matId, op: S.op, mode: S.mode,
+      depth: S.depth, engrDepth: S.engrDepth, manual: S.manual };
+    Store.set('cfg', DB.cfg);
+  }, 1200);
+}
+const curMachine = () => DB.machines[S.machineId] || Object.values(DB.machines)[0];
+const curTool = () => (S.toolId !== '__manual' && DB.tools[S.toolId]) || { id: '__manual', name: 'Вручну', ...S.manual };
+const curMat = () => getMat(S.matId) || allMats()[0];
+
+// ================== Розрахунок ==================
+function interpFz(arr, d) {
+  if (d <= FZ_D[0]) return Math.max(0.002, arr[0] * d / FZ_D[0]);
+  for (let i = 1; i < FZ_D.length; i++) if (d <= FZ_D[i]) {
+    const t = (d - FZ_D[i - 1]) / (FZ_D[i] - FZ_D[i - 1]);
+    return arr[i - 1] + (arr[i] - arr[i - 1]) * t;
+  }
+  return arr[arr.length - 1];
+}
+
+function calc(mach, tool, mat, op, mode, depthIn, engrIn) {
+  const W = [];
+  const M = MODES[mode] || MODES.norm, RG = RIGID[mach.rigid] || RIGID.mid, T = TM[tool.tm] || TM.carbide, O = OPS[op];
+  const D = num(tool.d), lc = num(tool.lc), depth = num(depthIn);
+  if (!(D > 0)) return { error: 'Вкажи діаметр фрези.' };
+  if (!mat) return { error: 'Обери матеріал.' };
+  const z = op === 'drill' ? 2 : Math.max(1, Math.round(num(tool.z) || 1));
+  const rpmMin = num(mach.rpmMin) || 0, rpmMax = num(mach.rpmMax) || 24000, feedMax = num(mach.feedMax) || 1e9;
+
+  // Робочий діаметр: у V-гравера залежить від глибини
+  let Deff = D, h = NaN;
+  if (op === 'engrave') {
+    h = num(engrIn); if (!(h > 0)) h = 0.5;
+    if (tool.type === 'vbit' || tool.type === 'engr') {
+      const A = num(tool.angle) || 90, tip = num(tool.tip) || 0;
+      Deff = Math.max(0.2, Math.min(D, tip + 2 * h * Math.tan(A / 2 * Math.PI / 180)));
+    }
+  }
+
+  // Оберти: n = 1000·V / (π·D)
+  const vMin = mat.vmin * T.v, vMax = mat.vmax * T.v;
+  const V = (vMin + (vMax - vMin) * M.v) * (op === 'drill' ? 0.7 : 1);
+  const nIdeal = 1000 * V / (Math.PI * Deff);
+  let n = clamp(r100(clamp(nIdeal, rpmMin, rpmMax)), rpmMin, rpmMax);
+  if (nIdeal > rpmMax * 1.02)
+    W.push({ t:'i', m:`Для Ø${fmt(Deff, 2)} мм ідеально ~${fmt(r100(nIdeal))} об/хв, шпиндель дає максимум ${fmt(rpmMax)} — рахую від максимуму.` });
+  if (nIdeal < rpmMin * 0.98) {
+    const Vr = Math.PI * Deff * n / 1000;
+    W.push({ t: Vr > vMax * 1.15 ? 'w' : 'i', m:`Матеріалу треба лише ~${fmt(r100(nIdeal))} об/хв, а мінімум шпинделя ${fmt(rpmMin)}. ` +
+      `Швидкість різання вийде ${fmt(Vr)} м/хв (рекомендовано ${fmt(vMin)}–${fmt(vMax)}).` +
+      (Vr > vMax * 1.15 ? ' Візьми фрезу більшого діаметра або з покриттям, слідкуй за нагрівом. На низьких обертах у шпинделя мало потужності.' : '') });
+  }
+
+  // Подача: F = fz · z · n
+  const lo = num(tool.lo) || lc || 0, ld = lo / D;
+  const ldK = ld > 8 ? 0.5 : ld > 6 ? 0.65 : ld > 4.5 ? 0.8 : 1;
+  if (ldK < 1) W.push({ t:'i', m:`Великий виліт (${fmt(ld, 1)}×D) — глибину й подачу знижено, щоб фрезу не віджимало і не ламало.` });
+  const fzRec = interpFz(mat.fz, Deff) * O.fzK * T.fz;
+  const fz = fzRec * M.fz * RG.fz * (ldK < 1 ? (1 + ldK) / 2 : 1);
+  let F = fz * z * n;
+  if (F > feedMax) {
+    const n2 = Math.max(rpmMin, Math.floor(feedMax / (fz * z) / 100) * 100);
+    if (n2 < n) {
+      W.push({ t:'i', m:`Подача впирається в максимум верстата (${fmt(feedMax)} мм/хв) — оберти знижено до ${fmt(n2)}, щоб фреза різала, а не терла.` });
+      n = n2;
+    }
+    F = Math.min(fz * z * n, feedMax);
+  }
+  const Vreal = Math.PI * Deff * n / 1000, fzReal = F / (z * n);
+  if (fzReal < fzRec * 0.5)
+    W.push({ t:'w', m:`Навантаження на зуб ${fmt(fzReal, 3)} мм — менше половини рекомендованого (${fmt(fzRec, 3)}). Фреза буде терти й грітися (дерево — горіти). Зменш оберти або візьми фрезу з меншою кількістю зубів.` });
+
+  // Глибина за прохід і крок
+  let ap = NaN, ae = O.ae ? O.ae * D : NaN;
+  if (O.ap === 'apSlot' || O.ap === 'apSide') ap = mat[O.ap] * D * (O.apK || 1) * M.ap * RG.ap * ldK;
+  else if (O.ap === 'apEngr') ap = mat.apEngr * M.ap * RG.ap;
+  else if (O.ap === 'face') ap = Math.min(1.5, mat.apSlot * D * 0.1) * M.ap;
+  else if (O.ap === 'drill') ap = mat.apSlot * D * 2;
+  if (lc > 0 && ap > lc) ap = lc;
+  let passes = NaN, apEach = ap;
+  const total = op === 'engrave' ? h : depth;
+  if (ap > 0 && total > 0 && op !== 'f3d') { passes = Math.max(1, Math.ceil(total / ap - 1e-6)); apEach = total / passes; }
+  if (lc > 0 && depth > lc && ['slot', 'pocket', 'contour', 'finish', 'r3d', 'drill'].includes(op))
+    W.push({ t:'w', m:`Глибина ${fmt(depth, 2)} мм більша за довжину різальної частини (${fmt(lc, 1)} мм) — фреза не дістане або буде терти хвостовиком.` });
+
+  // Врізання по Z
+  const Fz = op === 'drill' ? F : F * mat.plunge;
+  if (mat.kc >= 400 && op !== 'drill' && op !== 'engrave')
+    W.push({ t:'i', m:'У метал врізайся по спіралі або під кутом 2–3° (ramp), а не прямо вниз.' });
+  if (tool.tm === 'hss' && mat.kc >= 700) W.push({ t:'i', m:'HSS у металі — лише з СОЖ, швидкість різання знижено.' });
+
+  // Потужність: P ≈ kc · ap · ae · F / (60·10⁶ · ККД)
+  let P = NaN, Pav = NaN;
+  const apP = apEach > 0 ? apEach : ap;
+  let mrr = NaN;
+  if (op === 'drill') mrr = Math.PI * D * D / 4 * F;
+  else if (op === 'engrave') mrr = apP * Deff * 0.5 * F;
+  else if (op !== 'f3d' && apP > 0 && ae > 0) mrr = apP * ae * F;
+  if (mrr > 0) {
+    P = mat.kc * mrr / 60e6 / 0.8;
+    Pav = (num(mach.powerKw) || 0) * Math.min(1, n / (num(mach.rpmRated) || rpmMax));
+    if (Pav > 0 && P > Pav * 0.8)
+      W.push({ t:'b', m:`Потрібно ≈ ${fmt(P, 2)} кВт, а шпиндель на ${fmt(n)} об/хв дає ≈ ${fmt(Pav, 2)} кВт. Зменш глибину або крок.` });
+  }
+
+  // Гребінець для сферичної фрези: h = R − √(R² − (ae/2)²)
+  let scallop = NaN;
+  if (op === 'f3d' && ae > 0) { const R = D / 2; scallop = R - Math.sqrt(Math.max(0, R * R - ae * ae / 4)); }
+
+  return { op, D, Deff, z, n, F: r10(F), Fz: r10(Fz), ap: rAp(apEach), apMax: rAp(ap), passes, ae: rAp(ae), total,
+    Vreal, vMin, vMax, fzReal, fzRec, P, Pav, scallop, W };
+}
+
+// ================== Історія ==================
+function histFor(tool, matId, op, machId) {
+  return Object.values(DB.hist).filter(h => h.mat === matId && h.op === op && h.mach === machId &&
+    (tool.id !== '__manual' ? h.tool === tool.id
+      : (h.tool === '__manual' && h.snap && h.snap.type === tool.type && +h.snap.d === num(tool.d) && +h.snap.z === num(tool.z))))
+    .sort((a, b) => b.ts - a.ts);
+}
+function recentCombos() {
+  const seen = new Set(), out = [];
+  for (const h of Object.values(DB.hist).sort((a, b) => b.ts - a.ts)) {
+    const toolOk = h.tool === '__manual' || DB.tools[h.tool];
+    const mat = getMat(h.mat);
+    if (!toolOk || !mat || !OPS[h.op]) continue;
+    const key = `${h.tool}|${h.tool === '__manual' ? JSON.stringify(h.snap) : ''}|${h.mat}|${h.op}`;
+    if (seen.has(key)) continue; seen.add(key);
+    const t = h.tool === '__manual' ? h.snap : DB.tools[h.tool];
+    out.push({ h, label: `${h.tool === '__manual' ? '✏️ ' : ''}Ø${fmt(num(t.d), 2)} ${num(t.z) || 1}з · ${mat.name.split(/[ ,(]/)[0]} · ${OPS[h.op].s}` });
+    if (out.length >= 6) break;
+  }
+  return out;
+}
+async function trimHistory() {
+  const arr = Object.values(DB.hist).sort((a, b) => b.ts - a.ts);
+  for (const h of arr.slice(HIST_MAX)) { delete DB.hist[h.id]; await Store.del('h_' + h.id); }
+}
+
+// ================== Рендер ==================
+function render() {
+  document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
+  const m = curMachine();
+  $('#sub').textContent = `${m ? m.name : ''} · ${Store.mode === 'cloud' ? '☁️ памʼять у Telegram' : '💾 памʼять на цьому пристрої'}`;
+  ({ calc: renderCalc, tools: renderTools, mats: renderMats, hist: renderHist, settings: renderSettings })[S.tab]();
+}
+
+const fieldSel = (label, key, pairs, cur, attr = 'data-calc') =>
+  `<label class="field"><span>${label}</span><select ${attr}="${key}">${pairs.map(([v, l]) => opt(v, l, v === cur)).join('')}</select></label>`;
+const fieldIn = (label, key, val, attr = 'data-calc', extra = '') =>
+  `<label class="field"><span>${label}</span><input ${attr}="${key}" inputmode="decimal" autocomplete="off" value="${esc(val)}" ${extra}></label>`;
+
+function renderCalc() {
+  const tool = curTool(), mats = allMats(), machines = Object.values(DB.machines);
+  const ops = OPS_BY_TYPE[tool.type] || OPS_BY_TYPE.flat;
+  if (!ops.includes(S.op)) S.op = ops[0];
+  const manual = tool.id === '__manual', rec = recentCombos(), mt = S.manual;
+  view.innerHTML = `
+  ${rec.length ? `<div class="chips">${rec.map((c, i) => `<button class="chip" data-act="combo" data-i="${i}">${esc(c.label)}</button>`).join('')}</div>` : ''}
+  <section class="card">
+    ${machines.length > 1 ? fieldSel('Верстат', 'machineId', machines.map(m => [m.id, m.name]), S.machineId) : ''}
+    <div class="field"><span>Фреза <button class="link sm" data-act="newTool">＋ нова фреза</button></span>
+      <select data-calc="toolId">${sortedTools().map(t => opt(t.id, t.name, t.id === S.toolId)).join('')}
+        ${opt('__manual', '✏️ Ввести вручну (без збереження)', manual)}</select></div>
+    ${manual ? `
+      ${fieldSel('Тип фрези', 'm.type', Object.entries(TOOL_TYPES), mt.type)}
+      <div class="grid3">
+        ${fieldIn('Ø, мм', 'm.d', mt.d)}${fieldIn('Зубів', 'm.z', mt.z)}${fieldIn('Різальна, мм', 'm.lc', mt.lc)}
+      </div>
+      ${['vbit', 'engr', 'taperball'].includes(mt.type) ? `<div class="grid2">${fieldIn('Кут, °', 'm.angle', mt.angle)}${mt.type !== 'taperball' ? fieldIn('Кінчик, мм', 'm.tip', mt.tip) : ''}</div>` : ''}
+      ${fieldSel('Матеріал фрези', 'm.tm', Object.entries(TM).map(([k, v]) => [k, v.n]), mt.tm)}`
+      : `<div class="hint">${esc(toolDesc(tool))}</div>`}
+    ${fieldSel('Матеріал заготовки', 'matId', mats.map(m => [m.id, m.name]), S.matId)}
+    ${fieldSel('Операція', 'op', ops.map(o => [o, OPS[o].n]), S.op)}
+    ${S.op === 'f3d' ? '' : `<div class="grid2">${S.op === 'engrave'
+      ? fieldIn('Глибина гравіювання, мм', 'engrDepth', S.engrDepth)
+      : fieldIn(S.op === 'face' ? 'Зняти всього, мм' : S.op === 'drill' ? 'Глибина отвору, мм' : 'Глибина обробки, мм', 'depth', S.depth)}</div>`}
+    <div class="field"><span>Режим</span><div class="seg">${Object.entries(MODES).map(([k, m]) =>
+      `<button class="${S.mode === k ? 'on' : ''}" data-act="mode" data-v="${k}">${m.n}</button>`).join('')}</div></div>
+  </section>
+  <section class="card" id="result"></section>`;
+  renderResult();
+}
+
+function tile(label, val, unit, wide) {
+  return `<div class="big${wide ? ' wide' : ''}"><div class="l">${label}</div><div class="v">${val}</div><div class="u">${unit}</div></div>`;
+}
+let lastCalc = null;
+function renderResult() {
+  const el = $('#result'); if (!el) return;
+  const mach = curMachine(), tool = curTool(), mat = curMat();
+  const r = calc(mach, tool, mat, S.op, S.mode, S.depth, S.engrDepth);
+  lastCalc = r.error ? null : r;
+  if (r.error) { el.innerHTML = `<div class="empty">${esc(r.error)}</div>`; return; }
+
+  const hs = histFor(tool, mat.id, S.op, mach.id);
+  const good = hs.find(h => h.rate === 'good'), last = hs[0];
+  const ver = S.useVer ? hs.find(h => h.id === S.useVer) : null;
+  if (S.useVer && !ver) S.useVer = null;
+  const vals = ver ? { ...r, ...ver.used } : r;
+  if (ver && vals.ap > 0 && r.total > 0 && S.op !== 'f3d') vals.passes = Math.max(1, Math.ceil(r.total / vals.ap - 1e-6));
+
+  let banner = '';
+  if (ver) {
+    banner = `<div class="ver">${RATE[ver.rate]?.e || '📝'} Показано <b>ваші режими</b> від ${fmtDate(ver.ts)}${ver.note ? ` — «${esc(ver.note)}»` : ''}
+      <br><button class="btn sec" data-act="unVer">Показати розрахунок довідника</button></div>`;
+  } else {
+    const pick = good || (last && last.rate === 'ok' ? last : null);
+    if (pick) banner += `<div class="ver${pick.rate === 'ok' ? ' ok' : ''}">${RATE[pick.rate].e} ${pick.rate === 'good' ? 'Ви вже різали так' : 'Минулого разу'} (${fmtDate(pick.ts)}):
+      n ${fmt(pick.used.n)} · F ${fmt(pick.used.F)} · ap ${fmt(pick.used.ap, 2)}${pick.note ? `<br>«${esc(pick.note)}»` : ''}
+      <br><button class="btn" data-act="useVer" data-id="${pick.id}">Взяти ці значення</button></div>`;
+    if (last && last.rate === 'bad' && last !== pick)
+      banner += `<div class="ver bad">❌ Останній запис (${fmtDate(last.ts)}) — погано: n ${fmt(last.used.n)} · F ${fmt(last.used.F)} · ap ${fmt(last.used.ap, 2)}${last.note ? `<br>«${esc(last.note)}»` : ''}</div>`;
+  }
+
+  const tiles = [tile('Оберти шпинделя', fmt(vals.n), 'об/хв')];
+  if (S.op === 'drill') tiles.push(tile('Подача свердління (Z)', fmt(vals.F), `мм/хв · ${fmt(vals.F / 60, 1)} мм/с`));
+  else {
+    tiles.push(tile('Подача XY', fmt(vals.F), `мм/хв · ${fmt(vals.F / 60, 1)} мм/с`));
+    tiles.push(tile('Врізання Z', fmt(vals.Fz), `мм/хв · ${fmt(vals.Fz / 60, 1)} мм/с`));
+  }
+  if (S.op === 'f3d') {
+    tiles.push(tile('Крок між проходами', fmt(vals.ae, 2), `мм · ${Math.round(vals.ae / r.D * 100)}% від Ø`));
+    tiles.push(tile('Висота гребінця', fmt(r.scallop, 3), 'мм (для сферичного кінця)', true));
+  } else {
+    const pl = vals.passes > 0 ? ` · ${vals.passes} ${plural(vals.passes, 'прохід', 'проходи', 'проходів')}` : '';
+    tiles.push(tile(S.op === 'drill' ? 'Крок свердління (peck)' : 'Глибина за прохід', fmt(vals.ap, 2), `мм${S.op === 'drill' ? (vals.passes > 0 ? ` · ${vals.passes} ${plural(vals.passes, 'крок', 'кроки', 'кроків')}` : '') : pl}`));
+    if (vals.ae > 0) tiles.push(tile('Ширина зняття (крок)', fmt(vals.ae, 2), `мм · ${Math.round(vals.ae / r.D * 100)}% від Ø`));
+  }
+  if (tiles.length % 2) tiles[tiles.length - 1] = tiles[tiles.length - 1].replace('class="big"', 'class="big wide"');
+
+  const vNow = ver ? Math.PI * r.Deff * vals.n / 1000 : r.Vreal;
+  const fzNow = ver ? vals.F / (r.z * vals.n) : r.fzReal;
+  const meta = [
+    `Швидкість різання V = ${fmt(vNow)} м/хв (реком. ${fmt(r.vMin)}–${fmt(r.vMax)})`,
+    `подача на зуб fz = ${fmt(fzNow, 3)} мм (реком. ${fmt(r.fzRec, 3)})`,
+    S.op === 'engrave' ? `робочий Ø на глибині ${fmt(r.total, 2)} мм ≈ ${fmt(r.Deff, 2)} мм` : '',
+    r.P > 0 ? `потужність ${r.P < 0.01 ? '< 0,01' : '≈ ' + fmt(r.P, r.P < 1 ? 2 : 1)} кВт${r.Pav > 0 ? ` з ${fmt(r.Pav, 1)} доступних` : ''}` : '',
+  ].filter(Boolean).join('<br>');
+
+  el.innerHTML = `
+    <div class="reshead"><h2>Режими</h2>${ver ? '<span class="tag ok">ваші перевірені</span>' : `<span class="tag">${MODES[S.mode].n.toLowerCase()}</span>`}</div>
+    ${banner}
+    <div class="res">${tiles.join('')}</div>
+    <div class="meta">${meta}</div>
+    ${r.W.length ? `<ul class="msgs">${r.W.map(w => `<li class="${w.t}">${esc(w.m)}</li>`).join('')}</ul>` : ''}
+    ${mat.note ? `<ul class="msgs"><li>💡 ${esc(mat.note)}</li></ul>` : ''}
+    <div class="btns">
+      <button class="btn" data-act="saveRun">💾 Зберегти</button>
+      <button class="btn sec" data-act="copyRun">📋 Копіювати</button>
+    </div>
+    <div class="hint" style="margin-top:8px">Це стартові значення. Перевір на обрізку: звук, стружка, нагрів — і збережи, як вийшло. Наступного разу апка підкаже ваші перевірені режими.</div>`;
+  el._vals = vals;
+}
+
+function runSummary() {
+  const tool = curTool(), mat = curMat(), r = lastCalc, v = $('#result')?._vals || r;
+  if (!r) return '';
+  const lines = [
+    `Фреза: ${tool.id === '__manual' ? toolAutoName(tool) : tool.name}`,
+    `Матеріал: ${mat.name}`,
+    `Операція: ${OPS[S.op].n}`,
+    `Оберти S: ${fmt(v.n)} об/хв`,
+    `${S.op === 'drill' ? 'Подача свердління' : 'Подача F'}: ${fmt(v.F)} мм/хв (${fmt(v.F / 60, 1)} мм/с)`,
+  ];
+  if (S.op !== 'drill') lines.push(`Врізання Z: ${fmt(v.Fz)} мм/хв (${fmt(v.Fz / 60, 1)} мм/с)`);
+  if (S.op === 'f3d') lines.push(`Крок: ${fmt(v.ae, 2)} мм, гребінець ${fmt(r.scallop, 3)} мм`);
+  else {
+    if (v.ap > 0) lines.push(`Глибина за прохід: ${fmt(v.ap, 2)} мм${v.passes > 0 ? ` × ${v.passes} (всього ${fmt(r.total, 2)} мм)` : ''}`);
+    if (v.ae > 0) lines.push(`Ширина зняття: ${fmt(v.ae, 2)} мм`);
+  }
+  return lines.join('\n');
+}
+
+// ---------- Фрези ----------
+function renderTools() {
+  view.innerHTML = `
+    <div class="toolbar"><input data-filter="tools" placeholder="🔍 Пошук фрези" value="${esc(S.qTools)}"><button class="btn" data-act="newTool">＋ Фреза</button></div>
+    <section class="card" id="list"></section>`;
+  renderToolList();
+}
+function renderToolList() {
+  const q = S.qTools.trim().toLowerCase();
+  const tools = sortedTools().filter(t => !q || `${t.name} ${toolDesc(t)} ${t.note || ''}`.toLowerCase().includes(q));
+  $('#list').innerHTML = tools.length ? tools.map(t => `
+    <div class="item" data-act="editTool" data-id="${t.id}">
+      <div class="tx"><div class="t">${esc(t.name)}</div><div class="s">${esc(toolDesc(t))}</div></div>
+      <div class="r">${t.used ? `${t.used}×` : ''}</div></div>`).join('')
+    : `<div class="empty">${q ? 'Нічого не знайдено' : 'Ще немає фрез.<br>Додай першу — вручну або сфотографуй 📷'}</div>`;
+}
+
+function toolForm(t) {
+  t = t || { type: 'flat', z: 2, tm: 'carbide', helix: 'up' };
+  const isNew = !t.id;
+  openSheet(isNew ? 'Нова фреза' : 'Фреза', `
+    <form id="tf">
+      <div class="photo">
+        <button type="button" class="btn sec block" data-act="photo">📷 Розпізнати з фото</button>
+        <input type="file" accept="image/*" id="ph" class="hide">
+        <div class="st" id="phst">Сфотографуй фрезу поруч з упаковкою або етикеткою — Claude прочитає маркування і заповнить поля. Розміри обовʼязково перевір.</div>
+      </div>
+      <label class="field"><span>Назва / маркування</span><input name="name" value="${esc(t.name || '')}" placeholder="напр. 1-зах 6×22 по дереву"></label>
+      <label class="field"><span>Тип</span><select name="type">${optsFrom(TOOL_TYPES, t.type)}</select></label>
+      <div class="grid2">
+        <label class="field"><span>Діаметр Ø, мм</span><input name="d" inputmode="decimal" value="${esc(t.d ?? '')}"></label>
+        <label class="field"><span>Зубів (заходів)</span><input name="z" inputmode="numeric" value="${esc(t.z ?? '')}"></label>
+        <label class="field"><span>Різальна частина, мм</span><input name="lc" inputmode="decimal" value="${esc(t.lc ?? '')}"></label>
+        <label class="field"><span>Виліт з цанги, мм</span><input name="lo" inputmode="decimal" value="${esc(t.lo ?? '')}" placeholder="необовʼязково"></label>
+        <label class="field"><span>Загальна довжина, мм</span><input name="ol" inputmode="decimal" value="${esc(t.ol ?? '')}"></label>
+        <label class="field"><span>Хвостовик, мм</span><input name="shank" inputmode="decimal" value="${esc(t.shank ?? '')}"></label>
+      </div>
+      <div class="grid2" id="angRow">
+        <label class="field"><span id="angL">Кут, °</span><input name="angle" inputmode="decimal" value="${esc(t.angle ?? '')}"></label>
+        <label class="field" id="tipF"><span>Кінчик (пляма), мм</span><input name="tip" inputmode="decimal" value="${esc(t.tip ?? '')}"></label>
+      </div>
+      <div class="grid2">
+        <label class="field"><span>Матеріал фрези</span><select name="tm">${Object.entries(TM).map(([k, v]) => opt(k, v.n, k === (t.tm || 'carbide'))).join('')}</select></label>
+        <label class="field"><span>Спіраль</span><select name="helix">${optsFrom(HELIX, t.helix || '')}</select></label>
+      </div>
+      <label class="field"><span>Покриття</span><input name="coat" value="${esc(t.coat || '')}" placeholder="без покриття / TiAlN / AlTiN / DLC…"></label>
+      <label class="field"><span>Нотатка</span><textarea name="note" rows="2" maxlength="400">${esc(t.note || '')}</textarea></label>
+      <button class="btn block" type="submit">💾 Зберегти фрезу</button>
+      ${isNew ? '' : `<div class="btns"><button type="button" class="btn sec" data-act="dupTool" data-id="${t.id}">Копія</button>
+        <button type="button" class="btn danger" data-act="delTool" data-id="${t.id}">Видалити</button></div>`}
+    </form>`);
+  const f = $('#tf');
+  const vis = () => {
+    const ty = f.elements.type.value;
+    $('#angRow').classList.toggle('hide', !['vbit', 'engr', 'taperball'].includes(ty));
+    $('#tipF').classList.toggle('hide', ty === 'taperball');
+    $('#angL').textContent = ty === 'taperball' ? 'Кут конуса на сторону, °' : 'Кут при вершині, °';
+  };
+  vis(); f.elements.type.addEventListener('change', vis);
+  $('#ph').addEventListener('change', e => { const file = e.target.files[0]; e.target.value = ''; if (file) runPhoto(file, f, vis); });
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(f));
+    const o = { ...t, id: t.id || genId(), type: d.type, tm: d.tm, helix: d.helix, coat: d.coat.trim(), note: d.note.trim().slice(0, 400) };
+    for (const k of ['d', 'z', 'lc', 'lo', 'ol', 'shank', 'angle', 'tip']) { const x = num(d[k]); if (x > 0) o[k] = x; else delete o[k]; }
+    if (!(o.d > 0)) return toast('Вкажи діаметр', true);
+    o.z = Math.max(1, Math.round(o.z || 1));
+    o.name = d.name.trim() || toolAutoName(o);
+    if (!o.created) o.created = Date.now();
+    DB.tools[o.id] = o;
+    if (!(await Store.set('t_' + o.id, o))) return;
+    haptic('success'); toast('Фрезу збережено');
+    closeSheet();
+    if (isNew) { S.toolId = o.id; S.useVer = null; saveCfgSoon(); }
+    render();
+  });
+}
+
+// ---------- Розпізнавання фото (Claude API) ----------
+const CUTTER_SCHEMA = {
+  type: 'object',
+  properties: {
+    is_cutter:         { type: 'boolean' },
+    type:              { type: 'string', enum: ['flat', 'ball', 'taperball', 'vbit', 'engr', 'rough', 'comp', 'straight', 'surf', 'drill', 'unknown'] },
+    diameter_mm:       { type: 'number' },
+    flutes:            { type: 'integer' },
+    cutting_length_mm: { type: 'number' },
+    overall_length_mm: { type: 'number' },
+    shank_mm:          { type: 'number' },
+    angle_deg:         { type: 'number' },
+    tip_mm:            { type: 'number' },
+    tool_material:     { type: 'string', enum: ['carbide', 'hss', 'unknown'] },
+    coating:           { type: 'string' },
+    helix:             { type: 'string', enum: ['up', 'down', 'comp', 'straight', 'unknown'] },
+    name:              { type: 'string' },
+    notes:             { type: 'string' },
+    confidence:        { type: 'string', enum: ['high', 'medium', 'low'] },
+  },
+  required: ['is_cutter', 'type', 'diameter_mm', 'flutes', 'cutting_length_mm', 'overall_length_mm', 'shank_mm',
+    'angle_deg', 'tip_mm', 'tool_material', 'coating', 'helix', 'name', 'notes', 'confidence'],
+  additionalProperties: false,
+};
+const RECOG_SYSTEM = `You identify CNC milling tools (router bits, end mills, engravers, drills) from photos for a CNC machinist.
+Read every visible marking on the tool, its packaging or label (for example "6x22x50 2F", "D6 L22", "HRC55", "AlTiN", "1F 3.175"), and use visual cues (flute count, helix direction, tip shape) to fill the fields.
+Type codes: flat = spiral end mill with flat end; ball = ball nose; taperball = tapered ball nose (angle_deg = taper angle per side, diameter_mm = ball diameter); vbit = V-groove engraver with pointed tip (angle_deg = included angle); engr = conical engraver with a small flat tip (tip_mm = flat tip width); rough = roughing "corn" cutter; comp = compression up/down spiral; straight = straight-flute router bit; surf = surfacing / spoilboard bit; drill = drill.
+Use 0 for any number you cannot determine, "unknown" for enums you cannot determine and "" for unknown text. Do not estimate dimensions from proportions alone unless a scale reference (ruler, caliper, readable marking) is visible; if you estimate anything, say so in notes.
+Write "name" (short tool name with key dimensions) and "notes" (what was read from markings, what is uncertain, what to measure) in Ukrainian.`;
+
+let sdkPromise = null;
+const loadSdk = () => sdkPromise || (sdkPromise = import(SDK_URL).catch(e => { sdkPromise = null; throw e; }));
+
+async function fileToJpegB64(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new UserErr('Не вдалося відкрити фото')); i.src = url; });
+    const k = Math.min(1, 1568 / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.85).split(',')[1];
+  } finally { URL.revokeObjectURL(url); }
+}
+function apiErrorText(e, mod) {
+  if (e instanceof UserErr) return e.message;
+  const A = (mod && (mod.default || mod.Anthropic)) || {};
+  const is = name => { const C = (mod && mod[name]) || A[name]; return typeof C === 'function' && e instanceof C; };
+  if (is('AuthenticationError')) return 'Ключ API не підходить. Перевір його в ⚙️ Налаштуваннях.';
+  if (is('PermissionDeniedError')) return 'Цей ключ не має доступу до моделі.';
+  if (is('RateLimitError')) return 'Забагато запитів — спробуй за хвилину.';
+  if (is('BadRequestError')) return 'Запит відхилено: ' + (e.message || '');
+  if (is('APIConnectionError')) return 'Немає звʼязку з Claude. Перевір інтернет.';
+  if (is('APIError')) return `Помилка Claude API${e.status ? ' (' + e.status + ')' : ''}: ${e.message || ''}`;
+  return 'Помилка: ' + (e && e.message || e);
+}
+async function recognizeCutter(file) {
+  const data = await fileToJpegB64(file);
+  let mod;
+  try { mod = await loadSdk(); } catch (e) { throw new UserErr('Не вдалося завантажити модуль Claude. Перевір інтернет.'); }
+  const Anthropic = mod.default || mod.Anthropic;
+  const client = new Anthropic({ apiKey: DB.apiKey, dangerouslyAllowBrowser: true, maxRetries: 1 });
+  try {
+    const resp = await client.beta.messages.create({
+      model: MODEL,
+      max_tokens: 16000,
+      betas: ['server-side-fallback-2026-07-01'],
+      fallbacks: 'default',
+      system: RECOG_SYSTEM,
+      output_config: { effort: 'medium', format: { type: 'json_schema', schema: CUTTER_SCHEMA } },
+      messages: [{ role: 'user', content: [
+        { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data } },
+        { type: 'text', text: 'Визнач параметри інструмента на цьому фото.' },
+      ] }],
+    });
+    if (resp.stop_reason === 'refusal') throw new UserErr('Claude не зміг обробити це фото. Спробуй інше.');
+    if (resp.stop_reason === 'max_tokens') throw new UserErr('Відповідь обірвалась — спробуй ще раз.');
+    const tb = resp.content.find(b => b.type === 'text');
+    if (!tb) throw new UserErr('Порожня відповідь від Claude.');
+    return JSON.parse(tb.text);
+  } catch (e) { throw new UserErr(apiErrorText(e, mod)); }
+}
+async function runPhoto(file, f, vis) {
+  const st = $('#phst');
+  const btn = f.querySelector('[data-act="photo"]');
+  btn.disabled = true;
+  st.innerHTML = '<span class="spin"></span>Розпізнаю фрезу… зазвичай 10–30 секунд';
+  try {
+    const r = await recognizeCutter(file);
+    if (!r.is_cutter) { st.textContent = 'На фото не видно фрези. ' + (r.notes || ''); return; }
+    const set = (n, v) => { if (v !== undefined && v !== null && v !== '' && v !== 0 && v !== 'unknown' && f.elements[n]) f.elements[n].value = v; };
+    set('type', r.type); set('d', r.diameter_mm); set('z', r.flutes); set('lc', r.cutting_length_mm);
+    set('ol', r.overall_length_mm); set('shank', r.shank_mm); set('angle', r.angle_deg); set('tip', r.tip_mm);
+    set('tm', r.tool_material); set('coat', r.coating); set('helix', r.helix);
+    if (!f.elements.name.value.trim()) set('name', r.name);
+    if (r.notes && !f.elements.note.value.trim()) f.elements.note.value = r.notes.slice(0, 400);
+    vis();
+    const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
+    st.innerHTML = `✅ Заповнено з фото (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}<br><b>Перевір діаметр і довжину штангенциркулем.</b>`;
+    haptic('success');
+  } catch (e) {
+    st.textContent = '⚠️ ' + (e instanceof UserErr ? e.message : apiErrorText(e));
+    haptic('error');
+  } finally { btn.disabled = false; }
+}
+
+// ---------- Матеріали ----------
+function renderMats() {
+  const all = allMats(true);
+  const mine = all.filter(m => !m.preset && !m.hidden), pre = all.filter(m => m.preset && !m.hidden), hidden = all.filter(m => m.hidden);
+  const row = m => `<div class="item" data-act="editMat" data-id="${m.id}"><div class="tx"><div class="t">${esc(m.name)}${m.edited ? ' <span class="tag">змінено</span>' : ''}</div>
+    <div class="s">V ${fmt(m.vmin)}–${fmt(m.vmax)} м/хв · fz(Ø6) ${fmt(interpFz(m.fz, 6), 3)} мм · ap ${fmt(m.apSlot, 2)}×D</div></div></div>`;
+  view.innerHTML = `
+    <div class="toolbar"><div style="flex:1"></div><button class="btn" data-act="newMat">＋ Матеріал</button></div>
+    ${mine.length ? `<section class="card"><h2>Мої матеріали</h2>${mine.map(row).join('')}</section>` : ''}
+    <section class="card"><h2>Довідник (FrezyCNC + практика)</h2>${pre.map(row).join('')}</section>
+    ${hidden.length ? `<section class="card"><h2>Приховані</h2>${S.showHidden ? hidden.map(row).join('')
+      : `<button class="link" data-act="showHidden">Показати (${hidden.length})</button>`}</section>` : ''}
+    <div class="hint">Довідникові значення — стартові. Відкрий матеріал і зміни цифри під свій досвід — розрахунок одразу їх врахує.</div>`;
+}
+function matForm(m, copyFrom) {
+  const base = m || (copyFrom ? { ...copyFrom, id: undefined, name: copyFrom.name + ' (мій)', preset: false, edited: false, hidden: false }
+    : { name: '', vmin: 100, vmax: 200, fz: [0.01, 0.03, 0.05, 0.08, 0.1, 0.15], apSlot: 0.5, apSide: 1, apEngr: 1, plunge: 0.3, kc: 300, note: '' });
+  const isNew = !base.id, isPreset = !!base.preset;
+  openSheet(isNew ? 'Новий матеріал' : base.name, `
+    <form id="mf">
+      ${isNew && !copyFrom ? `<label class="field"><span>Взяти за основу</span><select id="mbase"><option value="">— з нуля —</option>${allMats(true).map(x => opt(x.id, x.name)).join('')}</select></label>` : ''}
+      <label class="field"><span>Назва</span><input name="name" value="${esc(base.name)}"></label>
+      <h2 style="font-size:12px;color:var(--hint);text-transform:uppercase;margin:6px 0">Швидкість різання V, м/хв (твердосплав)</h2>
+      <div class="grid2">
+        <label class="field"><span>від</span><input name="vmin" inputmode="decimal" value="${base.vmin}"></label>
+        <label class="field"><span>до</span><input name="vmax" inputmode="decimal" value="${base.vmax}"></label>
+      </div>
+      <h2 style="font-size:12px;color:var(--hint);text-transform:uppercase;margin:6px 0">Подача на зуб fz, мм — за діаметром фрези</h2>
+      <div class="grid3">${FZ_LABELS.map((l, i) => `<label class="field"><span>Ø ${l}</span><input name="fz${i}" inputmode="decimal" value="${base.fz[i]}"></label>`).join('')}</div>
+      <h2 style="font-size:12px;color:var(--hint);text-transform:uppercase;margin:6px 0">Глибина і врізання</h2>
+      <div class="grid2">
+        <label class="field"><span>За прохід на всю ширину, ×D</span><input name="apSlot" inputmode="decimal" value="${base.apSlot}"></label>
+        <label class="field"><span>При знятті збоку, ×D</span><input name="apSide" inputmode="decimal" value="${base.apSide}"></label>
+        <label class="field"><span>Гравіювання за прохід, мм</span><input name="apEngr" inputmode="decimal" value="${base.apEngr}"></label>
+        <label class="field"><span>Врізання Z, частка від F</span><input name="plunge" inputmode="decimal" value="${base.plunge}"></label>
+      </div>
+      <label class="field"><span>Питома сила різання kc, Н/мм² (для оцінки потужності)</span><input name="kc" inputmode="decimal" value="${base.kc}"></label>
+      <label class="field"><span>Нотатка</span><textarea name="note" rows="3" maxlength="500">${esc(base.note || '')}</textarea></label>
+      <button class="btn block" type="submit">💾 Зберегти</button>
+      ${isNew ? '' : `<div class="btns">
+        <button type="button" class="btn sec" data-act="copyMat" data-id="${base.id}">Створити копію</button>
+        ${isPreset && base.edited ? `<button type="button" class="btn sec" data-act="resetMat" data-id="${base.id}">Скинути до довідника</button>` : ''}
+        ${base.hidden ? `<button type="button" class="btn sec" data-act="unhideMat" data-id="${base.id}">Показувати</button>`
+          : `<button type="button" class="btn danger" data-act="${isPreset ? 'hideMat' : 'delMat'}" data-id="${base.id}">${isPreset ? 'Сховати' : 'Видалити'}</button>`}
+      </div>`}
+    </form>`);
+  const f = $('#mf');
+  const mb = $('#mbase');
+  if (mb) mb.addEventListener('change', () => { const src = getMat(mb.value); if (src) { closeSheet(); matForm(null, src); } });
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(f));
+    const o = { id: base.id || 'u' + genId(), name: d.name.trim(), note: d.note.trim().slice(0, 500) };
+    for (const k of ['vmin', 'vmax', 'apSlot', 'apSide', 'apEngr', 'plunge', 'kc']) o[k] = num(d[k]);
+    o.fz = FZ_LABELS.map((_, i) => num(d['fz' + i]));
+    if (!o.name) return toast('Вкажи назву', true);
+    if ([o.vmin, o.vmax, o.apSlot, o.apSide, o.apEngr, o.plunge, o.kc, ...o.fz].some(x => !(x > 0))) return toast('Усі числа мають бути більші за 0', true);
+    if (o.vmax < o.vmin) [o.vmin, o.vmax] = [o.vmax, o.vmin];
+    if (DB.matOv[o.id]?.hidden) o.hidden = true;
+    DB.matOv[o.id] = o;
+    if (!(await Store.set('m_' + o.id, o))) return;
+    haptic('success'); toast('Матеріал збережено'); closeSheet();
+    if (isNew) { S.matId = o.id; saveCfgSoon(); }
+    render();
+  });
+}
+
+// ---------- Історія ----------
+function renderHist() {
+  view.innerHTML = `
+    <div class="toolbar"><input data-filter="hist" placeholder="🔍 Пошук: фреза, матеріал, нотатка" value="${esc(S.qHist)}"></div>
+    <div class="chips">${[['', 'Усі'], ['good', '✅ Добре'], ['ok', '⚠️ Можна краще'], ['bad', '❌ Погано'], ['none', '📝 Без оцінки']]
+      .map(([k, l]) => `<button class="chip${S.hRate === k ? ' on' : ''}" data-act="hRate" data-v="${k}">${l}</button>`).join('')}</div>
+    <section class="card" id="list"></section>`;
+  renderHistList();
+}
+function renderHistList() {
+  const q = S.qHist.trim().toLowerCase();
+  const arr = Object.values(DB.hist).sort((a, b) => b.ts - a.ts).filter(h =>
+    (!S.hRate || (S.hRate === 'none' ? !h.rate : h.rate === S.hRate)) &&
+    (!q || `${h.toolName} ${h.matName} ${OPS[h.op]?.n} ${h.note || ''} ${h.machName}`.toLowerCase().includes(q)));
+  $('#list').innerHTML = arr.length ? arr.slice(0, 150).map(h => `
+    <div class="item" data-act="editHist" data-id="${h.id}">
+      <div class="tx"><div class="t">${esc(h.toolName)} · ${esc(h.matName)}</div>
+      <div class="s">${esc(OPS[h.op]?.s || h.op)} · n ${fmt(h.used.n)} · F ${fmt(h.used.F)} · ap ${fmt(h.used.ap, 2)}${h.note ? ' · ' + esc(h.note.slice(0, 50)) : ''}</div></div>
+      <div class="r">${RATE[h.rate]?.e || '📝'}<br>${fmtDate(h.ts)}</div></div>`).join('')
+    : `<div class="empty">${Object.keys(DB.hist).length ? 'Нічого не знайдено' : 'Історія порожня.<br>Порахуй режими і натисни «💾 Зберегти» — так апка запамʼятає, з чим ти працював.'}</div>`;
+}
+function rateButtons(cur) {
+  return `<input type="hidden" name="rate" value="${esc(cur || '')}"><div class="rate">${Object.entries(RATE).map(([k, r]) =>
+    `<button type="button" class="${cur === k ? 'on' : ''}" data-act="rate" data-v="${k}">${r.e} ${r.n}</button>`).join('')}</div>`;
+}
+function runFields(v, op) {
+  return `<div class="grid2">
+    <label class="field"><span>Оберти n, об/хв</span><input name="n" inputmode="numeric" value="${esc(v.n)}"></label>
+    <label class="field"><span>${op === 'drill' ? 'Подача свердління' : 'Подача F'}, мм/хв</span><input name="F" inputmode="numeric" value="${esc(v.F)}"></label>
+    ${op === 'drill' ? '' : `<label class="field"><span>Врізання Z, мм/хв</span><input name="Fz" inputmode="numeric" value="${esc(v.Fz)}"></label>`}
+    ${op === 'f3d' ? '' : `<label class="field"><span>${op === 'drill' ? 'Крок свердління' : 'Глибина за прохід'}, мм</span><input name="ap" inputmode="decimal" value="${esc(v.ap)}"></label>`}
+    ${v.ae > 0 ? `<label class="field"><span>Ширина / крок, мм</span><input name="ae" inputmode="decimal" value="${esc(v.ae)}"></label>` : ''}
+  </div>`;
+}
+function readRun(fd, prev) {
+  const o = { ...prev };
+  for (const k of ['n', 'F', 'Fz', 'ap', 'ae']) if (fd[k] !== undefined) { const x = num(fd[k]); if (x > 0) o[k] = x; }
+  return o;
+}
+function saveRunForm() {
+  if (!lastCalc) return;
+  const tool = curTool(), mat = curMat(), mach = curMachine(), v = $('#result')?._vals || lastCalc;
+  const used = { n: v.n, F: v.F, Fz: v.Fz, ap: v.ap, ae: v.ae };
+  openSheet('Зберегти результат', `
+    <form id="rf">
+      <div class="hint">${esc(tool.id === '__manual' ? toolAutoName(tool) : tool.name)} · ${esc(mat.name)} · ${esc(OPS[S.op].n)}</div>
+      ${runFields(used, S.op)}
+      <div class="hint">Якщо фактично різав з іншими значеннями — виправ їх тут.</div>
+      <div class="field"><span>Як пройшло? (можна оцінити пізніше в Історії)</span></div>
+      ${rateButtons('')}
+      <label class="field"><span>Нотатка</span><textarea name="note" rows="3" maxlength="500" placeholder="напр.: чистий різ, без задирів / на 2-му проході почала горіти"></textarea></label>
+      <button class="btn block" type="submit">💾 Зберегти в історію</button>
+    </form>`);
+  $('#rf').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(e.target));
+    const h = { id: genId(), ts: Date.now(), mach: mach.id, machName: mach.name,
+      tool: tool.id, toolName: tool.id === '__manual' ? toolAutoName(tool) : tool.name,
+      snap: { type: tool.type, d: num(tool.d), z: num(tool.z) || 1, tm: tool.tm || 'carbide' },
+      mat: mat.id, matName: mat.name, op: S.op, mode: S.mode, depth: num(S.depth), engr: num(S.engrDepth),
+      calc: { n: lastCalc.n, F: lastCalc.F, Fz: lastCalc.Fz, ap: lastCalc.ap, ae: lastCalc.ae },
+      used: readRun(fd, used), rate: fd.rate || '', note: (fd.note || '').trim().slice(0, 500) };
+    DB.hist[h.id] = h;
+    if (!(await Store.set('h_' + h.id, h))) return;
+    if (tool.id !== '__manual' && DB.tools[tool.id]) {
+      const t = DB.tools[tool.id]; t.used = (t.used || 0) + 1; t.lastUsed = Date.now(); Store.set('t_' + t.id, t);
+    }
+    await trimHistory();
+    S.useVer = h.rate === 'good' ? h.id : S.useVer;
+    haptic('success'); toast('Збережено в історію'); closeSheet(); render();
+  });
+}
+function histForm(h) {
+  const t = DB.tools[h.tool];
+  openSheet('Запис історії', `
+    <form id="hf">
+      <div class="hint">${fmtDate(h.ts)} · ${esc(h.machName || '')}<br><b>${esc(h.toolName)}</b> · ${esc(h.matName)} · ${esc(OPS[h.op]?.n || h.op)}
+        ${h.depth > 0 ? ` · глибина ${fmt(h.depth, 2)} мм` : ''}<br>Розрахунок був: n ${fmt(h.calc.n)} · F ${fmt(h.calc.F)} · ap ${fmt(h.calc.ap, 2)}</div>
+      ${runFields(h.used, h.op)}
+      <div class="field"><span>Як пройшло?</span></div>
+      ${rateButtons(h.rate)}
+      <label class="field"><span>Нотатка</span><textarea name="note" rows="3" maxlength="500">${esc(h.note || '')}</textarea></label>
+      <button class="btn block" type="submit">💾 Зберегти зміни</button>
+      <div class="btns">
+        ${(t || h.tool === '__manual') && getMat(h.mat) ? `<button type="button" class="btn sec" data-act="openHist" data-id="${h.id}">🧮 Відкрити в розрахунку</button>` : ''}
+        <button type="button" class="btn danger" data-act="delHist" data-id="${h.id}">Видалити</button>
+      </div>
+    </form>`);
+  $('#hf').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(e.target));
+    const o = { ...h, used: readRun(fd, h.used), rate: fd.rate || '', note: (fd.note || '').trim().slice(0, 500) };
+    DB.hist[o.id] = o;
+    if (!(await Store.set('h_' + o.id, o))) return;
+    haptic('success'); toast('Збережено'); closeSheet(); render();
+  });
+}
+
+// ---------- Налаштування ----------
+function renderSettings() {
+  const ms = Object.values(DB.machines);
+  view.innerHTML = `
+    <section class="card"><h2>Верстати</h2>
+      ${ms.map(m => `<div class="item" data-act="editMach" data-id="${m.id}"><div class="tx"><div class="t">${esc(m.name)}</div>
+        <div class="s">${fmt(m.rpmMin)}–${fmt(m.rpmMax)} об/хв · ${fmt(m.powerKw, 1)} кВт · до ${fmt(m.feedMax)} мм/хв · ${esc((RIGID[m.rigid] || RIGID.mid).n.split(' (')[0].toLowerCase())}</div></div></div>`).join('')}
+      <button class="btn sec block" data-act="newMach" style="margin-top:8px">＋ Верстат</button>
+      <div class="hint" style="margin-top:8px">Обовʼязково впиши реальні дані свого шпинделя і верстата — від них залежать усі розрахунки.</div>
+    </section>
+    <section class="card"><h2>Розпізнавання фрез з фото</h2>
+      <div class="hint">Працює через Claude API — потрібен власний ключ з console.anthropic.com (Settings → API keys). Одне фото коштує кілька центів. Ключ зберігається лише у твоєму сховищі ${Store.mode === 'cloud' ? 'Telegram' : 'браузера'} — інші люди, які відкриють апку, його не бачать.</div>
+      ${DB.apiKey ? `<div class="hint">✅ Ключ додано: ${esc(DB.apiKey.slice(0, 10))}…${esc(DB.apiKey.slice(-4))}</div>
+        <button class="btn danger block" data-act="delKey">Видалити ключ</button>`
+        : `<label class="field"><span>Ключ Claude API</span><input id="apikey" type="password" autocomplete="off" placeholder="sk-ant-…"></label>
+        <button class="btn block" data-act="saveKey">Зберегти ключ</button>`}
+    </section>
+    <section class="card"><h2>Памʼять</h2>
+      <div class="hint">${Store.mode === 'cloud' ? '☁️ Дані зберігаються в хмарі Telegram — доступні на телефоні й компʼютері, де відкрита ця апка.'
+        : '💾 Апка відкрита поза Telegram — дані зберігаються лише в цьому браузері.'}<br>
+        Фрез: ${Object.keys(DB.tools).length} · своїх / змінених матеріалів: ${Object.keys(DB.matOv).length} · записів історії: ${Object.keys(DB.hist).length} (зберігаються останні ${HIST_MAX})</div>
+      <div class="btns"><button class="btn sec" data-act="export">⬆️ Експорт</button><button class="btn sec" data-act="import">⬇️ Імпорт</button></div>
+    </section>
+    <section class="card"><h2>Як рахується</h2>
+      <div class="formula">n = 1000 · V / (π · D)</div>
+      <div class="formula">F = fz · z · n</div>
+      <div class="formula">Врізання Fz = F · k врізання</div>
+      <div class="formula">ap = k глибини · D · режим · жорсткість · виліт</div>
+      <div class="formula">Гребінець h = R − √(R² − (ae/2)²)</div>
+      <div class="formula">P ≈ kc · ap · ae · F / (60·10⁶ · 0.8)</div>
+      <div class="hint">V — швидкість різання (м/хв), D — діаметр (мм), fz — подача на зуб, z — кількість зубів, n — оберти.
+        Оберти обрізаються межами шпинделя; якщо подача впирається в максимум верстата — оберти знижуються, щоб зберегти навантаження на зуб.
+        Режим «Обережно» бере нижню межу V, «Продуктивно» — верхню. Для HSS-фрез V × 0.45.<br><br>
+        Таблиця V і fz — FrezyCNC «Режими різання» (для металів V перераховано під твердосплав), плюс практичні режими звідти ж.
+        Це стартові значення: остаточні режими підбираються на обрізку і зберігаються в Історії.</div>
+    </section>
+    <div class="hint" style="text-align:center">Режими ЧПУ v${APP_VER}${IN_TG ? ` · Telegram ${esc(tg.version || '')}` : ' · відкрито поза Telegram'}</div>`;
+}
+function machForm(m) {
+  const base = m || { ...defaultMachine(), id: undefined, name: 'Новий верстат', note: '' };
+  const isNew = !base.id;
+  openSheet(isNew ? 'Новий верстат' : base.name, `
+    <form id="sf">
+      <label class="field"><span>Назва</span><input name="name" value="${esc(base.name)}"></label>
+      <div class="grid2">
+        <label class="field"><span>Мін. оберти, об/хв</span><input name="rpmMin" inputmode="numeric" value="${base.rpmMin}"></label>
+        <label class="field"><span>Макс. оберти, об/хв</span><input name="rpmMax" inputmode="numeric" value="${base.rpmMax}"></label>
+        <label class="field"><span>Номінальні оберти, об/хв</span><input name="rpmRated" inputmode="numeric" value="${base.rpmRated}"></label>
+        <label class="field"><span>Потужність шпинделя, кВт</span><input name="powerKw" inputmode="decimal" value="${base.powerKw}"></label>
+        <label class="field"><span>Макс. робоча подача, мм/хв</span><input name="feedMax" inputmode="numeric" value="${base.feedMax}"></label>
+      </div>
+      <div class="hint">Номінальні оберти — з шильдика шпинделя (зазвичай 18000 або 24000). Нижче них потужність падає пропорційно обертам.</div>
+      <label class="field"><span>Жорсткість верстата</span><select name="rigid">${optsFrom(RIGID, base.rigid)}</select></label>
+      <label class="field"><span>Нотатка</span><textarea name="note" rows="2" maxlength="300">${esc(base.note || '')}</textarea></label>
+      <button class="btn block" type="submit">💾 Зберегти</button>
+      ${!isNew && Object.keys(DB.machines).length > 1 ? `<div class="btns"><button type="button" class="btn danger" data-act="delMach" data-id="${base.id}">Видалити верстат</button></div>` : ''}
+    </form>`);
+  $('#sf').addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(e.target));
+    const o = { id: base.id || genId(), name: d.name.trim() || 'Верстат', rigid: d.rigid, note: d.note.trim().slice(0, 300) };
+    for (const k of ['rpmMin', 'rpmMax', 'rpmRated', 'powerKw', 'feedMax']) o[k] = num(d[k]);
+    if (!(o.rpmMax > 0) || !(o.feedMax > 0)) return toast('Вкажи макс. оберти і подачу', true);
+    if (!(o.rpmMin >= 0) || o.rpmMin > o.rpmMax) o.rpmMin = Math.min(o.rpmMin || 0, o.rpmMax);
+    if (!(o.rpmRated > 0)) o.rpmRated = o.rpmMax;
+    if (!(o.powerKw > 0)) o.powerKw = 0;
+    DB.machines[o.id] = o;
+    if (!(await Store.set('s_' + o.id, o))) return;
+    if (isNew) { S.machineId = o.id; saveCfgSoon(); }
+    haptic('success'); toast('Верстат збережено'); closeSheet(); render();
+  });
+}
+function exportData() {
+  const data = JSON.stringify({ app: 'cnc-calc', v: 1, ts: Date.now(), tools: DB.tools, mats: DB.matOv, machines: DB.machines, hist: DB.hist });
+  openSheet('Експорт бази', `
+    <div class="hint">Це резервна копія твоїх фрез, матеріалів, верстатів та історії (без ключа API). Скопіюй і збережи, наприклад, в «Збережене» в Telegram.</div>
+    <textarea rows="10" readonly id="exp">${esc(data)}</textarea>
+    <button class="btn block" data-act="copyExp" style="margin-top:10px">📋 Копіювати</button>`);
+}
+function importData() {
+  openSheet('Імпорт бази', `
+    <div class="hint">Встав текст резервної копії. Записи з такими ж ідентифікаторами буде замінено, решта — додано.</div>
+    <textarea rows="10" id="imp" placeholder='{"app":"cnc-calc",…}'></textarea>
+    <button class="btn block" data-act="doImport" style="margin-top:10px">⬇️ Імпортувати</button>
+    <div class="hint" id="impst"></div>`);
+}
+async function doImport() {
+  let d; try { d = JSON.parse($('#imp').value); } catch (e) { return toast('Це не схоже на резервну копію', true); }
+  if (!d || d.app !== 'cnc-calc') return toast('Це не резервна копія цієї апки', true);
+  const groups = [['tools', 't_', DB.tools], ['mats', 'm_', DB.matOv], ['machines', 's_', DB.machines], ['hist', 'h_', DB.hist]];
+  const total = groups.reduce((s, [k]) => s + Object.keys(d[k] || {}).length, 0);
+  if (!(await ask(`Імпортувати ${total} записів?`))) return;
+  let done = 0;
+  for (const [k, p, target] of groups) for (const o of Object.values(d[k] || {})) {
+    if (!o || !o.id) continue;
+    target[o.id] = o; await Store.set(p + o.id, o);
+    if (++done % 10 === 0) $('#impst').textContent = `Імпортовано ${done} з ${total}…`;
+  }
+  await trimHistory();
+  haptic('success'); toast(`Імпортовано ${done} записів`); closeSheet(); initState(); render();
+}
+
+// ================== Шторка (модальне вікно) ==================
+function openSheet(title, html) {
+  sheet.innerHTML = `<div class="panel"><div class="panel-head"><b>${esc(title)}</b><button class="x" data-act="closeSheet" aria-label="Закрити">✕</button></div><div class="panel-body">${html}</div></div>`;
+  sheet.classList.add('open'); document.body.classList.add('noscroll');
+  if (tgv('6.1')) tg.BackButton.show();
+}
+function closeSheet() {
+  sheet.classList.remove('open'); sheet.innerHTML = ''; document.body.classList.remove('noscroll');
+  if (tgv('6.1')) tg.BackButton.hide();
+}
+sheet.addEventListener('click', e => { if (e.target === sheet) closeSheet(); });
+
+// ================== Події ==================
+const ACT = {
+  tab: el => { S.tab = el.dataset.tab; closeSheet(); render(); window.scrollTo(0, 0); },
+  mode: el => { S.mode = el.dataset.v; S.useVer = null; saveCfgSoon(); renderCalc(); },
+  combo: el => {
+    const c = recentCombos()[+el.dataset.i]; if (!c) return;
+    const h = c.h;
+    if (h.tool === '__manual') { S.toolId = '__manual'; Object.assign(S.manual, { type: h.snap.type, d: String(h.snap.d), z: String(h.snap.z), tm: h.snap.tm || 'carbide' }); }
+    else S.toolId = h.tool;
+    S.matId = h.mat; S.op = h.op; if (h.depth > 0) S.depth = String(h.depth); if (h.engr > 0) S.engrDepth = String(h.engr);
+    if (DB.machines[h.mach]) S.machineId = h.mach;
+    S.useVer = null; saveCfgSoon(); renderCalc();
+  },
+  useVer: el => { S.useVer = el.dataset.id; renderResult(); },
+  unVer: () => { S.useVer = null; renderResult(); },
+  saveRun: () => saveRunForm(),
+  copyRun: () => copyText(runSummary()),
+  closeSheet: () => closeSheet(),
+  newTool: () => toolForm(null),
+  editTool: el => toolForm(DB.tools[el.dataset.id]),
+  photo: () => {
+    if (!DB.apiKey) { toast('Спершу додай ключ Claude API в ⚙️ Налаштуваннях', true); return; }
+    $('#ph').click();
+  },
+  dupTool: el => {
+    const t = DB.tools[el.dataset.id]; if (!t) return;
+    closeSheet(); toolForm({ ...t, id: undefined, name: t.name + ' (копія)', used: 0, lastUsed: 0, created: 0 });
+  },
+  delTool: async el => {
+    const t = DB.tools[el.dataset.id]; if (!t || !(await ask(`Видалити фрезу «${t.name}»? Історія з нею залишиться.`))) return;
+    delete DB.tools[t.id]; await Store.del('t_' + t.id);
+    if (S.toolId === t.id) S.toolId = sortedTools()[0]?.id || '__manual';
+    saveCfgSoon(); closeSheet(); render();
+  },
+  newMat: () => matForm(null),
+  editMat: el => matForm(getMat(el.dataset.id)),
+  copyMat: el => { const m = getMat(el.dataset.id); closeSheet(); matForm(null, m); },
+  resetMat: async el => {
+    const id = el.dataset.id; if (!(await ask('Повернути довідникові значення?'))) return;
+    const hidden = DB.matOv[id]?.hidden;
+    if (hidden) { DB.matOv[id] = { id, hidden: true }; await Store.set('m_' + id, DB.matOv[id]); }
+    else { delete DB.matOv[id]; await Store.del('m_' + id); }
+    toast('Скинуто'); closeSheet(); render();
+  },
+  hideMat: async el => {
+    const id = el.dataset.id; DB.matOv[id] = { ...(DB.matOv[id] || { id }), hidden: true }; await Store.set('m_' + id, DB.matOv[id]);
+    if (S.matId === id) S.matId = allMats()[0]?.id;
+    toast('Сховано'); closeSheet(); render();
+  },
+  unhideMat: async el => {
+    const id = el.dataset.id, o = { ...(DB.matOv[id] || { id }) }; delete o.hidden;
+    if (id.startsWith('p_') && Object.keys(o).length === 1) { delete DB.matOv[id]; await Store.del('m_' + id); }
+    else { DB.matOv[id] = o; await Store.set('m_' + id, o); }
+    closeSheet(); render();
+  },
+  delMat: async el => {
+    const m = getMat(el.dataset.id); if (!m || !(await ask(`Видалити матеріал «${m.name}»?`))) return;
+    delete DB.matOv[m.id]; await Store.del('m_' + m.id);
+    if (S.matId === m.id) S.matId = allMats()[0]?.id;
+    closeSheet(); render();
+  },
+  showHidden: () => { S.showHidden = true; render(); },
+  hRate: el => { S.hRate = el.dataset.v; renderHist(); },
+  editHist: el => histForm(DB.hist[el.dataset.id]),
+  rate: el => {
+    const f = el.closest('form'), inp = f.elements.rate, v = inp.value === el.dataset.v ? '' : el.dataset.v;
+    inp.value = v; f.querySelectorAll('[data-act="rate"]').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  },
+  openHist: el => {
+    const h = DB.hist[el.dataset.id]; if (!h) return;
+    if (h.tool === '__manual') { S.toolId = '__manual'; Object.assign(S.manual, { type: h.snap.type, d: String(h.snap.d), z: String(h.snap.z), tm: h.snap.tm || 'carbide' }); }
+    else S.toolId = h.tool;
+    S.matId = h.mat; S.op = h.op; S.mode = h.mode || 'norm';
+    if (h.depth > 0) S.depth = String(h.depth); if (h.engr > 0) S.engrDepth = String(h.engr);
+    if (DB.machines[h.mach]) S.machineId = h.mach;
+    S.useVer = h.id; S.tab = 'calc'; saveCfgSoon(); closeSheet(); render(); window.scrollTo(0, 0);
+  },
+  delHist: async el => {
+    const h = DB.hist[el.dataset.id]; if (!h || !(await ask('Видалити запис історії?'))) return;
+    delete DB.hist[h.id]; await Store.del('h_' + h.id); if (S.useVer === h.id) S.useVer = null;
+    closeSheet(); render();
+  },
+  newMach: () => machForm(null),
+  editMach: el => machForm(DB.machines[el.dataset.id]),
+  delMach: async el => {
+    const m = DB.machines[el.dataset.id]; if (!m || !(await ask(`Видалити верстат «${m.name}»?`))) return;
+    delete DB.machines[m.id]; await Store.del('s_' + m.id);
+    if (S.machineId === m.id) S.machineId = Object.keys(DB.machines)[0];
+    saveCfgSoon(); closeSheet(); render();
+  },
+  saveKey: async () => {
+    const k = ($('#apikey').value || '').trim();
+    if (!/^sk-ant-/.test(k)) return toast('Ключ має починатися з sk-ant-', true);
+    DB.apiKey = k; if (await Store.set('apikey', k)) { haptic('success'); toast('Ключ збережено'); } render();
+  },
+  delKey: async () => {
+    if (!(await ask('Видалити ключ Claude API?'))) return;
+    DB.apiKey = ''; await Store.del('apikey'); render();
+  },
+  export: () => exportData(),
+  copyExp: () => copyText($('#exp').value),
+  import: () => importData(),
+  doImport: () => doImport(),
+};
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  e.preventDefault();
+  const fn = ACT[el.dataset.act];
+  if (fn) Promise.resolve(fn(el, e)).catch(err => { console.error(err); toast('Помилка: ' + err.message, true); });
+});
+function setCalc(k, v, full) {
+  if (k.startsWith('m.')) S.manual[k.slice(2)] = v; else S[k] = v;
+  if (['toolId', 'matId', 'op', 'machineId', 'm.type', 'm.d', 'm.z'].includes(k)) S.useVer = null;
+  saveCfgSoon();
+  if (!full) renderResult(); else if (k === 'machineId') render(); else renderCalc();
+}
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.dataset.calc && el.tagName === 'SELECT') setCalc(el.dataset.calc, el.value, true);
+});
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.dataset.calc && el.tagName !== 'SELECT') setCalc(el.dataset.calc, el.value, false);
+  if (el.dataset.filter === 'tools') { S.qTools = el.value; renderToolList(); }
+  if (el.dataset.filter === 'hist') { S.qHist = el.value; renderHistList(); }
+});
+
+// ================== Старт ==================
+(async function start() {
+  if (IN_TG) {
+    tg.ready(); tg.expand();
+    if (tgv('7.7')) tg.disableVerticalSwipes();
+    if (tgv('6.1')) { try { tg.setHeaderColor('secondary_bg_color'); tg.setBackgroundColor('secondary_bg_color'); } catch (e) {} tg.BackButton.onClick(closeSheet); }
+  }
+  try {
+    await loadDB();
+    initState();
+    render();
+  } catch (e) {
+    console.error(e);
+    view.innerHTML = `<div class="empty">Не вдалося завантажити: ${esc(e.message || e)}</div>`;
+  }
+})();
+})();
+</script>
+</body>
+</html>

@@ -69,6 +69,28 @@ header.top{position:sticky;top:0;z-index:15;max-width:560px;margin:0 auto;displa
 .mchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mchip i{width:7px;height:7px;border-radius:50%;flex:none;background:var(--ok);box-shadow:0 0 8px var(--ok)}
 .mchip i.off{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+.mchip .chev{width:14px;height:14px;flex:none;transform:rotate(90deg);color:var(--muted)}
+.mswitch{display:flex;gap:8px;overflow-x:auto;margin:0 -14px 12px;padding:0 14px;scrollbar-width:none}
+.mswitch::-webkit-scrollbar{display:none}
+.msw{flex:none;display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:16px;cursor:pointer;white-space:nowrap;border:1px solid var(--line-2);background:var(--surface);font:700 13.5px/1 var(--font);box-shadow:var(--shadow)}
+.msw svg.i{width:18px;height:18px;color:var(--muted)}
+.msw em{font-style:normal;font:700 12px/1 var(--mono);color:var(--warn)}
+.msw.on{color:#fff;border-color:transparent;background:linear-gradient(180deg,var(--accent-2),var(--accent));box-shadow:0 8px 20px var(--accent-line)}
+.msw.on svg.i,.msw.on em{color:#fff}
+.card.active{border-color:var(--accent-line);box-shadow:0 0 0 1px var(--accent-line),var(--shadow)}
+details.help{margin:0 0 14px;border-radius:16px;border:1px solid var(--line-2);background:var(--surface)}
+details.help summary{list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;font:700 14px/1.2 var(--font)}
+details.help summary::-webkit-details-marker{display:none}
+details.help summary svg.i{color:var(--accent)}
+details.help summary svg.i.chev{margin-left:auto;color:var(--dim);transition:transform .2s}
+details.help[open] summary .chev{transform:rotate(90deg)}
+details.help > .help-ol{padding:0 14px 0 34px}
+details.help > .hint{padding:0 14px}
+details.help > .hint{padding-bottom:14px}
+.help-ol{margin:0;padding-left:20px;font-size:13.5px;line-height:1.55;color:var(--muted)}
+.help-ol li{margin-bottom:9px}
+.help-ol b{color:var(--text)}
+.help-ol code{font:600 12.5px var(--mono);color:var(--text)}
 main{max-width:560px;margin:0 auto;padding:2px 14px 20px}
 
 /* базові блоки */
@@ -343,7 +365,7 @@ nav.tabbar button.on{color:var(--accent);background:var(--accent-soft)}
 <header class="top">
   <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5h5v5h-5z" fill="currentColor"/><path d="M9 8h6v8.5l-3 4.5-3-4.5z"/><path d="M9 11.2l6 2.3M9 14.8l5.4 2"/></svg></div>
   <div class="brand"><b>Режими ЧПУ</b><small id="sub">завантаження…</small></div>
-  <button class="mchip hide" id="mchip" data-act="tab" data-tab="settings"><i></i><span></span></button>
+  <button class="mchip hide" id="mchip" data-act="pickMach" aria-label="Обрати верстат"><i></i><span></span></button>
 </header>
 <main id="view"><div class="empty"><span class="spin"></span>Завантаження бази…</div></main>
 <nav class="tabbar" id="tabbar"></nav>
@@ -359,7 +381,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '2.0';
+const APP_VER = '2.1';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
@@ -482,6 +504,18 @@ const HELIX = { '':'—', up:'Вгору (up-cut)', down:'Вниз (down-cut)', 
 const RATE = { good:{ e:'✅', n:'Добре', c:'var(--ok)' }, ok:{ e:'⚠️', n:'Можна краще', c:'var(--warn)' }, bad:{ e:'❌', n:'Погано', c:'var(--bad)' } };
 const UNITS = { mmmin:'мм/хв', mms:'мм/с' };
 const HIST_MAX = 300;
+// Типові верстати — свідомо трохи обережні цифри (менша потужність і подача, вищі мін. оберти)
+const MACHINE_TPL = [
+  { id:'hobby', n:'Настільний / хобі', s:'3040, 6040, 6090 · шпиндель 0,8–2,2 кВт · алюмінієвий профіль', name:'Настільний фрезер',
+    m:{ rpmMin:8000, rpmMax:24000, rpmRated:24000, powerKw:1.5, feedMax:4000, feedMaxZ:1500, rigid:'light' } },
+  { id:'router', n:'Фрезер по дереву і рекламі', s:'1325, 1530, 2030 · шпиндель 3–6 кВт · сталева рама', name:'Фрезер 1325',
+    m:{ rpmMin:8000, rpmMax:24000, rpmRated:18000, powerKw:4.5, feedMax:12000, feedMaxZ:4000, rigid:'mid' } },
+  { id:'atc', n:'Промисловий з автозаміною', s:'ATC, шпиндель HSD 9–12 кВт · важка станина', name:'Промисловий ATC',
+    m:{ rpmMin:8000, rpmMax:24000, rpmRated:12000, powerKw:9, feedMax:25000, feedMaxZ:10000, rigid:'heavy' } },
+  { id:'metal', n:'Фрезерний по металу', s:'обробний центр, BT30 / BT40 · до 8–12 тис. об/хв', name:'Фрезерний по металу',
+    m:{ rpmMin:100, rpmMax:8000, rpmRated:1500, powerKw:5.5, feedMax:10000, feedMaxZ:8000, rigid:'heavy' } },
+  { id:'blank', n:'Інший', s:'Впишу дані сам', name:'Мій верстат', m:{} },
+];
 
 // ======================= Іконки =======================
 const ICONS = {
@@ -507,6 +541,8 @@ const ICONS = {
   device:'<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/>',
   x:'<path d="M6 6l12 12M18 6L6 18"/>',
   key:'<circle cx="8" cy="15.5" r="3.6"/><path d="M10.6 13l7.9-7.9M15.5 8l2.5 2.5M17.5 6l2 2"/>',
+  machine:'<path d="M2.5 20.5h19"/><path d="M4.5 20.5V9.5h15v11"/><path d="M4.5 9.5l1.8-4h11.4l1.8 4"/><rect x="10" y="10.5" width="4" height="4.5" rx="1"/><path d="M12 15v2.5"/>',
+  help:'<circle cx="12" cy="12" r="8.6"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.6M12 17v.01"/>',
   db:'<ellipse cx="12" cy="6" rx="7" ry="2.6"/><path d="M5 6v12c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V6"/><path d="M5 12c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6"/>',
   fx:'<path d="M5 19c2.5 0 3-2 3.6-6s1.2-7 4.4-7"/><path d="M5.5 11h6"/><path d="M14 13l5 6M19 13l-5 6"/>',
   slot:'<path d="M3 8.5h18M3 15.5h18"/><path d="M6 12h12" stroke-dasharray="2 2.4"/>',
@@ -698,16 +734,22 @@ const Store = {
 const DB = { tools:{}, matOv:{}, machines:{}, hist:{}, cfg:{}, apiKey:'' };
 
 function defaultMachine() {
-  return { id: genId(), name: 'Мій фрезер', rpmMin: 6000, rpmMax: 24000, rpmRated: 18000, powerKw: 6,
-    feedMax: 15000, feedMaxZ: 5000, rigid: 'mid', units: 'mmmin', configured: false, note: '' };
+  return { id: genId(), name: 'Мій фрезер', ...MACHINE_TPL[1].m, units: 'mmmin', configured: false, approx: true, note: '' };
 }
+// configured — користувач зберіг верстат; approx — цифри типові (з шаблону), а не з шильдика
 function normalizeMachine(m) {
   if (!(num(m.feedMaxZ) > 0)) m.feedMaxZ = Math.min(5000, num(m.feedMax) || 5000);
   if (!UNITS[m.units]) m.units = 'mmmin';
   if (!RIGID[m.rigid]) m.rigid = 'mid';
   if (m.configured === undefined) m.configured = false;
+  if (m.approx === undefined) {
+    // збережено у v2.0 без змін стандартних цифр — це не точні дані
+    const oldDefault = +m.rpmMin === 6000 && +m.rpmMax === 24000 && +m.rpmRated === 18000 && +m.powerKw === 6 && +m.feedMax === 15000;
+    m.approx = !m.configured || oldDefault;
+  }
   return m;
 }
+const machSpec = m => `${fmt(m.rpmMin / 1000, 1)}–${fmt(m.rpmMax / 1000, 1)} тис. об/хв · ${fmt(m.powerKw, 1)} кВт · до ${fmt(m.feedMax)} мм/хв`;
 // Перехід зі старого формату матеріалу (v1: одна таблиця fz і kc)
 function normalizeMat(o) {
   if (!o || typeof o !== 'object') return o;
@@ -1066,7 +1108,7 @@ function render() {
   $('#sub').innerHTML = `${ic(Store.mode === 'cloud' ? 'cloud' : 'device')}${Store.mode === 'cloud' ? 'памʼять у Telegram' : 'памʼять на пристрої'}`;
   const chip = $('#mchip');
   chip.classList.remove('hide');
-  chip.innerHTML = `<i class="${m.configured ? '' : 'off'}"></i><span>${esc(m.name)}</span>`;
+  chip.innerHTML = `<i class="${m.configured && !m.approx ? '' : 'off'}"></i><span>${esc(m.name)}</span>${ic('chev', 'chev')}`;
   ({ calc: renderCalc, tools: renderTools, mats: renderMats, hist: renderHist, settings: renderSettings })[S.tab]();
 }
 
@@ -1086,9 +1128,11 @@ function renderCalc() {
   const O = OPS[S.op], manual = tool.id === '__manual', mt = S.manual, rec = recentCombos();
   const depthKey = S.op === 'engrave' ? 'engrDepth' : 'depth';
   const depthLbl = S.op === 'engrave' ? 'Глибина гравіювання, мм' : S.op === 'face' ? 'Зняти всього, мм' : S.op === 'drill' ? 'Глибина отвору, мм' : 'Глибина обробки, мм';
+  const machines = Object.values(DB.machines);
   view.innerHTML = `
-  ${!mach.configured ? `<button class="banner" data-act="editMach" data-id="${mach.id}">${ic('alert')}<div><b>Впиши дані свого верстата</b>
-    <span>Зараз стоять приблизні — від них залежать усі ліміти безпеки.</span></div>${ic('chev', 'chev')}</button>` : ''}
+  ${!mach.configured ? `<button class="banner" data-act="chooseTpl" data-id="${mach.id}">${ic('alert')}<div><b>Обери тип свого верстата</b>
+    <span>Один дотик — і апка підставить типові дані. Від них залежать ліміти безпеки.</span></div>${ic('chev', 'chev')}</button>` : ''}
+  ${machines.length > 1 ? `<div class="mswitch">${machines.map(m => `<button class="msw${m.id === mach.id ? ' on' : ''}" data-act="chooseMach" data-id="${m.id}">${ic('machine')}<span>${esc(m.name)}</span>${m.approx ? '<em>≈</em>' : ''}</button>`).join('')}</div>` : ''}
   ${rec.length ? `<div class="chips">${rec.map((c, i) => `<button class="chip" data-act="combo" data-i="${i}" style="--c:${c.c}"><i></i>${esc(c.label)}</button>`).join('')}</div>` : ''}
   <section class="card">
     ${pickRow('pickTool', toolSVG(tool, 'xs'), 'Фреза', manual ? 'Вручну, без збереження' : tool.name, manual ? TOOL_TYPES[mt.type] : toolSpec(tool))}
@@ -1210,7 +1254,8 @@ function renderResult() {
     else if (S.op === 'engrave') cells.push(droCell('de', 'Ø на глибині', fmt(r.Deff, 2), 'мм'));
     else cells.push(droCell('v', 'V різання', fmt(r.Vreal), 'м/хв'));
   }
-  const notes = [...W, ...(mat.note ? [{ t: 'tip', m: mat.note }] : [])];
+  const notes = [...W, ...(mat.note ? [{ t: 'tip', m: mat.note }] : []),
+    ...(mach.configured && mach.approx ? [{ t: 'i', m: `Дані верстата «${mach.name}» — типові для такого класу, не з шильдика. Коли буде змога — уточни (натисни на назву верстата вгорі → «Змінити»).` }] : [])];
   const icFor = { i: 'info', w: 'alert', b: 'stop', tip: 'tip' };
   el.innerHTML = `
     ${banner ? `<div class="notes">${banner}</div>` : ''}
@@ -1433,7 +1478,8 @@ function apiErrorText(e, mod) {
   if (is('APIError')) return `Помилка Claude API${e.status ? ' (' + e.status + ')' : ''}: ${e.message || ''}`;
   return 'Помилка: ' + ((e && e.message) || e);
 }
-async function recognizeCutter(file) {
+const recognizeCutter = file => visionJSON(file, RECOG_SYSTEM, CUTTER_SCHEMA, 'Визнач параметри інструмента на цьому фото.');
+async function visionJSON(file, system, schema, prompt) {
   const data = await fileToJpegB64(file);
   let mod;
   try { mod = await loadSdk(); } catch (e) { throw new UserErr('Не вдалося завантажити модуль Claude. Перевір інтернет.'); }
@@ -1445,11 +1491,11 @@ async function recognizeCutter(file) {
       max_tokens: 16000,
       betas: ['server-side-fallback-2026-07-01'],
       fallbacks: 'default',
-      system: RECOG_SYSTEM,
-      output_config: { effort: 'medium', format: { type: 'json_schema', schema: CUTTER_SCHEMA } },
+      system,
+      output_config: { effort: 'medium', format: { type: 'json_schema', schema } },
       messages: [{ role: 'user', content: [
         { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data } },
-        { type: 'text', text: 'Визнач параметри інструмента на цьому фото.' },
+        { type: 'text', text: prompt },
       ] }],
     });
     if (resp.stop_reason === 'refusal') throw new UserErr('Claude не зміг обробити це фото. Спробуй інше.');
@@ -1476,6 +1522,47 @@ async function runPhoto(file, f, upd) {
     const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
     st.innerHTML = `✅ Заповнено з фото (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}<br><b>Перевір діаметр і довжину штангенциркулем.</b>`;
     haptic('success');
+  } catch (e) {
+    st.textContent = '⚠️ ' + (e instanceof UserErr ? e.message : apiErrorText(e));
+    haptic('error');
+  } finally { btn.disabled = false; }
+}
+
+// ---------- Шильдик шпинделя (Claude API) ----------
+const PLATE_SCHEMA = {
+  type: 'object',
+  properties: {
+    is_nameplate: { type: 'boolean' },
+    power_kw:     { type: 'number' },
+    max_rpm:      { type: 'number' },
+    rated_rpm:    { type: 'number' },
+    max_hz:       { type: 'number' },
+    rated_hz:     { type: 'number' },
+    cooling:      { type: 'string', enum: ['air', 'water', 'unknown'] },
+    notes:        { type: 'string' },
+  },
+  required: ['is_nameplate', 'power_kw', 'max_rpm', 'rated_rpm', 'max_hz', 'rated_hz', 'cooling', 'notes'],
+  additionalProperties: false,
+};
+const PLATE_SYSTEM = `You read CNC spindle motor nameplates (and VFD / inverter labels) from photos for a CNC machinist.
+Report: power_kw (convert HP to kW with 1 HP = 0.746 kW), max_rpm (highest speed), rated_rpm (speed at which rated power is reached; if only one speed is printed, use it for both), max_hz and rated_hz (frequencies in Hz, same logic), cooling ("air" or "water" if it is printed or clearly visible, e.g. water fittings).
+Use 0 for any number you cannot read and "unknown" for cooling if unsure. Never guess numbers that are not printed.
+Write "notes" in Ukrainian: what you read, what is unclear.`;
+async function runPlate(file, f) {
+  const st = $('#ph2st'), btn = f.querySelector('[data-act="plate"]');
+  btn.disabled = true;
+  st.innerHTML = '<span class="spin"></span>Читаю шильдик… зазвичай 10–30 секунд';
+  try {
+    const r = await visionJSON(file, PLATE_SYSTEM, PLATE_SCHEMA, 'Прочитай дані шпинделя з цієї таблички.');
+    if (!r.is_nameplate) { st.textContent = 'Не бачу таблички шпинделя на фото. ' + (r.notes || ''); return; }
+    const maxRpm = r.max_rpm > 0 ? r.max_rpm : r.max_hz > 0 ? r.max_hz * 60 : 0;
+    const rated = r.rated_rpm > 0 ? r.rated_rpm : r.rated_hz > 0 ? r.rated_hz * 60 : maxRpm;
+    const got = [];
+    const set = (n, v, label) => { if (v > 0 && f.elements[n]) { f.elements[n].value = Math.round(v * 100) / 100; got.push(label); } };
+    set('powerKw', r.power_kw, 'потужність'); set('rpmMax', maxRpm, 'макс. оберти'); set('rpmRated', rated, 'номінальні оберти');
+    if (r.cooling === 'air' && num(f.elements.rpmMin.value) < 9000) { f.elements.rpmMin.value = 9000; got.push('мін. оберти 9000 (повітряне охолодження)'); }
+    st.innerHTML = got.length ? `✅ Заповнено: ${esc(got.join(', '))}. ${esc(r.notes || '')}<br><b>Перевір цифри з табличкою.</b>` : `Не вдалося прочитати цифри. ${esc(r.notes || '')}`;
+    haptic(got.length ? 'success' : 'warning');
   } catch (e) {
     st.textContent = '⚠️ ' + (e instanceof UserErr ? e.message : apiErrorText(e));
     haptic('error');
@@ -1673,10 +1760,12 @@ function renderSettings() {
   const ms = Object.values(DB.machines);
   view.innerHTML = `
     <div class="ph"><h2>Налаштування</h2></div>
-    ${ms.map(m => `<section class="card">
-      <div class="mcard-h"><span class="mchip" style="margin:0;pointer-events:none"><i class="${m.configured ? '' : 'off'}"></i><span>${m.configured ? 'налаштовано' : 'приблизні дані'}</span></span>
-        <button class="btn sm" data-act="editMach" data-id="${m.id}" style="margin-left:auto">${ic('edit')}Змінити</button></div>
-      <div class="mcard-h" style="margin-top:12px"><b>${esc(m.name)}</b></div>
+    <div class="label" style="margin:0 4px 10px">${ic('machine')}Верстати</div>
+    ${ms.map(m => `<section class="card${m.id === S.machineId ? ' active' : ''}">
+      <div class="mcard-h"><b>${esc(m.name)}</b>${m.id === S.machineId ? '<span class="badge">активний</span>' : ''}</div>
+      <div class="mcard-h" style="margin-top:8px"><span class="mchip" style="margin:0;pointer-events:none"><i class="${m.configured && !m.approx ? '' : 'off'}"></i><span>${!m.configured ? 'не налаштовано' : m.approx ? 'типові дані' : 'точні дані'}</span></span>
+        ${m.id === S.machineId ? '' : `<button class="btn sm" data-act="chooseMach" data-id="${m.id}" style="margin-left:auto">${ic('check')}Обрати</button>`}
+        <button class="btn sm" data-act="editMach" data-id="${m.id}"${m.id === S.machineId ? ' style="margin-left:auto"' : ''}>${ic('edit')}Змінити</button></div>
       <div class="spec">
         <div><b>${fmt(m.rpmMin / 1000, 1)}–${fmt(m.rpmMax / 1000, 1)}k</b><small>оберти</small></div>
         <div><b>${fmt(m.powerKw, 1)} кВт</b><small>шпиндель</small></div>
@@ -1685,7 +1774,7 @@ function renderSettings() {
         <div><b>${fmt(m.feedMaxZ)}</b><small>F Z мм/хв</small></div>
         <div><b>${esc(RIGID[m.rigid]?.s || '')}</b><small>жорсткість</small></div>
       </div></section>`).join('')}
-    <button class="btn block" data-act="newMach" style="margin:0 0 16px">${ic('plus')}Ще один верстат</button>
+    <div class="btns" style="margin:0 0 16px"><button class="btn" data-act="newMach">${ic('plus')}Додати верстат</button><button class="btn" data-act="machHelp">${ic('help')}Де взяти дані?</button></div>
 
     <section class="card"><div class="label">${ic('key')}Розпізнавання фрез з фото</div>
       <div class="hint" style="margin-top:10px">Працює через Claude API — потрібен власний ключ з console.anthropic.com (Settings → API keys). Одне фото — кілька центів. Ключ лежить лише у твоєму сховищі ${Store.mode === 'cloud' ? 'Telegram' : 'браузера'} — інші люди, які відкриють апку, його не бачать.</div>
@@ -1718,12 +1807,48 @@ function renderSettings() {
     </section>
     <div class="hint" style="text-align:center">Режими ЧПУ v${APP_VER}${IN_TG ? ` · Telegram ${esc(tg.version || '')}` : ' · відкрито поза Telegram'}</div>`;
 }
-function machForm(m, welcome) {
+// Підказка «де взяти дані» — простими словами
+const MACH_HELP = `
+  <ol class="help-ol">
+    <li><b>Потужність і оберти шпинделя</b> — на металевій табличці (шильдику) на корпусі шпинделя. «kW» — потужність, «rpm» або «r/min» — оберти, «Hz» — частота.
+      Обертів немає, лише герци? <code>оберти = Гц × 60</code> (400 Гц → 24 000, 300 Гц → 18 000).</li>
+    <li><b>Номінальні оберти</b> — якщо на табличці дві частоти чи два числа обертів, менше з них — номінальне. Одне число — пиши його в обидва поля.</li>
+    <li><b>Мінімальні оберти</b> — у частотнику (коробка з екраном, що крутить шпиндель): «нижня межа частоти» × 60. Не знайшов — став 9 000 для повітряного охолодження і 6 000 для водяного.</li>
+    <li><b>Максимальна подача</b> — найбільша робоча швидкість, на якій верстат різав рівно, без стуку і пропуску кроків. Не знаєш — залиш значення з шаблону, воно обережне.</li>
+    <li><b>Подача Z</b> — зазвичай у 2–3 рази менша за XY.</li>
+    <li><b>Жорсткість</b>: рама з алюмінієвого профілю — легкий; зварна сталева рама — середній; важка станина, автозаміна інструменту — важкий.</li>
+  </ol>
+  <div class="hint" style="margin:8px 0 0">Найпростіше — сфотографуй табличку шпинделя кнопкою вище: Claude прочитає цифри сам (потрібен ключ у Налаштуваннях).</div>`;
+function tplPicker(targetId, welcome) {
+  openSheet(welcome ? 'Привіт! 👋' : 'Який верстат?', `
+    <div class="hint" style="font-size:14px;color:var(--text)">${welcome
+      ? 'Щоб розрахунки не зламали ні фрезу, ні верстат, апці треба знати твій верстат. Обери, на що він схожий — підставлю типові цифри. Точні впишеш, коли дізнаєшся.'
+      : 'Обери, на що схожий верстат — підставлю типові цифри. Їх можна буде змінити.'}</div>
+    <div class="opts">${MACHINE_TPL.map(t => `<button class="opt" data-act="tpl" data-tpl="${t.id}" data-target="${esc(targetId || '')}" data-welcome="${welcome ? 1 : ''}">
+      <span class="opt-ic">${ic(t.id === 'blank' ? 'edit' : 'machine')}</span><span class="opt-tx"><b>${esc(t.n)}</b><small>${esc(t.s)}</small></span>${ic('chev', 'chev')}</button>`).join('')}</div>
+    ${welcome ? `<div class="hint" style="margin-top:12px">Кілька верстатів? Решту додаси потім — натисни на назву верстата вгорі.</div>
+      <button class="btn block" data-act="skipWelcome">Пізніше</button>` : ''}`, true);
+}
+function machPicker() {
+  const ms = Object.values(DB.machines);
+  openSheet('Верстат', `
+    <div class="opts">${ms.map(m => optHTML({ kind: 'mach', id: m.id, icon: ic('machine'), t: m.name + (m.approx ? ' · типові дані' : ''), s: machSpec(m), on: m.id === S.machineId })).join('')}</div>
+    <div class="btns"><button class="btn" data-act="newMach">${ic('plus')}Додати</button><button class="btn" data-act="editMach" data-id="${S.machineId}">${ic('edit')}Змінити поточний</button></div>
+    <button class="btn block" data-act="machHelp" style="margin-top:8px">${ic('help')}Де взяти дані верстата?</button>`);
+}
+function machForm(m, opts = {}) {
+  const welcome = !!opts.welcome;
   const base = m || { ...defaultMachine(), id: undefined, name: 'Новий верстат' };
-  const isNew = !base.id;
+  const isNew = !base.id || !DB.machines[base.id];
   openSheet(welcome ? 'Привіт! 👋' : isNew ? 'Новий верстат' : base.name, `
     <form id="sf" autocomplete="off">
-      ${welcome ? `<div class="hint" style="font-size:14px;color:var(--text)">Щоб розрахунки не зламали ні фрезу, ні верстат, впиши дані свого фрезера. Вони є на шильдику шпинделя, на частотнику і в паспорті верстата.</div>` : ''}
+      ${base.approx ? `<div class="note i" style="margin-bottom:12px">${ic('info')}<div>Тут <b>типові цифри</b> для такого верстата — вони свідомо обережні. Можна зберегти як є, а точні вписати, коли дізнаєшся.</div></div>` : ''}
+      <div class="photo">
+        <button type="button" class="btn block" data-act="plate">${ic('camera')}Сфотографувати табличку шпинделя</button>
+        <input type="file" accept="image/*" id="ph2" class="hide">
+        <div class="pst" id="ph2st">Claude прочитає потужність і оберти з таблички (шильдика) на шпинделі.</div>
+      </div>
+      <details class="help"><summary>${ic('help')}Де знайти ці дані?${ic('chev', 'chev')}</summary>${MACH_HELP}</details>
       <label class="f"><span>Назва</span><input name="name" value="${esc(base.name)}"></label>
       <div class="sec-h">Шпиндель</div>
       <div class="g2">
@@ -1743,6 +1868,7 @@ function machForm(m, welcome) {
       <div class="hint">Головне число подачі показуватиметься саме в цих одиницях — щоб не переплутати мм/хв і мм/с (різниця в 60 разів!).</div>
       <label class="f"><span>Жорсткість верстата</span><select name="rigid">${optsFrom(RIGID, base.rigid)}</select></label>
       <label class="f"><span>Нотатка</span><textarea name="note" rows="2" maxlength="300">${esc(base.note || '')}</textarea></label>
+      <label class="check"><input type="checkbox" name="exact"${base.approx ? '' : ' checked'}>Дані точні — звірені з табличкою або паспортом</label>
       <button class="btn primary block" type="submit">${ic('save')}Зберегти верстат</button>
       ${welcome ? `<button type="button" class="btn block" data-act="skipWelcome" style="margin-top:8px">Пізніше</button>` : ''}
       ${!isNew && Object.keys(DB.machines).length > 1 ? `<div class="btns"><button type="button" class="btn danger" data-act="delMach" data-id="${base.id}">Видалити верстат</button></div>` : ''}
@@ -1752,11 +1878,12 @@ function machForm(m, welcome) {
     const b = e.target.closest('button'); if (!b) return;
     f.elements.units.value = b.dataset.v; $('#unSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); haptic('sel');
   });
+  $('#ph2').addEventListener('change', e => { const file = e.target.files[0]; e.target.value = ''; if (file) runPlate(file, f); });
   f.addEventListener('submit', async e => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(f));
     const o = { id: base.id || genId(), name: d.name.trim().slice(0, 40) || 'Верстат', rigid: RIGID[d.rigid] ? d.rigid : 'mid', units: UNITS[d.units] ? d.units : 'mmmin',
-      note: d.note.trim().slice(0, 300), configured: true };
+      note: d.note.trim().slice(0, 300), configured: true, approx: !d.exact };
     for (const k of ['rpmMin', 'rpmMax', 'rpmRated', 'powerKw', 'feedMax', 'feedMaxZ']) o[k] = num(d[k]);
     if (!(o.rpmMax >= 1000 && o.rpmMax <= 100000)) return toast('Макс. оберти — від 1 000 до 100 000', true);
     if (!(o.rpmMin >= 0) || o.rpmMin >= o.rpmMax) return toast('Мін. оберти мають бути менші за максимальні', true);
@@ -1850,7 +1977,8 @@ const ACT = {
     if (kind === 'tool') S.toolId = id;
     else if (kind === 'mat') S.matId = id;
     else if (kind === 'op') { S.op = id; S.aePct = ''; }
-    S.useVer = null; saveCfgSoon(); closeSheet(); renderCalc(); haptic('sel');
+    else if (kind === 'mach') { if (DB.machines[id]) S.machineId = id; }
+    S.useVer = null; saveCfgSoon(); closeSheet(); if (kind === 'mach') render(); else renderCalc(); haptic('sel');
   },
   useVer: el => { S.useVer = el.dataset.id; renderResult(); haptic('sel'); },
   unVer: () => { S.useVer = null; renderResult(); },
@@ -1917,8 +2045,24 @@ const ACT = {
     delete DB.hist[h.id]; await Store.del('h_' + h.id); if (S.useVer === h.id) S.useVer = null;
     closeSheet(); render();
   },
-  newMach: () => machForm(null),
-  editMach: el => machForm(DB.machines[el.dataset.id]),
+  newMach: () => { closeSheet(); tplPicker(null, false); },
+  editMach: el => { const m = DB.machines[el.dataset.id]; if (!m) return; closeSheet(); if (m.configured) machForm(m); else tplPicker(m.id, false); },
+  pickMach: () => machPicker(),
+  chooseMach: el => { if (!DB.machines[el.dataset.id]) return; S.machineId = el.dataset.id; S.useVer = null; saveCfgSoon(); render(); haptic('sel'); },
+  chooseTpl: el => tplPicker(el.dataset.id, false),
+  tpl: el => {
+    const t = MACHINE_TPL.find(x => x.id === el.dataset.tpl); if (!t) return;
+    const target = DB.machines[el.dataset.target];
+    const base = t.id === 'blank'
+      ? { ...defaultMachine(), ...(target || {}), id: target?.id, name: target?.configured ? target.name : t.name, approx: true }
+      : { ...defaultMachine(), ...(target || {}), ...t.m, id: target?.id, name: target?.configured ? target.name : t.name, approx: true };
+    closeSheet(); machForm(base, { welcome: !!el.dataset.welcome });
+  },
+  machHelp: () => openSheet('Де взяти дані верстата', MACH_HELP),
+  plate: () => {
+    if (!DB.apiKey) { toast('Спершу додай ключ Claude API в Налаштуваннях', true); return; }
+    $('#ph2').click();
+  },
   skipWelcome: async () => { await markOnboarded(); closeSheet(); },
   delMach: async el => {
     const m = DB.machines[el.dataset.id]; if (!m || !(await ask(`Видалити верстат «${m.name}»?`))) return;
@@ -1985,7 +2129,7 @@ document.addEventListener('input', e => {
     initState();
     render();
     const m = curMachine();
-    if (!DB.cfg.onboarded && !m.configured && !TEST) machForm(m, true);
+    if (!DB.cfg.onboarded && !m.configured && !TEST) tplPicker(m.id, true);
   } catch (e) {
     console.error(e);
     view.innerHTML = `<div class="card empty">Не вдалося завантажити: ${esc(e.message || e)}</div>`;

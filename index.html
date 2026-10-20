@@ -464,9 +464,14 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:12;padding-bottom:env(
 .isosel button.on{opacity:1;transform:scale(1.06)}
 .tc-art{position:relative}
 .tc-art.sq{width:64px;height:64px}
-.tc-ph{position:absolute;right:-6px;bottom:-6px;width:28px;height:28px;object-fit:cover;border:1px solid var(--line-2);box-shadow:0 0 0 2px var(--paper)}
-.pv-ph{display:block;width:92px;height:92px;margin-top:10px;object-fit:cover;border:1px solid var(--line-2)}
-.preview .pv-art.sq{width:112px;height:112px}
+.tc-end{position:absolute;right:-7px;bottom:-7px;width:32px;height:32px;padding:1px;background:var(--paper);border:1px solid var(--line-2);box-shadow:0 0 0 2px var(--paper)}
+.tc-end svg,.esvg{display:block}
+.tc-end svg{width:100%;height:100%}
+.pv-end{display:flex;align-items:center;gap:8px;margin-top:10px}
+.pv-end svg{flex:none;background:var(--paper);border:1px solid var(--line-2)}
+.pv-end small{font:700 8.5px/1.35 var(--tech);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.preview .pv-art.sq{width:112px;height:144px}
+.opt-ic.wide{width:62px;gap:2px;display:flex;align-items:center;justify-content:center}
 .tags .iso{margin-right:2px}
 .mtag{color:var(--ink)}
 
@@ -523,7 +528,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '3.1';
+const APP_VER = '3.2';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
@@ -623,7 +628,7 @@ const PRESET_MATS = [
 
 const TOOL_TYPES = {
   flat:'Кінцева спіральна', ball:'Сферична (кругла)', taperball:'Конічна сферична', vbit:'V-гравер',
-  engr:'Конічний гравер (плоский кінчик)', rough:'Кукурудза (насічка)', comp:'Компресійна',
+  engr:'Конічний гравер (плоский кінчик)', rough:'Кукурудза / чорнова (стружколом)', comp:'Компресійна',
   straight:'Пазова з прямими ножами', surf:'Торцева (вирівнювання)', drill:'Свердло',
   imill:'Фреза зі змінними пластинами', iface:'Торцева фреза з пластинами',
 };
@@ -807,154 +812,353 @@ function applyTheme() {
   try { Viz.retheme(); } catch (e) {}   // перемалювати розріз у кольорах нової теми
 }
 
-// ======================= Креслення фрези (SVG) =======================
-// Стиль технічного рисунка: контур, вісь штрихпунктиром, розмірні лінії, гвинтові канавки помаранчевим
+// ======================= Креслення інструмента (SVG) =======================
+// Стиль технічного рисунка: контур, вісь штрихпунктиром, розміри. Гвинтові канавки — справжня проєкція гвинтової
+// лінії на циліндр (синусоїда), ріжучі кромки й пластини — помаранчеві. Поруч «Вид А» з торця: видно кількість зубів чи пластин.
 let svgSeq = 0;
 const arrowH = (x, y, dir) => `M${x} ${y}l${dir * 4.5} -2v4z`;
 const arrowV = (x, y, dir) => `M${x} ${y}l-2 ${dir * 4.5}h4z`;
+const f2 = v => +(+v).toFixed(2);
+const P2 = q => `${f2(q[0])} ${f2(q[1])}`;
+const plateD = pts => `M${pts.map(P2).join('L')}Z`;
+const lineD = pts => (pts.length > 1 ? `M${pts.map(P2).join('L')}` : '');
+const TXT = (x, y, s, c = 'var(--text)', a = 'start') =>
+  `<text x="${f2(x)}" y="${f2(y)}" text-anchor="${a}" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="${c}">${s}</text>`;
+// Кукурудза по композиту (алмазна насічка) — дрібна, «2 зуби»; чорнова зі стружколомом по металу — 3+ зуби
+const isBurr = t => t.type === 'rough' && ((num(t.z) || 2) <= 2 || num(t.d) < 4);
+// Кріплення: хвостовик у цангу, насадна на різьбі (M16 у назві), торцева — на оправці
+const toolMount = t => (t.type === 'iface' ? 'arbor' : INS_TYPES.includes(t.type) && (t.mount === 'screw' || /\bM\d{2}\b/i.test(t.name || '')) ? 'screw' : 'shank');
+const HELIX_DEF = { flat: 35, ball: 30, taperball: 30, rough: 30, comp: 25, drill: 30 };
+
+// Гвинтові канавки збоку: кромка x = cx + R·sin θ, де θ росте вздовж осі; видно лише передню половину циліндра.
+// Канавка (заглиблення) — смуга між кромкою і точкою на gw радіан позаду неї. hand = −1 — праве (up-cut, «\»), +1 — ліве («/»).
+function helixFlutes(cx, R, yTop, yBot, z, pitch, hand, gw) {
+  let grooves = '', edges = '';
+  if (!(pitch > 0) || yBot - yTop < 1 || z < 1) return { grooves, edges };
+  const n = Math.min(360, Math.max(30, Math.ceil((yBot - yTop) / 0.6)));
+  const wrap = a => { let b = (a + Math.PI) % (2 * Math.PI); if (b < 0) b += 2 * Math.PI; return b - Math.PI; };
+  const X = a => cx + hand * R * Math.sin(clamp(wrap(a), -Math.PI / 2, Math.PI / 2));
+  for (let k = 0; k < z; k++) {
+    const ph = 2 * Math.PI * k / z;
+    let A = [], B = [], E = [], pa = null, pb = null;
+    const flushG = () => { if (A.length > 1 && gw > 0) grooves += `M${A.map(P2).join('L')}L${B.reverse().map(P2).join('L')}Z`; A = []; B = []; };
+    const flushE = () => { edges += lineD(E); E = []; };
+    for (let i = 0; i <= n; i++) {
+      const y = yBot - (yBot - yTop) * i / n, a = ph + (yBot - y) * 2 * Math.PI / pitch, wa = wrap(a), wb = wrap(a - gw);
+      const jumpA = pa !== null && Math.abs(wa - pa) > Math.PI, jumpB = pb !== null && Math.abs(wb - pb) > Math.PI;
+      if (jumpA || jumpB) flushG();
+      if (jumpA) flushE();
+      pa = wa; pb = wb;
+      A.push([X(a), y]); B.push([X(a - gw), y]);
+      if (Math.cos(wa) > 0.02) E.push([X(a), y]); else flushE();
+    }
+    flushG(); flushE();
+  }
+  return { grooves, edges };
+}
+
 function toolSVG(t, size) {
   if (INS_TYPES.includes(t.type)) return insToolSVG(t, size);
-  const big = size === 'lg';
+  const big = size === 'lg', type = t.type || 'flat';
   const W = big ? 112 : 60, H = 150, cx = big ? 42 : W / 2, top = 8;
   const D = num(t.d) > 0 ? num(t.d) : 6;
   const sh = num(t.shank) > 0 ? num(t.shank) : Math.max(D, 3.175);
   const lc = num(t.lc) > 0 ? num(t.lc) : D * 3;
-  const ol = num(t.ol) > lc ? num(t.ol) : Math.max(lc + Math.max(22, sh * 3), lc * 1.8);
+  const ol0 = num(t.ol) > lc ? num(t.ol) : Math.max(lc + Math.max(22, sh * 3), lc * 1.8);
+  // У картках і списках — крупний план робочої частини (хвостовик обірвано), на великому кресленні — вся фреза
+  const ol = big ? ol0 : Math.min(ol0, lc + Math.max(1.6 * D, sh * 1.8, lc * 0.45)), cropped = ol < ol0 - 0.5;
   // По висоті — справжні пропорції, по ширині — трохи перебільшено, щоб було видно форму
   const s = Math.min((H - 18) / ol, (big ? 50 : 46) / Math.max(D, sh));
   const sx = Math.min(s * 2.2, (big ? 52 : 46) / Math.max(D, sh));
-  const ws = sh * sx, wd = Math.max(D * sx, 2.4), ht = ol * s, hc = Math.min(lc * s, ht - 4);
-  const y0 = top + ht - hc, y1 = top + ht, L = cx - wd / 2, R = cx + wd / 2;
-  const type = t.type || 'flat', A = clamp(num(t.angle) || 90, 10, 170);
-  const id = 'cp' + (++svgSeq);
+  const ws = sh * sx, wd = Math.max(D * sx, 2.4), r = wd / 2, ht = ol * s, hc = Math.min(lc * s, ht - 4);
+  const y0 = top + ht - hc, y1 = top + ht, L = cx - r, R = cx + r;
+  const A = clamp(num(t.angle) || 90, 10, 170), id = 'cp' + (++svgSeq), burr = isBurr(t);
+  const z = clamp(Math.round(num(t.z) || 2), 1, 8);
   let neck = 0;
   if (ws > wd + 1 && !['vbit', 'engr', 'taperball', 'surf'].includes(type)) neck = Math.min(6, (ws - wd) * 0.9);
-  let body;
+
+  // 1. Силует різальної частини і кромки на торці
+  let body, tipE = '', yH = y1;   // yH — де внизу закінчуються гвинтові канавки
   switch (type) {
-    case 'ball': body = `M${L} ${y0}H${R}V${y1 - wd / 2}A${wd / 2} ${wd / 2} 0 0 1 ${L} ${y1 - wd / 2}Z`; break;
-    case 'taperball': { const r = wd / 2, tb = Math.max(ws, wd); body = `M${cx - tb / 2} ${y0}H${cx + tb / 2}L${R} ${y1 - r}A${r} ${r} 0 0 1 ${L} ${y1 - r}Z`; break; }
-    case 'vbit': { const hk = Math.min(hc, (wd / 2) / Math.tan(A / 2 * rad)); body = `M${L} ${y0}H${R}V${y1 - hk}L${cx} ${y1}L${L} ${y1 - hk}Z`; break; }
-    case 'engr': { const tp = Math.max(0.8, (num(t.tip) || 0.2) * sx); const hk = Math.min(hc, ((wd - tp) / 2) / Math.tan(A / 2 * rad));
-      body = `M${L} ${y0}H${R}V${y1 - hk}L${cx + tp / 2} ${y1}H${cx - tp / 2}L${L} ${y1 - hk}Z`; break; }
-    case 'drill': { const hp = (wd / 2) / Math.tan(59 * rad); body = `M${L} ${y0}H${R}V${y1 - hp}L${cx} ${y1}L${L} ${y1 - hp}Z`; break; }
-    default: body = `M${L} ${y0}H${R}V${y1}H${L}Z`;
+    case 'ball': body = `M${L} ${y0}H${R}V${y1 - r}A${r} ${r} 0 0 1 ${L} ${y1 - r}Z`; tipE = `M${R} ${y1 - r}A${r} ${r} 0 0 1 ${cx} ${y1}`; break;
+    case 'taperball': { const tb = Math.max(ws, wd); body = `M${cx - tb / 2} ${y0}H${cx + tb / 2}L${R} ${y1 - r}A${r} ${r} 0 0 1 ${L} ${y1 - r}Z`; tipE = `M${R} ${y1 - r}A${r} ${r} 0 0 1 ${cx} ${y1}`; break; }
+    case 'vbit': { const hk = Math.min(hc, r / Math.tan(A / 2 * rad)); body = `M${L} ${y0}H${R}V${y1 - hk}L${cx} ${y1}L${L} ${y1 - hk}Z`; tipE = `M${R} ${y1 - hk}L${cx} ${y1}`; break; }
+    case 'engr': {
+      const tp = Math.max(0.8, (num(t.tip) || 0.2) * sx), hk = Math.min(hc, (r - tp / 2) / Math.tan(A / 2 * rad));
+      body = `M${L} ${y0}H${R}V${y1 - hk}L${cx + tp / 2} ${y1}H${cx - tp / 2}L${L} ${y1 - hk}Z`; tipE = `M${R} ${y1 - hk}L${cx + tp / 2} ${y1}`; break;
+    }
+    case 'drill': {   // вершина 140° у твердосплавних, 118° у HSS; дві губки
+      const hp = r / Math.tan((t.tm === 'hss' ? 59 : 70) * rad); yH = y1 - hp;
+      body = `M${L} ${y0}H${R}V${yH}L${cx} ${y1}L${L} ${yH}Z`; tipE = `M${R} ${yH}L${cx} ${y1}L${L} ${yH}`; break;
+    }
+    case 'surf': body = `M${L} ${y0}H${R}V${y1}H${L}Z`; tipE = `M${L + 1} ${y1}H${R - 1}`; break;
+    default: {
+      const c = Math.min(r * 0.2, 1.3);
+      if (burr) {   // кукурудза: «риб'ячий хвіст» на торці
+        const v = Math.min(r * 0.55, 3);
+        body = `M${L} ${y0}H${R}V${y1 - c}L${cx + r * 0.35} ${y1}L${cx} ${y1 - v}L${cx - r * 0.35} ${y1}L${L} ${y1 - c}Z`;
+        tipE = `M${cx + r * 0.35} ${y1}L${cx} ${y1 - v}L${cx - r * 0.35} ${y1}`;
+      } else { body = `M${L} ${y0}H${R}V${y1 - c}L${R - c} ${y1}H${L + c}L${L} ${y1 - c}Z`; tipE = `M${L + c} ${y1}H${R - c}`; }
+    }
   }
-  const step = clamp(wd * 0.62, 3.2, 9), lines = [], slope = wd * 0.55;
-  if (type !== 'straight') for (let y = y0 - wd; y < y1 + wd; y += step) {
-    const down = t.helix === 'down';
-    if (type === 'comp' || t.helix === 'comp') {
-      const mid = y1 - hc * 0.3;
-      lines.push(y < mid ? `M${L - 2} ${y + slope}L${R + 2} ${y}` : `M${L - 2} ${y}L${R + 2} ${y + slope}`);
-    } else lines.push(down ? `M${L - 2} ${y}L${R + 2} ${y + slope}` : `M${L - 2} ${y + slope}L${R + 2} ${y}`);
-    if (type === 'rough') lines.push(`M${L - 2} ${y}L${R + 2} ${y + slope}`);
+
+  // 2. Канавки: справжня гвинтова лінія
+  const beta = num(t.helixAngle) > 0 ? num(t.helixAngle) : HELIX_DEF[type] || 30;
+  const pitch = Math.PI * D / Math.tan(beta * rad) * s;
+  const gw = 2 * Math.PI / z * (type === 'drill' ? 0.42 : z <= 2 ? 0.38 : 0.32);
+  let grooves = '', edges = '', notches = '', runout = true;
+  if (burr) {   // алмазна насічка: праві й ліві гвинтові зубчики перехрещуються
+    const p = Math.max(Math.PI * D / Math.tan(55 * rad) * s, 2.5), n = D < 3 ? 5 : 7;
+    edges = helixFlutes(cx, r, y0, y1, n, p, 1, 0).edges + helixFlutes(cx, r, y0, y1, n, p, -1, 0).edges;
+    runout = false;
+  } else if (type === 'vbit' || type === 'engr') {
+    grooves = `M${cx - r * 0.15} ${y0}H${cx + r * 0.45}L${cx + r * 0.08} ${y1}Z`;
+    edges = `M${cx - r * 0.15} ${y0}L${cx} ${y1 - 0.5}`;
+  } else if (type === 'straight' || type === 'surf') {
+    for (let k = 0; k < z; k++) {
+      const a = 2 * Math.PI * k / z + 0.5; if (Math.cos(a) <= 0.05) continue;
+      const x = cx + r * Math.sin(a), xb = cx + r * Math.sin(a - 0.6);
+      grooves += `M${f2(xb)} ${y0}H${f2(x)}V${y1}H${f2(xb)}Z`; edges += `M${f2(x)} ${y0}V${y1}`;
+    }
+  } else if (type === 'comp' || t.helix === 'comp') {   // компресійна: внизу up-cut, вище — down-cut
+    const ym = y1 - hc * 0.35;
+    const lo = helixFlutes(cx, r, ym, yH, z, pitch, -1, gw), hi = helixFlutes(cx, r, y0, ym, z, pitch, 1, gw);
+    grooves = lo.grooves + hi.grooves; edges = lo.edges + hi.edges;
+  } else {
+    const f = helixFlutes(cx, r, y0, yH, z, pitch, t.helix === 'down' ? 1 : -1, gw);
+    grooves = f.grooves; edges = f.edges;
+    if (type === 'rough') {   // чорнова: стружколомні виїмки по кромках
+      const st = Math.max(2.2, hc / 14);
+      for (let y = y0 + st * 0.6; y < yH - st * 0.4; y += st)
+        notches += `M${f2(L)} ${f2(y)}l${f2(r * 0.16)} ${f2(st * 0.25)}L${f2(L)} ${f2(y + st * 0.5)}ZM${f2(R)} ${f2(y + st * 0.5)}l${f2(-r * 0.16)} ${f2(st * 0.25)}L${f2(R)} ${f2(y + st)}Z`;
+    }
   }
-  if (type === 'straight') for (let k = 1; k < 3; k++) lines.push(`M${L + wd * k / 3} ${y0}V${y1}`);
-  const flutes = ['vbit', 'engr', 'drill'].includes(type)
-    ? `<path d="M${cx - wd * 0.18} ${y0}L${cx} ${y1 - 1}" stroke="var(--accent)" stroke-width="1"/>`
-    : `<path d="${lines.join('')}" stroke="var(--accent)" stroke-width="1.1" fill="none"/>`;
-  const shankD = `M${cx - ws / 2} ${top}H${cx + ws / 2}V${y0 - neck}H${cx - ws / 2}Z`;
+  const runD = runout && hc > 4 ? `M${L} ${y0}Q${cx} ${f2(y0 + Math.min(hc * 0.12, r * 0.7))} ${R} ${y0}` : '';
+
+  // 3. Хвостовик з фаскою, шийка
+  const c2 = cropped ? 0 : Math.min(ws * 0.12, 1.6);
+  const shankD = `M${cx - ws / 2} ${top + c2}L${cx - ws / 2 + c2} ${top}H${cx + ws / 2 - c2}L${cx + ws / 2} ${top + c2}V${y0 - neck}H${cx - ws / 2}Z`;
+  // лінія обриву: хвостовик довший, ніж показано
+  const brkD = cropped ? (() => { let d = `M${f2(cx - ws / 2 - 1.5)} ${top}`; for (let i = 1; i <= 6; i++) d += `L${f2(cx - ws / 2 - 1.5 + (ws + 3) * i / 6)} ${f2(top + (i % 2 ? -1.4 : 1.4))}`; return d; })() : '';
   const neckD = neck ? `M${cx - ws / 2} ${y0 - neck}H${cx + ws / 2}L${R} ${y0}H${L}Z` : '';
+  const band = big && y0 - neck - top > 30 ? `<path d="M${cx - ws / 2 + 1.5} ${f2(top + 9)}h${f2(ws - 3)}M${cx - ws / 2 + 1.5} ${f2(top + 15)}h${f2(ws - 3)}" stroke="var(--ink)" stroke-width=".5" opacity=".5"/>
+    <path d="M${cx - ws / 2 + 2.5} ${f2(top + 12)}h${f2((ws - 5) * 0.55)}" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="1.2 .8" opacity=".35"/>` : '';
+
   let dims = '';
   if (big) {
     // розмір різальної частини — лише якщо його вписано (інакше на кресленні була б вигадана цифра)
     const xr = Math.max(cx + ws / 2, R) + 10, yd = y1 + 9, hasLc = num(t.lc) > 0;
     dims = `<g fill="var(--muted)" stroke="none">${hasLc ? `<path d="${arrowV(xr, y0, 1)}"/><path d="${arrowV(xr, y1, -1)}"/>` : ''}<path d="${arrowH(L, yd, 1)}"/><path d="${arrowH(R, yd, -1)}"/></g>
       <g stroke="var(--muted)" stroke-width=".7" fill="none"><path d="${hasLc ? `M${R + 1} ${y0}H${xr + 3}M${R + 1} ${y1}H${xr + 3}M${xr} ${y0}V${y1}` : ''}M${L} ${y1 + 1}V${yd + 3}M${R} ${y1 + 1}V${yd + 3}M${L} ${yd}H${R}"/></g>
-      ${hasLc ? `<text x="${xr + 5}" y="${(y0 + y1) / 2 + 3.5}" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--text)">${fmt(lc, 1)}</text>` : ''}
-      <text x="${cx}" y="${yd + 13}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--accent)">Ø${fmt(D, 2)}</text>`;
+      ${hasLc ? TXT(xr + 5, (y0 + y1) / 2 + 3.5, fmt(lc, 1)) : ''}${TXT(cx, yd + 13, `Ø${fmt(D, 2)}`, 'var(--accent)', 'middle')}`;
   }
   const viewH = big ? H + 26 : H;
   const sizeAttr = big ? 'class="pv-art tsvg"' : `class="tsvg" width="${size === 'xs' ? 30 : 40}" height="${size === 'xs' ? 42 : 76}"`;
   return `<svg viewBox="0 0 ${W} ${viewH}" ${sizeAttr} aria-hidden="true">
     <clipPath id="${id}"><path d="${body}"/></clipPath>
-    <path d="M${cx} ${top - 5}V${y1 + 5}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="7 2 1.5 2" fill="none"/>
+    <path d="M${cx} ${top - 5}V${f2(y1 + 5)}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="7 2 1.5 2" fill="none"/>
     <g stroke="var(--ink)" stroke-width="${big ? 1.2 : 1.1}" stroke-linejoin="round">
       <path class="dw" pathLength="1" d="${shankD}" fill="var(--ink)" fill-opacity=".06"/>
       ${neckD ? `<path class="dw" pathLength="1" d="${neckD}" fill="var(--ink)" fill-opacity=".06"/>` : ''}
-      <path class="dw" pathLength="1" d="${body}" fill="var(--ink)" fill-opacity=".14"/>
+      <path class="dw" pathLength="1" d="${body}" fill="var(--ink)" fill-opacity=".1"/>
+    </g>${band}${brkD ? `<path d="${brkD}" stroke="var(--muted)" stroke-width=".8" fill="none"/>` : ''}
+    <g clip-path="url(#${id})">
+      ${grooves ? `<path d="${grooves}" fill="var(--ink)" fill-opacity=".24"/>` : ''}
+      ${notches ? `<path d="${notches}" fill="var(--field)" stroke="var(--ink)" stroke-width=".5"/>` : ''}
+      ${runD ? `<path d="${runD}" stroke="var(--ink)" stroke-width=".6" fill="none" opacity=".7"/>` : ''}
+      <path d="${edges}" stroke="var(--accent)" stroke-width="${burr ? 0.7 : big ? 1.3 : 1.15}" fill="none" stroke-linecap="round" ${burr ? 'opacity=".85"' : ''}/>
     </g>
-    <g clip-path="url(#${id})">${flutes}</g>
+    ${tipE ? `<path d="${tipE}" stroke="var(--accent)" stroke-width="${big ? 1.6 : 1.4}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
     ${dims}
   </svg>`;
 }
-// Фреза зі змінними пластинами, вигляд збоку: сталевий корпус, кишені під стружку, пластини — помаранчеві
-const P2 = q => `${+q[0].toFixed(2)} ${+q[1].toFixed(2)}`;
-const plateD = pts => `M${pts.map(P2).join('L')}Z`;
+
+// Фреза зі змінними пластинами, вигляд збоку: сталевий корпус, кишені під стружку, пластини з гвинтами
 function insToolSVG(t, size) {
-  const big = size === 'lg', face = t.type === 'iface';
+  const big = size === 'lg', face = t.type === 'iface', mount = toolMount(t);
   const D = num(t.d) > 0 ? num(t.d) : face ? 63 : 16;
   const z = clamp(Math.round(num(t.z) || (face ? 6 : 2)), 1, 30);
   const ins = DB.inserts[t.insertId];
   const W = big ? 112 : 60, cx = big ? 44 : W / 2, sw = big ? 1.2 : 1.1, p = big ? 1.1 : 0.9;
-  const plate = (pts, o = 1) => `<path d="${plateD(pts)}" fill="var(--accent)" fill-opacity="${(0.8 * o).toFixed(2)}" stroke="var(--accent)" stroke-opacity="${o}" stroke-width=".8" stroke-linejoin="round"/>`;
-  const txt = (x, y, s, c = 'var(--text)', a = 'start') => `<text x="${x}" y="${y}" text-anchor="${a}" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="${c}">${s}</text>`;
+  const plate = (pts, o = 1) => `<path d="${plateD(pts)}" fill="var(--accent)" fill-opacity="${f2(0.82 * o)}" stroke="var(--accent)" stroke-opacity="${o}" stroke-width=".8" stroke-linejoin="round"/>`;
+  const screw = (x, y, rr) => rr < 0.7 ? '' : `<circle cx="${f2(x)}" cy="${f2(y)}" r="${f2(rr)}" fill="var(--field)" stroke="var(--ink)" stroke-width=".6"/><path d="M${f2(x - rr * 0.55)} ${f2(y)}h${f2(rr * 1.1)}M${f2(x)} ${f2(y - rr * 0.55)}v${f2(rr * 1.1)}" stroke="var(--ink)" stroke-width=".5"/>`;
+  const brk = (xa, xb, y) => { let d = `M${f2(xa - 2)} ${f2(y)}`; const n = 6, st = (xb - xa + 4) / n; for (let i = 1; i <= n; i++) d += `L${f2(xa - 2 + st * i)} ${f2(y + (i % 2 ? -1.6 : 1.6))}`; return `<path d="${d}" stroke="var(--muted)" stroke-width=".7" fill="none"/>`; };
   let H, shapes = '', over = '', dims = '', y1, L, R, axisTop = 3;
   if (face) {
-    // Торцева: корпус-«тарілка» на короткій оправці, пластини під 45° по колу
-    const s = (big ? 62 : 52) / D, wd = D * s, hb = 0.36 * D * s, wa = Math.max(0.34 * D, 24) * s, ha = 0.3 * D * s;
-    const top = big ? 26 : 12, yb = top + ha; y1 = yb + hb; L = cx - wd / 2; R = cx + wd / 2;
-    H = y1 + (big ? 30 : 14);
-    const tr = wd * 0.4, yk = y1 - hb * 0.5;
-    shapes = `<path class="dw" pathLength="1" d="M${cx - wa / 2} ${top}H${cx + wa / 2}V${yb}H${cx - wa / 2}Z" fill="var(--ink)" fill-opacity=".06"/>
-      <path class="dw" pathLength="1" d="M${cx - tr} ${yb}H${cx + tr}L${R} ${yk}V${y1}H${L}V${yk}Z" fill="var(--ink)" fill-opacity=".14"/>`;
-    over += `<path d="M${cx - wa / 2 + 2} ${top + ha * 0.45}h${wa - 4}" stroke="var(--ink)" stroke-width=".6" opacity=".6"/>`;
+    // Торцева на оправці: «тарілка» з гніздами під 45°, посадка з пазами під шпонку, оправка йде далі в шпиндель
+    const s = (big ? 62 : 52) / D, wd = D * s, hb = 0.36 * D * s;
+    const wh = Math.min(wd * 0.62, Math.max(0.5 * D, 30) * s), hh = Math.max(2.5, 0.08 * D * s), wa = Math.min(wh * 0.75, Math.max(0.32 * D, 24) * s), ha = Math.max(5, 0.18 * D * s);
+    const top = big ? 24 : 12, yA = top + ha, yb = yA + hh; y1 = yb + hb; L = cx - wd / 2; R = cx + wd / 2;
+    H = y1 + (big ? 30 : 14); axisTop = top - 6;
+    const tr = wd * 0.42, yk = y1 - hb * 0.5;
+    shapes = `<path class="dw" pathLength="1" d="M${f2(cx - wa / 2)} ${top}H${f2(cx + wa / 2)}V${f2(yA)}H${f2(cx - wa / 2)}Z" fill="var(--ink)" fill-opacity=".05"/>
+      <path class="dw" pathLength="1" d="M${f2(cx - wh / 2)} ${f2(yA)}H${f2(cx + wh / 2)}V${f2(yb)}H${f2(cx - wh / 2)}Z" fill="var(--ink)" fill-opacity=".08"/>
+      <path class="dw" pathLength="1" d="M${f2(cx - tr)} ${f2(yb)}H${f2(cx + tr)}L${f2(R)} ${f2(yk)}V${f2(y1)}H${f2(L)}V${f2(yk)}Z" fill="var(--ink)" fill-opacity=".12"/>`;
+    over += brk(cx - wa / 2, cx + wa / 2, top);
+    // паз під шпонку на посадці
+    over += `<path d="M${f2(cx - wh * 0.08)} ${f2(yA)}v${f2(hh * 0.7)}h${f2(wh * 0.16)}v${f2(-hh * 0.7)}" fill="var(--field)" stroke="var(--ink)" stroke-width=".6"/>`;
     const a = Math.min(hb * 0.5, wd * 0.1), dep = a * 0.95;
     const corner = (sg, o) => {   // кут 45°: ріжуча кромка B→C
       const xR = cx + sg * wd / 2, B = [xR - sg * a, y1 + p], C = [xR + sg * p, y1 - a], n = [-sg * dep * 0.7071, -dep * 0.7071];
       return plate([B, C, [C[0] + n[0], C[1] + n[1]], [B[0] + n[0], B[1] + n[1]]], o);
     };
-    over += corner(1, 1) + corner(-1, 0.55);
-    // пластини, що видно спереду, — по колу з кроком 360°/z
+    // гнізда спереду: кишеня-«ложка» над кожною пластиною; пластина — квадрат, повернутий на 45°
     for (let i = 0; i < z; i++) {
       const th = (i + 0.5) * 2 * Math.PI / z, sn = Math.sin(th), cs = Math.cos(th);
-      if (sn <= 0.15 || Math.abs(cs) > 0.86) continue;
-      const x = cx + cs * wd / 2, w = Math.max(1.2, a * 0.9 * sn);
-      over += plate([[x - w / 2, y1 + p], [x + w / 2, y1 + p], [x + w / 2, y1 - a * 0.8], [x - w / 2, y1 - a * 0.8]], 0.45 + 0.5 * sn);
-      over += `<path d="M${(x + w / 2 + 0.6).toFixed(2)} ${(y1 - a * 0.8).toFixed(2)}q${(-w * 0.2).toFixed(2)} ${(-hb * 0.35).toFixed(2)} ${(w * 0.5).toFixed(2)} ${(-hb * 0.55).toFixed(2)}" stroke="var(--ink)" stroke-width=".6" fill="none" opacity=".55"/>`;
+      if (sn <= 0.12 || Math.abs(cs) > 0.86) continue;
+      const x = cx + cs * wd / 2, w = Math.max(1.4, a * 1.05 * sn), hgt = a * 0.95;
+      over += `<path d="M${f2(x - w * 0.9)} ${f2(y1)}Q${f2(x - w * 1.1)} ${f2(y1 - hb * 0.62)} ${f2(x + w * 0.2)} ${f2(y1 - hb * 0.72)}Q${f2(x + w * 0.7)} ${f2(y1 - hb * 0.4)} ${f2(x + w * 0.55)} ${f2(y1)}Z" fill="var(--field)" stroke="var(--ink)" stroke-width=".55" opacity="${f2(0.5 + 0.5 * sn)}"/>`;
+      over += plate([[x - w / 2, y1 + p], [x + w / 2, y1 + p], [x + w / 2, y1 - hgt], [x - w / 2 + w * 0.15, y1 - hgt]], 0.45 + 0.5 * sn);
+      if (big) over += screw(x, y1 - hgt * 0.45, Math.min(w * 0.22, 1.4));
     }
+    over += corner(1, 1) + corner(-1, 0.55);
     if (big) {
       const yd = y1 + 11;
       dims = `<g fill="var(--muted)"><path d="${arrowH(L, yd, 1)}"/><path d="${arrowH(R, yd, -1)}"/></g>
         <path d="M${L} ${y1 + 2}V${yd + 3}M${R} ${y1 + 2}V${yd + 3}M${L} ${yd}H${R}" stroke="var(--muted)" stroke-width=".7" fill="none"/>
-        ${txt(cx, yd + 13, `Ø${fmt(D, 1)}`, 'var(--accent)', 'middle')}${txt(cx + wa / 2 + 6, top + 10, `Z${z}`)}${txt(cx + wa / 2 + 6, top + 22, `${fmt(num(t.kappa) || 45)}°`, 'var(--muted)')}`;
+        ${TXT(cx, yd + 13, `Ø${fmt(D, 1)}`, 'var(--accent)', 'middle')}${TXT(cx + wh / 2 + 4, top + 8, `Z${z}`)}${TXT(cx + wh / 2 + 4, top + 20, `${fmt(num(t.kappa) || 45)}°`, 'var(--muted)')}`;
     }
   } else {
-    // Кінцева з пластинами: хвостовик, головка з кишенями, пластини на торці
-    const sh = num(t.shank) > 0 ? num(t.shank) : D, ol = num(t.ol) > 0 ? num(t.ol) : Math.max(4 * D, 60);
+    // Кінцева з пластинами: хвостовик (або насадна на різьбі), головка з кишенями, пластини з гвинтами
+    const screwHead = mount === 'screw';
+    const sh = num(t.shank) > 0 ? num(t.shank) : D, ol0 = num(t.ol) > 0 ? num(t.ol) : screwHead ? 1.5 * D : Math.max(4 * D, 60);
+    const ilMm = (ins && num(ins.len)) || 10;
+    const hlMm = screwHead ? Math.min(ol0 * 0.62, D * 0.95) : Math.min(ol0 * 0.4, Math.max(1.6 * D, 2.2 * ilMm));
+    // у картках — крупний план головки з пластинами, хвостовик обірвано
+    const ol = big ? ol0 : Math.min(ol0, hlMm + Math.max(0.9 * D, 10)), cropped = ol < ol0 - 0.5;
     H = big ? 176 : 150;
     const s = Math.min(132 / ol, (big ? 50 : 46) / Math.max(D, sh)), sx = Math.min(s * 2.2, (big ? 52 : 46) / Math.max(D, sh));
     const top = Math.max(8, (H - (big ? 26 : 0) - ol * s) / 2), wd = D * sx, ws = Math.min(sh, D * 1.6) * sx; y1 = top + ol * s; L = cx - wd / 2; R = cx + wd / 2;
     axisTop = top - 5;
-    const hl = Math.min(ol * 0.34, Math.max(1.4 * D, 16)) * s, yh = y1 - hl;
-    const il = Math.min(((ins && num(ins.len)) || 10) * s, hl * 0.62), iw = Math.min(wd * 0.34, 6.35 * sx);
-    const body = ws < wd - 0.5
-      ? `M${cx - ws / 2} ${top}H${cx + ws / 2}V${yh - (wd - ws) / 2}L${R} ${yh}V${y1}H${L}V${yh}L${cx - ws / 2} ${yh - (wd - ws) / 2}Z`
-      : ws > wd + 0.5 ? `M${cx - ws / 2} ${top}H${cx + ws / 2}V${yh}H${R}V${y1}H${L}V${yh}H${cx - ws / 2}Z` : `M${L} ${top}H${R}V${y1}H${L}Z`;
-    shapes = `<path class="dw" pathLength="1" d="${body}" fill="var(--ink)" fill-opacity=".12"/>`;
-    over += `<path d="M${L + 0.6} ${yh}H${R - 0.6}" stroke="var(--ink)" stroke-width=".7" opacity=".7"/>`;
-    // кишеня під стружку перед пластиною
-    const xa = R - iw - wd * 0.2;
-    over += `<path d="M${xa.toFixed(2)} ${y1}Q${xa.toFixed(2)} ${(y1 - il * 1.3).toFixed(2)} ${R - 0.4} ${(y1 - il * 1.65).toFixed(2)}V${y1}Z" fill="var(--field)" stroke="var(--ink)" stroke-width=".8"/>`;
-    const A = [R + p, y1 + p], B = [R + p, y1 + p - il], C = [R + p - iw, y1 + p - il + iw * 0.3], Dd = [R + p - iw, y1 + p];
-    over += plate([A, B, C, Dd]) + `<circle cx="${(R + p - iw / 2).toFixed(2)}" cy="${(y1 + p - il * 0.45).toFixed(2)}" r="${Math.max(0.8, iw * 0.17).toFixed(2)}" fill="var(--field)" stroke="var(--accent)" stroke-width=".6"/>`;
-    if (z >= 2) over += plate([[L - p, y1 + p], [L - p, y1 + p - il * 0.92], [L - p + iw * 0.45, y1 + p - il * 0.92 + iw * 0.15], [L - p + iw * 0.45, y1 + p]], 0.55);
-    for (let i = 2; i < Math.min(z, 6); i++) {   // решта пластин — вузькі смужки між крайніми
-      const x = L + wd * (i - 1) / (Math.min(z, 6) - 1) * 0.8 + wd * 0.04;
-      over += plate([[x, y1 + p], [x + iw * 0.22, y1 + p], [x + iw * 0.22, y1 + p - il * 0.8], [x, y1 + p - il * 0.8]], 0.35);
+    const rb = wd / 2 * 0.93;   // корпус трохи менший за коло пластин
+    const hl = hlMm * s, yh = y1 - hl;
+    const il = Math.min(ilMm * s * 1.15, hl * 0.5), iw = Math.min(wd * 0.42, 6.35 * sx * 0.9);
+    // корпус
+    const bodyD = ws < 2 * rb - 0.5
+      ? `M${f2(cx - ws / 2)} ${top}H${f2(cx + ws / 2)}V${f2(yh - (2 * rb - ws) / 2)}L${f2(cx + rb)} ${f2(yh)}V${f2(y1)}H${f2(cx - rb)}V${f2(yh)}L${f2(cx - ws / 2)} ${f2(yh - (2 * rb - ws) / 2)}Z`
+      : `M${f2(cx - ws / 2)} ${top}H${f2(cx + ws / 2)}V${f2(yh)}H${f2(cx + rb)}V${f2(y1)}H${f2(cx - rb)}V${f2(yh)}H${f2(cx - ws / 2)}Z`;
+    shapes = `<path class="dw" pathLength="1" d="${bodyD}" fill="var(--ink)" fill-opacity=".1"/>`;
+    if (screwHead) {
+      // насадна: шийка оправки з лисками під ключ, різьбове зʼєднання, далі — оправка (обрив)
+      over += brk(cx - ws / 2, cx + ws / 2, top);
+      const yt = yh - Math.min((yh - top) * 0.35, 9);
+      over += `<path d="M${f2(cx - ws / 2)} ${f2(yt)}H${f2(cx + ws / 2)}" stroke="var(--ink)" stroke-width=".7" opacity=".8"/>`;
+      over += `<path d="M${f2(cx - ws * 0.28)} ${f2(top + 3)}V${f2(yt - 2)}M${f2(cx + ws * 0.28)} ${f2(top + 3)}V${f2(yt - 2)}" stroke="var(--ink)" stroke-width=".55" opacity=".6"/>`;
+      let th = ''; for (let y = yt + 1.2; y < yh - 0.6; y += 1.5) th += `M${f2(cx - ws * 0.32)} ${f2(y)}l${f2(ws * 0.64)} -0.8`;
+      over += `<path d="${th}" stroke="var(--ink)" stroke-width=".45" opacity=".55"/>`;
+    } else {
+      // лазерне маркування на хвостовику і канавка-проточка над головкою; у картці хвостовик обірвано
+      if (cropped) over += brk(cx - ws / 2, cx + ws / 2, top);
+      const yB = top + (yh - top) * 0.3;
+      over += `<path d="M${f2(cx - ws / 2 + 1)} ${f2(yB)}h${f2(ws - 2)}M${f2(cx - ws / 2 + 1)} ${f2(yB + 6)}h${f2(ws - 2)}" stroke="var(--ink)" stroke-width=".45" opacity=".5"/>
+        <path d="M${f2(cx - ws / 2 + 2)} ${f2(yB + 3)}h${f2((ws - 4) * 0.6)}" stroke="var(--ink)" stroke-width="1.4" stroke-dasharray="1.1 .7" opacity=".35"/>`;
+      over += `<path d="M${f2(cx - rb)} ${f2(yh)}H${f2(cx + rb)}M${f2(cx - rb)} ${f2(yh + 1.6)}H${f2(cx + rb)}" stroke="var(--ink)" stroke-width=".6" opacity=".7"/>`;
+    }
+    // Пластини як на кресленні з каталогу: головна — праворуч, лицем до нас, з кишенею-«ложкою» і гвинтом;
+    // друга — ліворуч у профіль; третя й далі — між ними, у ракурсі. Точну кількість показує «Вид А».
+    const pocket = (xEdge, side, w, op) => {
+      const xa = xEdge - side * (w + Math.max(2, wd * 0.2));
+      return `<path d="M${f2(xa)} ${f2(y1)}C${f2(xa)} ${f2(y1 - il * 0.9)} ${f2(xEdge - side * w * 0.6)} ${f2(y1 - il * 1.7)} ${f2(xEdge - side * 0.3)} ${f2(y1 - il * 1.85)}V${f2(y1)}Z" fill="var(--field)" stroke="var(--ink)" stroke-width=".75" opacity="${op}"/>`;
+    };
+    const face1 = (xEdge, side, w, op) => {   // пластина лицем: зовнішня кромка вертикальна, верхня — скошена (паралелограм 85°)
+      const xIn = xEdge - side * w;
+      return plate([[xEdge, y1 + p], [xEdge, y1 + p - il], [xIn, y1 + p - il + w * 0.28], [xIn, y1 + p]], op)
+        + `<path d="M${f2(xEdge)} ${f2(y1 + p - il * 0.96)}V${f2(y1 + p)}" stroke="var(--accent)" stroke-width="${big ? 1.8 : 1.4}"/>`
+        + screw((xEdge + xIn) / 2, y1 + p - il * 0.48, Math.max(0.7, w * 0.16) * (big ? 1.15 : 1));
+    };
+    const iwMain = Math.min(wd * 0.5, Math.max(iw, 6.35 * sx * 0.95));
+    over += pocket(cx + rb + p, 1, iwMain, 1) + face1(cx + rb + p, 1, iwMain, 1);
+    if (z >= 2) {   // профіль протилежної пластини: тонка смужка, що виступає за корпус
+      const th = Math.max(1.4, 3.2 * sx * 0.45), xe = cx - rb - p;
+      over += `<path d="M${f2(cx - rb + th * 0.4)} ${f2(y1)}Q${f2(cx - rb + th * 1.6)} ${f2(y1 - il * 1.3)} ${f2(cx - rb)} ${f2(y1 - il * 1.75)}" fill="none" stroke="var(--ink)" stroke-width=".6" opacity=".7"/>`;
+      over += plate([[xe, y1 + p], [xe, y1 + p - il * 0.92], [xe + th, y1 + p - il * 0.92 + 0.6], [xe + th, y1 + p]], 0.9);
+    }
+    for (let k = 2; k < Math.min(z, 6); k++) {   // решта — у ракурсі між ними
+      const fr = (k - 1) / (Math.min(z, 6) - 1), xEdge = cx - rb * 0.55 + (2 * rb * 0.55) * fr * 0.7, w = iwMain * 0.42;
+      over += pocket(xEdge, 1, w, 0.7) + face1(xEdge, 1, w, 0.62);
     }
     if (big) {
       const xr = Math.max(R, cx + ws / 2) + 9, yd = y1 + 9, ap = ins && num(ins.apMax) > 0 ? num(ins.apMax) : 0;
       dims = `<g fill="var(--muted)"><path d="${arrowH(L, yd, 1)}"/><path d="${arrowH(R, yd, -1)}"/></g>
         <path d="M${L} ${y1 + 2}V${yd + 3}M${R} ${y1 + 2}V${yd + 3}M${L} ${yd}H${R}" stroke="var(--muted)" stroke-width=".7" fill="none"/>
-        ${txt(cx, yd + 13, `Ø${fmt(D, 1)}`, 'var(--accent)', 'middle')}${txt(xr, y1 - il / 2 + 3, `Z${z}`)}${ap ? txt(xr, y1 - il / 2 + 15, `ap${fmt(ap, 1)}`, 'var(--muted)') : ''}`;
+        ${TXT(cx, yd + 13, `Ø${fmt(D, 1)}`, 'var(--accent)', 'middle')}${TXT(xr, y1 - il / 2 + 3, `Z${z}`)}${ap ? TXT(xr, y1 - il / 2 + 15, `ap${fmt(ap, 1)}`, 'var(--muted)') : ''}${screwHead ? TXT(xr, top + 10, 'M16', 'var(--muted)') : ''}`;
     }
   }
   const sizeAttr = big ? 'class="pv-art tsvg"' : `class="tsvg" width="${size === 'xs' ? 30 : 40}" height="${size === 'xs' ? 42 : 76}"`;
-  return `<svg viewBox="0 0 ${W} ${H.toFixed(1)}" ${sizeAttr} aria-hidden="true">
-    <path d="M${cx} ${axisTop.toFixed(1)}V${(y1 + 5).toFixed(1)}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="7 2 1.5 2" fill="none"/>
+  return `<svg viewBox="0 0 ${W} ${f2(H)}" ${sizeAttr} aria-hidden="true">
+    <path d="M${cx} ${f2(axisTop)}V${f2(y1 + 5)}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="7 2 1.5 2" fill="none"/>
     <g stroke="var(--ink)" stroke-width="${sw}" stroke-linejoin="round">${shapes}</g>${over}${dims}</svg>`;
 }
-// Пластина у плані: форма за першою літерою ISO-коду, отвір під гвинт, фаска-стружколом, головна кромка помаранчева
+
+// «Вид А» — з торця: зуби з канавками (моноліт), губки й перемичка (свердло), насічка (кукурудза), пластини по колу
+function endSVG(t, size) {
+  const px = size === 'lg' ? 84 : size === 'xs' ? 24 : 30, c = 22, R = 17, type = t.type || 'flat';
+  const insT = INS_TYPES.includes(type), z = clamp(Math.round(num(t.z) || 2), 1, insT ? 30 : 8);
+  const pt = (rr, a) => [c + rr * Math.cos(a), c + rr * Math.sin(a)];
+  const circ = (q, rr, at = '') => `<circle cx="${f2(q[0])}" cy="${f2(q[1])}" r="${f2(rr)}" ${at}/>`;
+  let body = '', cut = '', acc = '', thin = '', mid = '';
+  if (insT) {
+    const face = type === 'iface', Rb = R * (face ? 0.9 : 0.84), d = 2 * Math.PI / z;
+    body = circ([c, c], Rb);
+    for (let k = 0; k < z; k++) {
+      const a = -Math.PI / 2 + k * d, tv = [-Math.sin(a), Math.cos(a)];
+      // кишеня перед пластиною (обрізана по корпусу)
+      const gr = Math.min(Rb * 0.36, Math.PI * Rb / z * 0.46);
+      cut += circ(pt(Rb * 0.98, a + Math.min(d * 0.26, 0.5)), gr);
+      // пластина: ріжучий край — на колі R; торцева — квадратні під 45°, кінцева — паралелограми
+      const q = face ? Math.min(R * 0.26, Math.PI * R / z * 0.62) : Math.min(R * 0.46, Math.PI * R / z * 0.8);
+      const th = face ? q * 0.85 : Math.max(2.2, q * 0.45);
+      const o1 = pt(R, a), i1 = pt(R - q, a);
+      const P = [o1, i1, [i1[0] - tv[0] * th, i1[1] - tv[1] * th], [o1[0] - tv[0] * th, o1[1] - tv[1] * th]];
+      acc += plateD(P);
+      const m = P.reduce((s, v) => [s[0] + v[0] / 4, s[1] + v[1] / 4], [0, 0]);
+      if (size === 'lg' || z <= 6) mid += circ(m, Math.max(0.55, th * 0.18), 'fill="var(--field)" stroke="var(--ink)" stroke-width=".4"');
+    }
+    if (face) {   // посадковий отвір і болт кріплення
+      mid += circ([c, c], R * 0.3, 'fill="var(--field)" stroke="var(--ink)" stroke-width=".7"');
+      const hx = Array.from({ length: 6 }, (_, i) => pt(R * 0.16, i * Math.PI / 3));
+      mid += `<path d="${plateD(hx)}" fill="var(--ink)" fill-opacity=".25" stroke="var(--ink)" stroke-width=".6"/>`;
+    } else if (toolMount(t) === 'screw') mid += circ([c, c], R * 0.13, 'fill="var(--field)" stroke="var(--ink)" stroke-width=".6"');
+  } else if (type === 'drill') {
+    body = circ([c, c], R);
+    for (const a of [-Math.PI / 2, Math.PI / 2]) {
+      cut += circ(pt(R * 0.62, a + 0.95), R * 0.42);
+      acc += lineD([pt(R * 0.16, a + 0.55), pt(R, a)]);            // губка
+    }
+    acc += lineD([pt(R * 0.16, Math.PI / 2 + 0.55), pt(R * 0.16, -Math.PI / 2 + 0.55)]);   // перемичка
+  } else if (isBurr(t)) {
+    const n = 26, P = [];
+    for (let i = 0; i < n * 2; i++) P.push(pt(i % 2 ? R * 0.86 : R, i * Math.PI / n));
+    body = `<path d="${plateD(P)}"/>`;
+    thin = circ([c, c], R * 0.55, 'fill="none" stroke="var(--ink)" stroke-width=".5" opacity=".5"');
+    acc = '';
+  } else {
+    // моноліт: z зубів; між ними — канавки, передня поверхня зуба — ріжуча кромка
+    const d = 2 * Math.PI / z, rc = R * (z <= 2 ? 0.5 : z === 3 ? 0.58 : 0.64);
+    let path = '';
+    for (let k = 0; k < z; k++) {
+      const a = -Math.PI / 2 + k * d, tip = pt(R, a), land = pt(R, a + d * 0.44), core = pt(rc, a + d * 0.8);
+      const c1 = pt(R * 0.96, a + d * 0.62), c2 = pt(rc * 1.03, a + d * 0.98), next = pt(R, a + d);
+      path += (k ? '' : `M${P2(tip)}`) + `A${R} ${R} 0 0 1 ${P2(land)}Q${P2(c1)} ${P2(core)}Q${P2(c2)} ${P2(next)}`;
+      acc += lineD([pt(rc * 1.06, a + d * 0.99), next]);                                    // кромка на периферії
+      thin += lineD([pt(type === 'ball' || k % 2 === 0 ? R * 0.08 : R * 0.42, a + d - 0.1), pt(R * 0.97, a + d - 0.02)]);   // торцеві кромки (центроріжучі — до центру)
+    }
+    body = `<path d="${path}Z"/>`;
+    thin = `<path d="${thin}" stroke="var(--accent)" stroke-width=".7" opacity=".6" fill="none"/>`;
+  }
+  const cid = 'ec' + (++svgSeq);
+  const lab = size === 'lg' ? `<text x="3" y="8" font-family="Jura,sans-serif" font-size="6.5" font-weight="700" fill="var(--muted)">А</text>` : '';
+  return `<svg viewBox="0 0 44 44" class="esvg" width="${px}" height="${px}" aria-hidden="true">${lab}
+    <path d="M${c} 1.5V42.5M1.5 ${c}H42.5" stroke="var(--muted)" stroke-width=".4" stroke-dasharray="5 1.5 1 1.5"/>
+    <g fill="var(--ink)" fill-opacity=".14" stroke="var(--ink)" stroke-width=".9" stroke-linejoin="round">${body}</g>
+    ${cut ? `<clipPath id="${cid}">${insT ? circ([c, c], R * (type === 'iface' ? 0.9 : 0.84)) : circ([c, c], R)}</clipPath><g clip-path="url(#${cid})" fill="var(--field)" stroke="var(--ink)" stroke-width=".7">${cut}</g>` : ''}
+    ${insT ? `<path d="${acc}" fill="var(--accent)" fill-opacity=".85" stroke="var(--accent)" stroke-width=".6" stroke-linejoin="round"/>`
+      : acc ? `<path d="${acc}" stroke="var(--accent)" stroke-width="1.5" fill="none" stroke-linecap="round"/>` : ''}
+    ${thin}${mid}</svg>`;
+}
+
+// Пластина у плані: форма за першою літерою ISO-коду, радіус при вершині, фаска-стружколом, отвір під гвинт,
+// головна кромка — помаранчева. На великому кресленні знизу ще вид збоку: товщина і задній кут.
 function insShape(sh, code) {
   const rh = a => { const h = a / 2 * rad; return [[-Math.cos(h), 0], [0, Math.sin(h)], [Math.cos(h), 0], [0, -Math.sin(h)]]; };
   const par = (w, a) => { const k = 1 / Math.tan(a * rad); return [[-w / 2 - k / 2, 0.5], [w / 2 - k / 2, 0.5], [w / 2 + k / 2, -0.5], [-w / 2 + k / 2, -0.5]]; };
@@ -968,47 +1172,73 @@ function insShape(sh, code) {
     case 'T': return ngon(3, Math.PI / 2);
     case 'W': { const o = []; for (let i = 0; i < 6; i++) { const a = Math.PI / 2 + i * Math.PI / 3, r = i % 2 ? 0.62 : 1; o.push([r * Math.cos(a), r * Math.sin(a)]); } return o; }
     case 'H': return ngon(6); case 'O': return ngon(8, Math.PI / 8); case 'P': return ngon(5, Math.PI / 2);
-    case 'S': {
-      // SE..: квадрат з фасками на кутах (торцеві 45°)
+    case 'S': {   // SE..: квадрат з фасками-зачисниками на кутах (торцеві 45°)
       const c = /^SE/i.test(code || '') ? 0.2 : 0.06;
       return [[-1 + c, 1], [1 - c, 1], [1, 1 - c], [1, -1 + c], [1 - c, -1], [-1 + c, -1], [-1, -1 + c], [-1, 1 - c]];
     }
     default: return null;   // R — коло
   }
 }
+// Контур з округленими вершинами (радіус при вершині пластини)
+function roundD(P, rr) {
+  const n = P.length; let d = '';
+  for (let i = 0; i < n; i++) {
+    const p0 = P[(i - 1 + n) % n], q = P[i], p1 = P[(i + 1) % n];
+    const t0 = Math.min(rr / Math.hypot(p0[0] - q[0], p0[1] - q[1]), 0.45), t1 = Math.min(rr / Math.hypot(p1[0] - q[0], p1[1] - q[1]), 0.45);
+    const a = [q[0] + (p0[0] - q[0]) * t0, q[1] + (p0[1] - q[1]) * t0], b = [q[0] + (p1[0] - q[0]) * t1, q[1] + (p1[1] - q[1]) * t1];
+    d += `${i ? 'L' : 'M'}${P2(a)}Q${P2(q)} ${P2(b)}`;
+  }
+  return d + 'Z';
+}
+const CLEAR = { A: 3, B: 5, C: 7, D: 15, E: 20, F: 25, G: 30, N: 0, P: 11, O: 0 };   // задній кут за 2-ю літерою коду
 function insertSVG(i, size) {
-  const big = size === 'lg', V = big ? 112 : 60, m = big ? 14 : 6;
+  const big = size === 'lg', V = big ? 112 : 60, m = big ? 12 : 6;
   const shape = (i && i.shape) || (i && i.code ? String(i.code)[0].toUpperCase() : 'S');
-  const pts = insShape(shape, i && i.code);
-  const box = V - 2 * m - (big ? 14 : 0), c0 = [V / 2, (V - (big ? 14 : 0)) / 2];
-  let outline, inner, edge, rr;
+  const pts = insShape(shape, i && i.code), code = insKey(i && i.code);
+  const box = big ? 64 : V - 2 * m, c0 = [V / 2, big ? 8 + box / 2 : V / 2];
+  let outline, inner, edge, rr, wpx = box, mmPx;
+  const len = num(i && i.len) || 10;
   if (!pts) {
-    rr = box / 2; outline = `<circle cx="${c0[0]}" cy="${c0[1]}" r="${rr}"/>`;
-    inner = `<circle cx="${c0[0]}" cy="${c0[1]}" r="${rr * 0.8}"/>`;
+    rr = box / 2; outline = `<circle class="dw" pathLength="1" cx="${c0[0]}" cy="${c0[1]}" r="${rr}"/>`;
+    inner = `<circle cx="${c0[0]}" cy="${c0[1]}" r="${f2(rr * 0.8)}"/>`;
     edge = `<path d="M${c0[0] - rr} ${c0[1]}A${rr} ${rr} 0 0 0 ${c0[0] + rr} ${c0[1]}"/>`;
+    mmPx = box / len;
   } else {
     const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
     const w = Math.max(...xs) - Math.min(...xs), h = Math.max(...ys) - Math.min(...ys), k = box / Math.max(w, h);
     const ox = c0[0] - (Math.max(...xs) + Math.min(...xs)) / 2 * k, oy = c0[1] + (Math.max(...ys) + Math.min(...ys)) / 2 * k;
     const P = pts.map(q => [ox + q[0] * k, oy - q[1] * k]);
+    wpx = w * k; mmPx = wpx / (shape === 'S' ? len * 1.06 : len * 1.04);
+    const rv = clamp((num(i && i.re) || 0.8) * mmPx, 0.8, box * 0.1);
     const cxp = P.reduce((s, q) => s + q[0], 0) / P.length, cyp = P.reduce((s, q) => s + q[1], 0) / P.length;
-    outline = `<path class="dw" pathLength="1" d="${plateD(P)}"/>`;
-    inner = `<path d="${plateD(P.map(q => [cxp + (q[0] - cxp) * 0.8, cyp + (q[1] - cyp) * 0.8]))}"/>`;
+    outline = `<path class="dw" pathLength="1" d="${roundD(P, rv)}"/>`;
+    inner = `<path d="${roundD(P.map(q => [cxp + (q[0] - cxp) * 0.8, cyp + (q[1] - cyp) * 0.8]), rv * 0.8)}"/>`;
     const lo = P.reduce((b, q, j) => (q[1] + P[(j + 1) % P.length][1] > b.v ? { v: q[1] + P[(j + 1) % P.length][1], j } : b), { v: -1e9, j: 0 }).j;
-    edge = `<path d="M${P2(P[lo])}L${P2(P[(lo + 1) % P.length])}"/>`;
+    const e0 = P[lo], e1 = P[(lo + 1) % P.length], el = Math.hypot(e1[0] - e0[0], e1[1] - e0[1]), tr = Math.min(rv / el, 0.3);
+    edge = `<path d="${lineD([[e0[0] + (e1[0] - e0[0]) * tr, e0[1] + (e1[1] - e0[1]) * tr], [e1[0] - (e1[0] - e0[0]) * tr, e1[1] - (e1[1] - e0[1]) * tr]])}"/>`;
     rr = Math.min(w, h) * k / 2;
   }
   const hole = Math.max(2, rr * 0.3);
-  const dim = big && i ? `<text x="${V / 2}" y="${V - 5}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--accent)">${esc([shape, num(i.len) ? `L${fmt(num(i.len), 1)}` : '', num(i.thick) ? `s${fmt(num(i.thick), 2)}` : ''].filter(Boolean).join(' · '))}</text>` : '';
+  let side = '', dim = '';
+  if (big && i) {
+    // вид збоку: товщина s і задній кут α (трапеція звужується донизу)
+    const al = CLEAR[code[1]] ?? 11, sp = clamp((num(i.thick) || 3.5) * mmPx, 4, 14), yS = 8 + box + 8, ins = Math.min(sp * Math.tan(al * rad), wpx * 0.2);
+    const xa = c0[0] - wpx / 2, xb = c0[0] + wpx / 2;
+    side = `<path d="M${f2(xa)} ${f2(yS)}H${f2(xb)}L${f2(xb - ins)} ${f2(yS + sp)}H${f2(xa + ins)}Z" fill="var(--ink)" fill-opacity=".14" stroke="var(--ink)" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M${f2(xa)} ${f2(yS)}H${f2(xb)}" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+      ${al ? TXT(xa - 3, yS + sp / 2 + 3.5, `${al}°`, 'var(--muted)', 'end') : ''}`;
+    dim = TXT(V / 2, yS + sp + 12, esc([shape, num(i.len) ? `L${fmt(num(i.len), 1)}` : '', num(i.thick) ? `s${fmt(num(i.thick), 1)}` : "", num(i.re) ? `r${fmt(num(i.re), 1)}` : ""].filter(Boolean).join(' · ')), 'var(--accent)', 'middle');
+  }
+  const VH = big ? 8 + box + 8 + 14 + 16 : V;
   const sz = big ? 'class="pv-art sq tsvg"' : `class="tsvg" width="${size === 'xs' ? 30 : 46}" height="${size === 'xs' ? 30 : 46}"`;
-  return `<svg viewBox="0 0 ${V} ${V}" ${sz} aria-hidden="true">
-    <path d="M${c0[0] - rr - 4} ${c0[1]}H${c0[0] + rr + 4}M${c0[0]} ${c0[1] - rr - 4}V${c0[1] + rr + 4}" stroke="var(--muted)" stroke-width=".5" stroke-dasharray="6 2 1.5 2"/>
+  return `<svg viewBox="0 0 ${V} ${VH}" ${sz} aria-hidden="true">
+    <path d="M${f2(c0[0] - rr - 4)} ${c0[1]}H${f2(c0[0] + rr + 4)}M${c0[0]} ${f2(c0[1] - rr - 4)}V${f2(c0[1] + rr + 4)}" stroke="var(--muted)" stroke-width=".5" stroke-dasharray="6 2 1.5 2"/>
     <g fill="var(--ink)" fill-opacity=".14" stroke="var(--ink)" stroke-width="${big ? 1.3 : 1.1}" stroke-linejoin="round">${outline}</g>
-    <g fill="none" stroke="var(--ink)" stroke-width=".6" opacity=".55">${inner}</g>
+    <g fill="none" stroke="var(--ink)" stroke-width=".6" opacity=".55" stroke-dasharray="${big ? '2.5 1.2' : 'none'}">${inner}</g>
     <g fill="none" stroke="var(--accent)" stroke-width="${big ? 2.6 : 2.1}" stroke-linecap="round">${edge}</g>
-    <circle cx="${c0[0]}" cy="${c0[1]}" r="${(hole * 1.5).toFixed(2)}" fill="none" stroke="var(--ink)" stroke-width=".6" opacity=".6"/>
-    <circle cx="${c0[0]}" cy="${c0[1]}" r="${hole.toFixed(2)}" fill="var(--field)" stroke="var(--ink)" stroke-width="1"/>
-    ${dim}</svg>`;
+    <circle cx="${c0[0]}" cy="${c0[1]}" r="${f2(hole * 1.5)}" fill="none" stroke="var(--ink)" stroke-width=".6" opacity=".6"/>
+    <circle cx="${c0[0]}" cy="${c0[1]}" r="${f2(hole)}" fill="var(--field)" stroke="var(--ink)" stroke-width="1"/>
+    ${side}${dim}</svg>`;
 }
 // Трикутники ISO, як на коробках пластин
 const isoChips = arr => `<span class="iso">${Object.entries(ISO).map(([k, v]) => `<i class="${(arr || []).includes(k) ? '' : 'off'}" style="--c:${v.c}" title="${v.n}">${k}</i>`).join('')}</span>`;
@@ -1102,8 +1332,8 @@ const Store = {
 
 // ======================= База =======================
 // Ключі: t_<id> фреза, i_<id> пластина, m_<id> матеріал (свій або змінений з довідника), s_<id> верстат, h_<id> історія,
-// ph_<id> мініатюра фото (до 4 КБ), cfg, apikey
-const DB = { tools:{}, inserts:{}, matOv:{}, machines:{}, hist:{}, photos:{}, cfg:{}, apiKey:'' };
+// cfg, apikey
+const DB = { tools:{}, inserts:{}, matOv:{}, machines:{}, hist:{}, cfg:{}, apiKey:'' };
 
 function defaultMachine() {
   return { id: genId(), name: 'Мій фрезер', ...MACHINE_TPL[1].m, units: 'mmmin', configured: false, approx: true, note: '' };
@@ -1144,7 +1374,7 @@ async function loadDB() {
   for (const [k, v] of Object.entries(entries || {})) {
     if (v == null || v === '') continue;
     if (k === 'apikey') { DB.apiKey = v; continue; }
-    if (k.startsWith('ph_')) { DB.photos[k.slice(3)] = v; continue; }
+    if (k.startsWith('ph_')) continue;   // старі мініатюри фото (v3.1) більше не показуються
     let o; try { o = JSON.parse(v); } catch (e) { continue; }
     if (!o) continue;
     if (k === 'cfg') DB.cfg = o || {};
@@ -1196,8 +1426,6 @@ function toolSpec(t) {
     num(t.lc) ? `різальна ${fmt(num(t.lc), 1)}` : '', ['vbit', 'engr', 'taperball'].includes(t.type) && num(t.angle) ? `${fmt(num(t.angle), 1)}°` : '',
     (TM[t.tm] || TM.carbide).s].filter(Boolean).join(' · ');
 }
-// Фото предмета: з інвентаря (img/…) або мініатюра, зроблена при розпізнаванні (ph_<id>)
-const photoOf = o => (o && (DB.photos[o.id] || (/^img\/[\w.-]+$/.test(o.img || '') ? o.img : ''))) || '';
 const sortedInserts = () => Object.values(DB.inserts).sort((a, b) => String(a.code).localeCompare(String(b.code)));
 // Скільки пластин стоїть у фрезах
 function insUse(id) {
@@ -2089,11 +2317,11 @@ const Viz = (() => {
 // ---------- Вибір (шторки) ----------
 function optHTML(o) {
   return `<button class="opt${o.on ? ' on' : ''}" data-act="choose" data-kind="${o.kind}" data-id="${esc(o.id)}" data-s="${esc((o.t + ' ' + (o.s || '')).toLowerCase())}">
-    <span class="opt-ic">${o.icon}</span><span class="opt-tx"><b>${esc(o.t)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}</span>${o.on ? ic('check', 'ck') : ''}</button>`;
+    <span class="opt-ic${o.wide ? " wide" : ""}">${o.icon}</span><span class="opt-tx"><b>${esc(o.t)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}</span>${o.on ? ic('check', 'ck') : ''}</button>`;
 }
 function openPicker(kind) {
   if (kind === 'tool') {
-    const item = t => ({ kind, id: t.id, icon: toolSVG(t, 'xs'), t: t.name + (num(t.qty) > 1 ? ` ×${num(t.qty)}` : ''), s: `${TOOL_TYPES[t.type]} · ${toolSpec(t)}`, on: t.id === S.toolId });
+    const item = t => ({ kind, id: t.id, wide: true, icon: toolSVG(t, "xs") + endSVG(t, "xs"), t: t.name + (num(t.qty) > 1 ? ` ×${num(t.qty)}` : ''), s: `${TOOL_TYPES[t.type]} · ${toolSpec(t)}`, on: t.id === S.toolId });
     const groups = toolGroups(sortedTools());
     const html = groups.map(([h, arr]) => (h ? `<div class="grp-h">${h}<em>${arr.length}</em></div>` : '') + `<div class="opts">${arr.map(t => optHTML(item(t))).join('')}</div>`).join('');
     openSheet('Фреза', `
@@ -2131,13 +2359,13 @@ function renderTools() {
 }
 const rng = (a, d = 0) => (Array.isArray(a) && a[0] > 0 && a[1] >= a[0] ? (a[0] === a[1] ? fmt(a[0], d) : `${fmt(a[0], d)}–${fmt(a[1], d)}`) : '');
 function toolCard(t, i, act = 'editTool', grouped) {
-  const insT = INS_TYPES.includes(t.type), ins = insT ? DB.inserts[t.insertId] : null, ph = photoOf(t), m = grouped ? null : DB.machines[t.mach];
+  const insT = INS_TYPES.includes(t.type), ins = insT ? DB.inserts[t.insertId] : null, m = grouped ? null : DB.machines[t.mach];
   const tags = [`<span class="a">Ø${fmt(num(t.d), 3)}</span>`, `<span>${num(t.z) || 1}${insT ? 'пл' : 'з'}</span>`,
     insT ? (ins ? `<span class="a">${esc(ins.code)}</span>` : '<span>без пластини</span>') : num(t.lc) ? `<span>L${fmt(num(t.lc), 1)}</span>` : '',
     num(t.qty) > 1 ? `<span>×${num(t.qty)}</span>` : '', num(t.maxRpm) ? `<span>≤${fmt(num(t.maxRpm) / 1000, 1)}k</span>` : '',
     insT ? '' : `<span>${(TM[t.tm] || TM.carbide).s}</span>`, t.coat && !insT ? `<span>${esc(t.coat)}</span>` : ''].join('');
   return `<button class="tcard" data-act="${act}" data-id="${t.id}" data-no="№${String(i + 1).padStart(2, '0')}">
-    <span class="tc-art">${toolSVG(t, 'sm')}${ph ? `<img class="tc-ph" src="${esc(ph)}" alt="" loading="lazy">` : ''}</span>
+    <span class="tc-art">${toolSVG(t, 'sm')}<span class="tc-end" title="Вид з торця">${endSVG(t, 'sm')}</span></span>
     <span class="tc-tx"><b>${esc(t.name)}</b><span class="tags">${tags}</span>
       <small>${esc(TOOL_TYPES[t.type] || '')}${m ? ` · <span class="mtag">${esc(m.name)}</span>` : ''}${t.used ? ` · ${t.used} ${plural(t.used, 'раз', 'рази', 'разів')}` : ''}</small></span>
   </button>`;
@@ -2162,9 +2390,9 @@ function renderToolList() {
   $('#list').innerHTML = toolGroups(tools).map(([h, arr]) => (h ? `<div class="grp-h">${h}<em>${arr.length}</em></div>` : '') + arr.map(t => toolCard(t, n++, 'editTool', !!h)).join('')).join('');
 }
 function insCard(i, n, act = 'editIns') {
-  const u = insUse(i.id), ph = photoOf(i), q = num(i.qty);
+  const u = insUse(i.id), q = num(i.qty);
   return `<button class="tcard" data-act="${act}" data-id="${i.id}" data-no="П${String(n + 1).padStart(2, '0')}">
-    <span class="tc-art sq">${insertSVG(i, 'sm')}${ph ? `<img class="tc-ph" src="${esc(ph)}" alt="" loading="lazy">` : ''}</span>
+    <span class="tc-art sq">${insertSVG(i, 'sm')}</span>
     <span class="tc-tx"><b>${esc(i.code)}</b>
       <span class="tags">${isoChips(i.iso)}${Number.isFinite(q) ? `<span class="a">${fmt(q)} шт</span>` : ''}${rng(i.vc) ? `<span>Vc ${rng(i.vc)}</span>` : ''}${rng(i.fz, 2) ? `<span>fz ${rng(i.fz, 2)}</span>` : ''}</span>
       <small>${esc(insSpec(i))}${u.tools.length ? ` · стоїть у ${u.tools.length} ${plural(u.tools.length, 'фрезі', 'фрезах', 'фрезах')} (${u.pcs} шт)` : ''}</small></span>
@@ -2177,10 +2405,8 @@ function renderInsList() {
     : `<div class="card empty">${ic('tools')}<div>${q ? 'Нічого не знайдено' : 'Ще немає пластин.<br>Додай вручну або сфотографуй коробку 📷 — апка прочитає етикетку.'}</div></div>`;
 }
 
-let formThumb = '';   // мініатюра з фото, яке щойно розпізнали — збережеться разом із записом
-function toolForm(t, opts = {}) {
+function toolForm(t) {
   t = t || { type: 'flat', z: 2, tm: 'carbide', helix: 'up', mach: S.machineId };
-  formThumb = opts.thumb || '';
   const isNew = !t.id || !DB.tools[t.id];
   const machOpts = [['', 'Будь-який верстат'], ...Object.values(DB.machines).map(m => [m.id, m.name])];
   const insOpts = [['', '— не вибрано —'], ...sortedInserts().map(i => [i.id, `${i.code}${i.grade ? ' · ' + i.grade : ''}`])];
@@ -2251,8 +2477,7 @@ function toolForm(t, opts = {}) {
       : Object.keys(DB.inserts).length ? 'Вибери пластину — апка візьме з неї швидкість, подачу і глибину.'
         : 'Пластин у базі ще немає — додай у вкладці «Фрези → Пластини». Поки що рахую за типовими даними.';
     const pv = { ...d, z: num(d.z) || 1 };
-    const ph = formThumb || photoOf(t);
-    $('#tfPrev').innerHTML = `${toolSVG(pv, 'lg')}<div class="pv-tx"><b>${esc(d.name.trim() || toolAutoName(pv))}</b>${esc(TOOL_TYPES[ty])}<br>${esc(toolSpec(pv))}${num(d.lo) ? `<br>виліт ${fmt(num(d.lo), 1)} мм` : ''}${ph ? `<img class="pv-ph" src="${esc(ph)}" alt="">` : ''}</div>`;
+    $('#tfPrev').innerHTML = `${toolSVG(pv, 'lg')}<div class="pv-tx"><b>${esc(d.name.trim() || toolAutoName(pv))}</b>${esc(TOOL_TYPES[ty])}<br>${esc(toolSpec(pv))}${num(d.lo) ? `<br>виліт ${fmt(num(d.lo), 1)} мм` : ''}<div class="pv-end">${endSVG(pv, 'lg')}<small>Вид А<br>з торця</small></div></div>`;
   };
   upd();
   f.addEventListener('input', upd);
@@ -2280,7 +2505,6 @@ function toolForm(t, opts = {}) {
     if (!o.created) o.created = Date.now();
     DB.tools[o.id] = o;
     if (!(await Store.set('t_' + o.id, o))) return;
-    if (formThumb) { DB.photos[o.id] = formThumb; await Store.set('ph_' + o.id, formThumb); }
     haptic('success'); toast('Фрезу збережено');
     closeSheet();
     if (isNew) { S.toolId = o.id; S.useVer = null; saveCfgSoon(); }
@@ -2289,9 +2513,8 @@ function toolForm(t, opts = {}) {
 }
 
 // ---------- Пластини ----------
-function insForm(i, opts = {}) {
+function insForm(i) {
   i = i || { iso: [] };
-  formThumb = opts.thumb || '';
   const isNew = !i.id || !DB.inserts[i.id];
   const r2 = (a, j) => (Array.isArray(a) && a[j] > 0 ? a[j] : '');
   openSheet(isNew ? 'Нова пластина' : 'Пластина', `
@@ -2339,8 +2562,7 @@ function insForm(i, opts = {}) {
   const isoNow = () => [...sel.querySelectorAll('.on')].map(b => b.dataset.v);
   const upd = () => {
     const d = Object.fromEntries(new FormData(f)), pv = { ...d, iso: isoNow() };
-    const ph = formThumb || photoOf(i);
-    $('#ifPrev').innerHTML = `${insertSVG(pv, 'lg')}<div class="pv-tx"><b>${esc(d.code.trim().toUpperCase() || 'Пластина')}</b>${isoChips(pv.iso)}<br>${esc(insSpec(pv))}${ph ? `<img class="pv-ph" src="${esc(ph)}" alt="">` : ''}</div>`;
+    $('#ifPrev').innerHTML = `${insertSVG(pv, 'lg')}<div class="pv-tx"><b>${esc(d.code.trim().toUpperCase() || 'Пластина')}</b>${isoChips(pv.iso)}<br>${esc(insSpec(pv))}</div>`;
     $('#isoHint').textContent = pv.iso.length ? pv.iso.map(k => `${k} — ${ISO[k].n.toLowerCase()}`).join(', ') : 'Натисни трикутники, позначені на коробці крапкою або колом.';
   };
   const u = isNew ? null : insUse(i.id);
@@ -2379,7 +2601,6 @@ function insForm(i, opts = {}) {
     if (!o.created) o.created = Date.now();
     DB.inserts[o.id] = o;
     if (!(await Store.set('i_' + o.id, o))) return;
-    if (formThumb) { DB.photos[o.id] = formThumb; await Store.set('ph_' + o.id, formThumb); }
     haptic('success'); toast('Пластину збережено'); closeSheet(); S.toolsSub = 'ins'; render();
   });
 }
@@ -2513,19 +2734,6 @@ async function fileToJpegB64(file) {
   c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
   c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', 0.85).split(',')[1];
-}
-// Квадратна мініатюра ~3 КБ — влазить у запис хмари Telegram (до 4 КБ)
-async function makeThumb(file) {
-  try {
-    const img = await loadImg(file), s = Math.min(img.naturalWidth, img.naturalHeight);
-    for (const [px, q] of [[96, 0.7], [84, 0.6], [72, 0.55], [60, 0.5]]) {
-      const c = document.createElement('canvas'); c.width = c.height = px;
-      c.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, px, px);
-      const u = c.toDataURL('image/jpeg', q);
-      if (u.length < 3900) return u;
-    }
-  } catch (e) {}
-  return '';
 }
 function apiErrorText(e, mod) {
   if (e instanceof UserErr) return e.message;
@@ -2666,14 +2874,13 @@ async function findByPhoto(kind, file) {
   openSheet(`Знайти ${F.noun} за фото`, `<div class="scanbox" id="scb"><img src="${url}" alt=""><i class="beam"></i><b></b><b></b><b></b><b></b></div>
     <div class="pst" id="fst"><span class="spin"></span>${kind === 'mach' ? 'Впізнаю верстат і шукаю його характеристики в інтернеті… до хвилини' : 'Розпізнаю… зазвичай 10–30 секунд'}</div>
     <div id="fres" style="margin-top:12px"></div>`, true);
-  const thumb = await makeThumb(file);
   try {
     const r = await F.run(file);
     if (seq !== findSeq || !$('#fres')) return;
     $('#scb').classList.add('done');
     if (!F.ok(r)) { $('#fst').textContent = `Не бачу на фото ${F.what}. ${r.notes || ''}`; haptic('warning'); return; }
     const o = F.conv(r), found = F.match(o);
-    findPend = { kind, o, thumb };
+    findPend = { kind, o };
     const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
     $('#fst').innerHTML = `✅ Розпізнано (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}`;
     $('#fres').innerHTML = `<div class="preview">${F.art(o)}<div class="pv-tx"><b>${esc(F.title(o))}</b>${esc(F.sub(o))}</div></div>
@@ -2692,7 +2899,6 @@ async function runPhoto(file, f, upd) {
   const st = $('#phst'), btn = f.querySelector('[data-act="photo"]');
   btn.disabled = true;
   st.innerHTML = '<span class="spin"></span>Розпізнаю фрезу… зазвичай 10–30 секунд';
-  const thumb = makeThumb(file);
   try {
     const r = await recognizeCutter(file);
     if (!r.is_cutter) { st.textContent = 'На фото не видно фрези. ' + (r.notes || ''); return; }
@@ -2702,7 +2908,6 @@ async function runPhoto(file, f, upd) {
       if ((k === 'name' || k === 'note') && f.elements[k].value.trim()) continue;
       f.elements[k].value = v;
     }
-    formThumb = (await thumb) || formThumb;
     upd();
     const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
     st.innerHTML = `✅ Заповнено з фото (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}<br><b>Перевір діаметр і довжину штангенциркулем.</b>`;
@@ -2716,7 +2921,6 @@ async function runInsPhoto(file, f, sel, upd) {
   const st = $('#ph3st'), btn = f.querySelector('[data-act="insPhoto"]');
   btn.disabled = true;
   st.innerHTML = '<span class="spin"></span>Читаю етикетку… зазвичай 10–30 секунд';
-  const thumb = makeThumb(file);
   try {
     const r = await recognizeInsert(file);
     if (!r.is_insert) { st.textContent = 'Не бачу пластини чи етикетки на фото. ' + (r.notes || ''); return; }
@@ -2727,7 +2931,6 @@ async function runInsPhoto(file, f, sel, upd) {
     if (o.iso && o.iso.length) sel.querySelectorAll('button').forEach(b => b.classList.toggle('on', o.iso.includes(b.dataset.v)));
     if (pos(r.qty) && !E.qty.value.trim()) E.qty.value = r.qty;
     if (o.note && !E.note.value.trim()) E.note.value = o.note;
-    formThumb = (await thumb) || formThumb;
     upd();
     const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
     st.innerHTML = `✅ Прочитано (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}${pos(r.qty) ? `<br>У коробці ${r.qty} шт — вкажи, скільки є насправді.` : ''}`;
@@ -3111,7 +3314,6 @@ function machForm(m, opts = {}) {
     if (!(o.feedMaxZ >= 50 && o.feedMaxZ <= 200000)) return toast('Перевір макс. подачу Z (мм/хв)', true);
     if (!(o.rpmRated > 0) || o.rpmRated > o.rpmMax) o.rpmRated = o.rpmMax;
     if (!(o.powerKw > 0) || o.powerKw > 100) return toast('Вкажи потужність шпинделя, кВт', true);
-    if (base.img) o.img = base.img;
     if (base.ord !== undefined) o.ord = base.ord;
     DB.machines[o.id] = o;
     if (!(await Store.set('s_' + o.id, o))) return;
@@ -3122,9 +3324,8 @@ function machForm(m, opts = {}) {
   });
 }
 async function markOnboarded() { DB.cfg = { ...DB.cfg, onboarded: true }; await Store.set('cfg', DB.cfg); }
-// Видалене з інвентаря цеху більше не повертається; мініатюра фото видаляється разом із записом
+// Видалене з інвентаря цеху більше не повертається
 async function forget(id) {
-  if (DB.photos[id]) { delete DB.photos[id]; await Store.del('ph_' + id); }
   if (String(id).startsWith('inv_')) { DB.cfg = { ...DB.cfg, invDel: [...new Set([...(DB.cfg.invDel || []), id])] }; await Store.set('cfg', DB.cfg); }
 }
 // Інвентар цеху (inventory.json поруч з апкою): верстати, пластини, фрези і перевірені режими.
@@ -3287,8 +3488,8 @@ const ACT = {
   findAdd: () => {
     const p = findPend; if (!p) return;
     closeSheet();
-    if (p.kind === 'tool') toolForm(p.o, { thumb: p.thumb });
-    else if (p.kind === 'ins') insForm(p.o, { thumb: p.thumb });
+    if (p.kind === 'tool') toolForm(p.o);
+    else if (p.kind === 'ins') insForm(p.o);
     else machForm(p.o);
   },
   machPhoto: el => {
@@ -3448,7 +3649,7 @@ document.addEventListener('input', e => {
     console.error(e);
     view.innerHTML = `<div class="card empty">Не вдалося завантажити: ${esc(e.message || e)}</div>`;
   }
-  if (TEST) window.__cnc = { calc, PRESET_MATS, getMat, MODES, OPS, interp, toolSVG, insertSVG, parseInsCode, insRange, DB, seedInventory };
+  if (TEST) window.__cnc = { calc, PRESET_MATS, getMat, MODES, OPS, interp, toolSVG, insertSVG, endSVG, parseInsCode, insRange, DB, seedInventory };
 })();
 })();
 </script>

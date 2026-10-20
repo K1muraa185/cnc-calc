@@ -441,6 +441,62 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:12;padding-bottom:env(
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .toast.err{border-left-color:var(--bad);background:#3A0F14}
 
+/* ---- перемикачі ---- */
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;padding:3px;background:var(--field);border:1px solid var(--line-2)}
+.seg button{position:relative;overflow:hidden;border:0;padding:10px 6px;cursor:pointer;background:transparent;color:var(--muted);
+  font:700 11.5px/1 var(--tech);letter-spacing:.12em;text-transform:uppercase;transition:color .2s,background .2s}
+.seg button.on{color:#fff;background:linear-gradient(180deg,var(--accent-2),var(--accent))}
+.seg button em{font-style:normal;font-family:var(--mono);letter-spacing:0;margin-left:5px;opacity:.75}
+.seg.sub{margin:0 0 12px}
+.ph .icon-btn{margin-left:auto}
+.ph .icon-btn + .btn{margin-left:0}
+
+/* ---- пластини: трикутники ISO як на коробках ---- */
+.iso{display:inline-flex;gap:2px;vertical-align:middle}
+.iso i{width:17px;height:15px;display:flex;justify-content:center;align-items:flex-end;padding-bottom:1px;font:800 8.5px/1 var(--mono);font-style:normal;
+  color:#fff;background:var(--c);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.iso i:nth-child(2n){clip-path:polygon(0 0,100% 0,50% 100%);align-items:flex-start;padding:1px 0 0}
+.iso i.off{background:var(--line);color:var(--dim)}
+.isosel{display:flex;gap:4px;margin:0 0 12px}
+.isosel button{flex:1;height:40px;border:0;padding:0 0 4px;cursor:pointer;display:flex;justify-content:center;align-items:flex-end;font:800 13px/1 var(--mono);
+  color:#fff;background:var(--c);clip-path:polygon(50% 0,100% 100%,0 100%);opacity:.22;transition:opacity .2s,transform .25s var(--spring)}
+.isosel button:nth-child(2n){clip-path:polygon(0 0,100% 0,50% 100%);align-items:flex-start;padding:5px 0 0}
+.isosel button.on{opacity:1;transform:scale(1.06)}
+.tc-art{position:relative}
+.tc-art.sq{width:64px;height:64px}
+.tc-ph{position:absolute;right:-6px;bottom:-6px;width:28px;height:28px;object-fit:cover;border:1px solid var(--line-2);box-shadow:0 0 0 2px var(--paper)}
+.pv-ph{display:block;width:92px;height:92px;margin-top:10px;object-fit:cover;border:1px solid var(--line-2)}
+.preview .pv-art.sq{width:112px;height:112px}
+.tags .iso{margin-right:2px}
+.mtag{color:var(--ink)}
+
+.grp-h .mart{width:26px;height:18px;flex:none;stroke:var(--muted)}
+.grp-h svg.i{width:16px;height:16px;color:var(--muted)}
+.pv-m{display:grid;place-items:center;width:112px;flex:none}
+.pv-m .mart{width:100px;height:69px}
+
+/* ---- час і продуктивність ---- */
+.tbox .tb-row{display:flex;gap:12px;align-items:flex-end;margin-top:12px}
+.tbox .tb-row .f{flex:1;margin:0}
+.tb-out{display:flex;gap:14px;flex:none}
+.tb-out div{text-align:right;min-width:52px}
+.tb-out b{display:block;font:700 19px/1 var(--mono);color:var(--ink)}
+.tb-out small{display:block;margin-top:5px;font:700 8.5px/1.2 var(--tech);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tbox .hint{margin:10px 0 0}
+
+/* ---- пошук за фото: видошукач зі скануванням ---- */
+.scanbox{position:relative;overflow:hidden;height:190px;margin:0 0 12px;border:1px solid var(--line-2);background:var(--field)}
+.scanbox img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35) contrast(1.05);opacity:.9}
+.scanbox::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid-2) 1px,transparent 1px),linear-gradient(90deg,var(--grid-2) 1px,transparent 1px);background-size:14px 14px}
+.scanbox .beam{position:absolute;left:0;right:0;top:0;height:2px;z-index:1;background:var(--accent);box-shadow:0 0 16px 4px var(--accent);animation:beam 1.5s ease-in-out infinite alternate}
+.scanbox.done .beam{display:none}
+.scanbox.done img{filter:none}
+.scanbox b{position:absolute;width:18px;height:18px;z-index:1;border:0 solid var(--accent)}
+.scanbox b:nth-of-type(1){left:8px;top:8px;border-width:2px 0 0 2px}.scanbox b:nth-of-type(2){right:8px;top:8px;border-width:2px 2px 0 0}
+.scanbox b:nth-of-type(3){left:8px;bottom:8px;border-width:0 0 2px 2px}.scanbox b:nth-of-type(4){right:8px;bottom:8px;border-width:0 2px 2px 0}
+@keyframes beam{from{top:0}to{top:calc(100% - 2px)}}
+
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -467,7 +523,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '3.0';
+const APP_VER = '3.1';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
@@ -509,6 +565,10 @@ const PRESET_MATS = [
     fzMin:[0.015,0.04,0.07,0.13,0.18,0.24,0.28], fzMax:[0.03,0.06,0.12,0.2,0.26,0.32,0.36],
     apSlot:0.6, apSide:1.2, apEngr:2, plunge:0.3, ramp:5, kc1:120,
     note:'Попутне фрезерування, 1-заходна фреза, обдув повітрям. Не зупиняйся в одній точці — оплавиться.' },
+  { id:'p_ptfe', g:'plastic', name:'Фторопласт (PTFE, тефлон)', vmin:150, vmax:500, vcap:1500,
+    fzMin:[0.02,0.05,0.1,0.15,0.22,0.28,0.32], fzMax:[0.04,0.08,0.15,0.25,0.33,0.42,0.48],
+    apSlot:0.75, apSide:1.5, apEngr:2, plunge:0.35, ramp:5, kc1:60,
+    note:'Лише обдув повітрям, без емульсії. Гостра 1–2-заходна фреза з полірованою канавкою, оберти 15–24 тис. Фторопласт мʼякий і «пливе»: не перетискай у лещатах, чистовий прохід — окремо з малим зняттям. Не перегрівай — дим від PTFE шкідливий.' },
   { id:'p_pvc', g:'plastic', name:'ПВХ спінений', vmin:200, vmax:450, vcap:1500,
     fzMin:[0.03,0.06,0.12,0.18,0.25,0.3,0.35], fzMax:[0.05,0.1,0.2,0.3,0.4,0.48,0.55],
     apSlot:1.0, apSide:2.0, apEngr:3, plunge:0.35, ramp:8, kc1:40,
@@ -517,11 +577,16 @@ const PRESET_MATS = [
     fzMin:[0.02,0.04,0.08,0.12,0.16,0.2,0.22], fzMax:[0.03,0.06,0.12,0.18,0.24,0.3,0.33],
     apSlot:1.0, apSide:1.0, apEngr:0.5, plunge:0.3, ramp:5, kc1:250,
     note:'Зустрічне фрезерування, 1-заходна фреза. Для V-пазів під згин — спеціальні фрези 90°/135°.' },
+  // Подача тут — на «2 зуби»: так рахується кукурудза (подача на оберт / 2). Пластини 2–3 мм ріжуть за 1–2 проходи.
+  { id:'p_cfrp', g:'composite', name:'Карбон (вуглепластик, препрег)', vmin:100, vmax:300, vcap:500,
+    fzMin:[0.005,0.01,0.02,0.03,0.045,0.055,0.06], fzMax:[0.01,0.02,0.04,0.055,0.07,0.085,0.09],
+    apSlot:1.0, apSide:1.5, apEngr:0.3, plunge:0.25, ramp:3, kc1:250,
+    note:'Твердосплавна «кукурудза» або компресійна з алмазним покриттям. Пил карбону струмопровідний і шкідливий — аспірація обовʼязкова, респіратор теж. Краї «пухнасті» або розшаровуються — фреза затупилась або подача замала. Не зупиняйся в одній точці: смола підгорає.' },
   { id:'p_foam', g:'foam', name:'Пінополіуретан, модельний пластик, пінопласт', vmin:300, vmax:700, vcap:3000,
     fzMin:[0.03,0.08,0.15,0.25,0.35,0.45,0.5], fzMax:[0.06,0.15,0.3,0.45,0.6,0.75,0.8],
     apSlot:2.0, apSide:3.0, apEngr:5, plunge:0.5, ramp:15, kc1:6,
     note:'Легкий матеріал — можна глибоко і швидко. Обмеження тут зазвичай — максимальна подача верстата.' },
-  { id:'p_alu', g:'metal', name:'Алюміній (Д16, АД31, АМг)', vmin:150, vmax:400, cool:true,
+  { id:'p_alu', g:'metal', name:'Алюміній (Д16, 7075, АД31, АМг)', vmin:150, vmax:400, cool:true,
     fzMin:[0.008,0.02,0.04,0.06,0.09,0.12,0.14], fzMax:[0.015,0.04,0.08,0.13,0.18,0.24,0.27],
     apSlot:0.25, apSide:0.75, apEngr:0.3, plunge:0.15, ramp:3, kc1:600,
     note:'1–2-заходна фреза з полірованою канавкою. Занадто тонка стружка налипає на фрезу і ламає її — не занижуй подачу.' },
@@ -537,6 +602,11 @@ const PRESET_MATS = [
     fzMin:[0.004,0.008,0.012,0.018,0.025,0.04,0.045], fzMax:[0.006,0.012,0.02,0.03,0.045,0.06,0.07],
     apSlot:0.1, apSide:0.3, apEngr:0.1, plunge:0.1, ramp:1.5, kc1:1700,
     note:'Твердосплав з покриттям TiAlN/AlTiN, 3–4 зуби. V тут для твердосплаву (у FrezyCNC 35–50 — рівень HSS).' },
+  // vcIns — окремий діапазон для пластин: монолітні й пластинчасті при тому ж Ø ріжуть з різною V і fz
+  { id:'p_40x', g:'metal', name:'Сталь 40Х (сира, 170–200 HB)', vmin:110, vmax:140, vcIns:[120,160], cool:true,
+    fzMin:[0.004,0.008,0.012,0.018,0.025,0.04,0.045], fzMax:[0.006,0.012,0.02,0.03,0.045,0.06,0.07],
+    apSlot:0.1, apSide:0.3, apEngr:0.1, plunge:0.1, ramp:1.5, kc1:1800,
+    note:'Вʼязка, дає довгу стружку — ЗОР обовʼязкова (M8). Монолітні з TiSiN: V 110–140 м/хв (робоче 110–130). Пластини: V 120–160 (робоче ~140). Монолітна фреза на ~6,4 м ходу втрачає 0,02–0,04 мм по Ø — для жорстких допусків плануй заміну.' },
   { id:'p_inox', g:'metal', name:'Нержавіюча сталь', vmin:50, vmax:90, cool:true,
     fzMin:[0.003,0.006,0.01,0.015,0.02,0.03,0.035], fzMax:[0.005,0.01,0.016,0.025,0.035,0.05,0.055],
     apSlot:0.08, apSide:0.25, apEngr:0.08, plunge:0.08, ramp:1.5, kc1:2100,
@@ -553,11 +623,40 @@ const PRESET_MATS = [
 
 const TOOL_TYPES = {
   flat:'Кінцева спіральна', ball:'Сферична (кругла)', taperball:'Конічна сферична', vbit:'V-гравер',
-  engr:'Конічний гравер (плоский кінчик)', rough:'Кукурудза (чорнова)', comp:'Компресійна',
+  engr:'Конічний гравер (плоский кінчик)', rough:'Кукурудза (насічка)', comp:'Компресійна',
   straight:'Пазова з прямими ножами', surf:'Торцева (вирівнювання)', drill:'Свердло',
+  imill:'Фреза зі змінними пластинами', iface:'Торцева фреза з пластинами',
 };
 const TOOL_SHORT = { flat:'Спіральна', ball:'Сфера', taperball:'Конус-сфера', vbit:'V-гравер', engr:'Гравер',
-  rough:'Кукурудза', comp:'Компресія', straight:'Пазова', surf:'Торцева', drill:'Свердло' };
+  rough:'Кукурудза', comp:'Компресія', straight:'Пазова', surf:'Торцева', drill:'Свердло', imill:'Пластинчаста', iface:'Торцева пласт.' };
+const INS_TYPES = ['imill', 'iface'];   // корпус сталевий, ріжуть твердосплавні пластини
+// ISO-групи оброблюваних матеріалів — кольори як на коробках пластин
+const ISO = {
+  P: { n: 'Сталь', c: '#2F6FDE' }, M: { n: 'Нержавійка', c: '#E9B500' }, K: { n: 'Чавун', c: '#E03131' },
+  N: { n: 'Кольорові, пластик', c: '#2FB344' }, S: { n: 'Жароміцні, титан', c: '#E8890C' }, H: { n: 'Загартовані', c: '#868E96' },
+};
+// Типові режими для пластин з покриттям, якщо на коробці нічого не написано (Vc м/хв, fz мм/зуб)
+const INS_DEF = { P: { vc: [130, 200], fz: [0.08, 0.18] }, M: { vc: [100, 160], fz: [0.06, 0.14] }, K: { vc: [120, 200], fz: [0.1, 0.22] },
+  N: { vc: [250, 600], fz: [0.06, 0.15] }, S: { vc: [30, 60], fz: [0.05, 0.12] }, H: { vc: [60, 120], fz: [0.03, 0.08] } };
+// Свердління металу: поправка подачі на оберт за групою ISO (база — сталь P)
+const DRILL_K = { P: 1, M: 0.75, K: 1.3, N: 1.6, S: 0.65, H: 0.5 };
+const MAT_ISO = { p_steel: 'P', p_40x: 'P', p_inox: 'M', p_iron: 'K', p_ti: 'S', p_alu: 'N', p_brass: 'N', p_mag: 'N' };
+const matIso = m => MAT_ISO[m.id] || (m.g === 'metal' ? 'P' : 'N');
+// Діапазон з коробки покриває всі групи (напр. Vc 30–220: від титану до сталі) — звужуємо його типовим для групи матеріалу
+function insRange(box, def) {
+  if (!(Array.isArray(box) && box[0] > 0 && box[1] >= box[0])) return def;
+  const lo = Math.max(box[0], def[0]), hi = Math.min(box[1], def[1]);
+  if (lo <= hi) return [lo, hi];
+  return def[1] < box[0] ? def : [box[1] * 0.8, box[1]];   // не перетинаються: беремо повільніше з двох
+}
+// Нормалізований код пластини для пошуку: «APMT 1135 PDER-M2» → «APMT1135PDERM2»
+const insKey = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+// Форми пластин за першою літерою ISO-коду
+const INS_SHAPES = {
+  A: 'Паралелограм 85° (APMT)', B: 'Паралелограм 82°', C: 'Ромб 80° (CNMG, CCMT)', D: 'Ромб 55° (DNMG, DCMT)', E: 'Ромб 75°',
+  H: 'Шестикутник', K: 'Паралелограм 55°', L: 'Прямокутник', M: 'Ромб 86°', O: 'Восьмикутник', P: 'Пʼятикутник',
+  R: 'Кругла (RPMT, RCKT)', S: 'Квадрат (SEKT, SNMG)', T: 'Трикутник (TNMG, TCMT)', V: 'Ромб 35° (VNMG, VCMT)', W: 'Тригон 80° (WNMG)',
+};
 const OPS = {
   slot:   { n:'Розкрій / паз на всю ширину', s:'Розкрій', d:'Фреза йде всією шириною — найважча операція.', ae:1.0, ap:'apSlot', fzK:1, cut:true },
   pocket: { n:'Виборка (кишеня)', s:'Виборка', d:'Вибирання площі, перший прохід — як паз.', ae:0.45, ap:'apSlot', fzK:1, cut:true },
@@ -574,6 +673,7 @@ const OPS_BY_TYPE = {
   comp:['slot','contour','pocket','finish'], straight:['slot','contour','pocket','finish'],
   ball:['r3d','f3d','slot'], taperball:['f3d','r3d'], vbit:['engrave'], engr:['engrave'],
   surf:['face','pocket'], drill:['drill'],
+  imill:['slot','contour','pocket','face','finish','r3d'], iface:['face','pocket','contour'],
 };
 const MODES = {
   safe:{ n:'Обережно', s:'нова фреза', v:0.15, fr:0.6, fz:0.0, ap:0.8 },
@@ -713,6 +813,7 @@ let svgSeq = 0;
 const arrowH = (x, y, dir) => `M${x} ${y}l${dir * 4.5} -2v4z`;
 const arrowV = (x, y, dir) => `M${x} ${y}l-2 ${dir * 4.5}h4z`;
 function toolSVG(t, size) {
+  if (INS_TYPES.includes(t.type)) return insToolSVG(t, size);
   const big = size === 'lg';
   const W = big ? 112 : 60, H = 150, cx = big ? 42 : W / 2, top = 8;
   const D = num(t.d) > 0 ? num(t.d) : 6;
@@ -755,10 +856,11 @@ function toolSVG(t, size) {
   const neckD = neck ? `M${cx - ws / 2} ${y0 - neck}H${cx + ws / 2}L${R} ${y0}H${L}Z` : '';
   let dims = '';
   if (big) {
-    const xr = Math.max(cx + ws / 2, R) + 10, yd = y1 + 9;
-    dims = `<g fill="var(--muted)" stroke="none"><path d="${arrowV(xr, y0, 1)}"/><path d="${arrowV(xr, y1, -1)}"/><path d="${arrowH(L, yd, 1)}"/><path d="${arrowH(R, yd, -1)}"/></g>
-      <g stroke="var(--muted)" stroke-width=".7" fill="none"><path d="M${R + 1} ${y0}H${xr + 3}M${R + 1} ${y1}H${xr + 3}M${xr} ${y0}V${y1}M${L} ${y1 + 1}V${yd + 3}M${R} ${y1 + 1}V${yd + 3}M${L} ${yd}H${R}"/></g>
-      <text x="${xr + 5}" y="${(y0 + y1) / 2 + 3.5}" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--text)">${fmt(lc, 1)}</text>
+    // розмір різальної частини — лише якщо його вписано (інакше на кресленні була б вигадана цифра)
+    const xr = Math.max(cx + ws / 2, R) + 10, yd = y1 + 9, hasLc = num(t.lc) > 0;
+    dims = `<g fill="var(--muted)" stroke="none">${hasLc ? `<path d="${arrowV(xr, y0, 1)}"/><path d="${arrowV(xr, y1, -1)}"/>` : ''}<path d="${arrowH(L, yd, 1)}"/><path d="${arrowH(R, yd, -1)}"/></g>
+      <g stroke="var(--muted)" stroke-width=".7" fill="none"><path d="${hasLc ? `M${R + 1} ${y0}H${xr + 3}M${R + 1} ${y1}H${xr + 3}M${xr} ${y0}V${y1}` : ''}M${L} ${y1 + 1}V${yd + 3}M${R} ${y1 + 1}V${yd + 3}M${L} ${yd}H${R}"/></g>
+      ${hasLc ? `<text x="${xr + 5}" y="${(y0 + y1) / 2 + 3.5}" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--text)">${fmt(lc, 1)}</text>` : ''}
       <text x="${cx}" y="${yd + 13}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--accent)">Ø${fmt(D, 2)}</text>`;
   }
   const viewH = big ? H + 26 : H;
@@ -774,6 +876,151 @@ function toolSVG(t, size) {
     <g clip-path="url(#${id})">${flutes}</g>
     ${dims}
   </svg>`;
+}
+// Фреза зі змінними пластинами, вигляд збоку: сталевий корпус, кишені під стружку, пластини — помаранчеві
+const P2 = q => `${+q[0].toFixed(2)} ${+q[1].toFixed(2)}`;
+const plateD = pts => `M${pts.map(P2).join('L')}Z`;
+function insToolSVG(t, size) {
+  const big = size === 'lg', face = t.type === 'iface';
+  const D = num(t.d) > 0 ? num(t.d) : face ? 63 : 16;
+  const z = clamp(Math.round(num(t.z) || (face ? 6 : 2)), 1, 30);
+  const ins = DB.inserts[t.insertId];
+  const W = big ? 112 : 60, cx = big ? 44 : W / 2, sw = big ? 1.2 : 1.1, p = big ? 1.1 : 0.9;
+  const plate = (pts, o = 1) => `<path d="${plateD(pts)}" fill="var(--accent)" fill-opacity="${(0.8 * o).toFixed(2)}" stroke="var(--accent)" stroke-opacity="${o}" stroke-width=".8" stroke-linejoin="round"/>`;
+  const txt = (x, y, s, c = 'var(--text)', a = 'start') => `<text x="${x}" y="${y}" text-anchor="${a}" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="${c}">${s}</text>`;
+  let H, shapes = '', over = '', dims = '', y1, L, R, axisTop = 3;
+  if (face) {
+    // Торцева: корпус-«тарілка» на короткій оправці, пластини під 45° по колу
+    const s = (big ? 62 : 52) / D, wd = D * s, hb = 0.36 * D * s, wa = Math.max(0.34 * D, 24) * s, ha = 0.3 * D * s;
+    const top = big ? 26 : 12, yb = top + ha; y1 = yb + hb; L = cx - wd / 2; R = cx + wd / 2;
+    H = y1 + (big ? 30 : 14);
+    const tr = wd * 0.4, yk = y1 - hb * 0.5;
+    shapes = `<path class="dw" pathLength="1" d="M${cx - wa / 2} ${top}H${cx + wa / 2}V${yb}H${cx - wa / 2}Z" fill="var(--ink)" fill-opacity=".06"/>
+      <path class="dw" pathLength="1" d="M${cx - tr} ${yb}H${cx + tr}L${R} ${yk}V${y1}H${L}V${yk}Z" fill="var(--ink)" fill-opacity=".14"/>`;
+    over += `<path d="M${cx - wa / 2 + 2} ${top + ha * 0.45}h${wa - 4}" stroke="var(--ink)" stroke-width=".6" opacity=".6"/>`;
+    const a = Math.min(hb * 0.5, wd * 0.1), dep = a * 0.95;
+    const corner = (sg, o) => {   // кут 45°: ріжуча кромка B→C
+      const xR = cx + sg * wd / 2, B = [xR - sg * a, y1 + p], C = [xR + sg * p, y1 - a], n = [-sg * dep * 0.7071, -dep * 0.7071];
+      return plate([B, C, [C[0] + n[0], C[1] + n[1]], [B[0] + n[0], B[1] + n[1]]], o);
+    };
+    over += corner(1, 1) + corner(-1, 0.55);
+    // пластини, що видно спереду, — по колу з кроком 360°/z
+    for (let i = 0; i < z; i++) {
+      const th = (i + 0.5) * 2 * Math.PI / z, sn = Math.sin(th), cs = Math.cos(th);
+      if (sn <= 0.15 || Math.abs(cs) > 0.86) continue;
+      const x = cx + cs * wd / 2, w = Math.max(1.2, a * 0.9 * sn);
+      over += plate([[x - w / 2, y1 + p], [x + w / 2, y1 + p], [x + w / 2, y1 - a * 0.8], [x - w / 2, y1 - a * 0.8]], 0.45 + 0.5 * sn);
+      over += `<path d="M${(x + w / 2 + 0.6).toFixed(2)} ${(y1 - a * 0.8).toFixed(2)}q${(-w * 0.2).toFixed(2)} ${(-hb * 0.35).toFixed(2)} ${(w * 0.5).toFixed(2)} ${(-hb * 0.55).toFixed(2)}" stroke="var(--ink)" stroke-width=".6" fill="none" opacity=".55"/>`;
+    }
+    if (big) {
+      const yd = y1 + 11;
+      dims = `<g fill="var(--muted)"><path d="${arrowH(L, yd, 1)}"/><path d="${arrowH(R, yd, -1)}"/></g>
+        <path d="M${L} ${y1 + 2}V${yd + 3}M${R} ${y1 + 2}V${yd + 3}M${L} ${yd}H${R}" stroke="var(--muted)" stroke-width=".7" fill="none"/>
+        ${txt(cx, yd + 13, `Ø${fmt(D, 1)}`, 'var(--accent)', 'middle')}${txt(cx + wa / 2 + 6, top + 10, `Z${z}`)}${txt(cx + wa / 2 + 6, top + 22, `${fmt(num(t.kappa) || 45)}°`, 'var(--muted)')}`;
+    }
+  } else {
+    // Кінцева з пластинами: хвостовик, головка з кишенями, пластини на торці
+    const sh = num(t.shank) > 0 ? num(t.shank) : D, ol = num(t.ol) > 0 ? num(t.ol) : Math.max(4 * D, 60);
+    H = big ? 176 : 150;
+    const s = Math.min(132 / ol, (big ? 50 : 46) / Math.max(D, sh)), sx = Math.min(s * 2.2, (big ? 52 : 46) / Math.max(D, sh));
+    const top = Math.max(8, (H - (big ? 26 : 0) - ol * s) / 2), wd = D * sx, ws = Math.min(sh, D * 1.6) * sx; y1 = top + ol * s; L = cx - wd / 2; R = cx + wd / 2;
+    axisTop = top - 5;
+    const hl = Math.min(ol * 0.34, Math.max(1.4 * D, 16)) * s, yh = y1 - hl;
+    const il = Math.min(((ins && num(ins.len)) || 10) * s, hl * 0.62), iw = Math.min(wd * 0.34, 6.35 * sx);
+    const body = ws < wd - 0.5
+      ? `M${cx - ws / 2} ${top}H${cx + ws / 2}V${yh - (wd - ws) / 2}L${R} ${yh}V${y1}H${L}V${yh}L${cx - ws / 2} ${yh - (wd - ws) / 2}Z`
+      : ws > wd + 0.5 ? `M${cx - ws / 2} ${top}H${cx + ws / 2}V${yh}H${R}V${y1}H${L}V${yh}H${cx - ws / 2}Z` : `M${L} ${top}H${R}V${y1}H${L}Z`;
+    shapes = `<path class="dw" pathLength="1" d="${body}" fill="var(--ink)" fill-opacity=".12"/>`;
+    over += `<path d="M${L + 0.6} ${yh}H${R - 0.6}" stroke="var(--ink)" stroke-width=".7" opacity=".7"/>`;
+    // кишеня під стружку перед пластиною
+    const xa = R - iw - wd * 0.2;
+    over += `<path d="M${xa.toFixed(2)} ${y1}Q${xa.toFixed(2)} ${(y1 - il * 1.3).toFixed(2)} ${R - 0.4} ${(y1 - il * 1.65).toFixed(2)}V${y1}Z" fill="var(--field)" stroke="var(--ink)" stroke-width=".8"/>`;
+    const A = [R + p, y1 + p], B = [R + p, y1 + p - il], C = [R + p - iw, y1 + p - il + iw * 0.3], Dd = [R + p - iw, y1 + p];
+    over += plate([A, B, C, Dd]) + `<circle cx="${(R + p - iw / 2).toFixed(2)}" cy="${(y1 + p - il * 0.45).toFixed(2)}" r="${Math.max(0.8, iw * 0.17).toFixed(2)}" fill="var(--field)" stroke="var(--accent)" stroke-width=".6"/>`;
+    if (z >= 2) over += plate([[L - p, y1 + p], [L - p, y1 + p - il * 0.92], [L - p + iw * 0.45, y1 + p - il * 0.92 + iw * 0.15], [L - p + iw * 0.45, y1 + p]], 0.55);
+    for (let i = 2; i < Math.min(z, 6); i++) {   // решта пластин — вузькі смужки між крайніми
+      const x = L + wd * (i - 1) / (Math.min(z, 6) - 1) * 0.8 + wd * 0.04;
+      over += plate([[x, y1 + p], [x + iw * 0.22, y1 + p], [x + iw * 0.22, y1 + p - il * 0.8], [x, y1 + p - il * 0.8]], 0.35);
+    }
+    if (big) {
+      const xr = Math.max(R, cx + ws / 2) + 9, yd = y1 + 9, ap = ins && num(ins.apMax) > 0 ? num(ins.apMax) : 0;
+      dims = `<g fill="var(--muted)"><path d="${arrowH(L, yd, 1)}"/><path d="${arrowH(R, yd, -1)}"/></g>
+        <path d="M${L} ${y1 + 2}V${yd + 3}M${R} ${y1 + 2}V${yd + 3}M${L} ${yd}H${R}" stroke="var(--muted)" stroke-width=".7" fill="none"/>
+        ${txt(cx, yd + 13, `Ø${fmt(D, 1)}`, 'var(--accent)', 'middle')}${txt(xr, y1 - il / 2 + 3, `Z${z}`)}${ap ? txt(xr, y1 - il / 2 + 15, `ap${fmt(ap, 1)}`, 'var(--muted)') : ''}`;
+    }
+  }
+  const sizeAttr = big ? 'class="pv-art tsvg"' : `class="tsvg" width="${size === 'xs' ? 30 : 40}" height="${size === 'xs' ? 42 : 76}"`;
+  return `<svg viewBox="0 0 ${W} ${H.toFixed(1)}" ${sizeAttr} aria-hidden="true">
+    <path d="M${cx} ${axisTop.toFixed(1)}V${(y1 + 5).toFixed(1)}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="7 2 1.5 2" fill="none"/>
+    <g stroke="var(--ink)" stroke-width="${sw}" stroke-linejoin="round">${shapes}</g>${over}${dims}</svg>`;
+}
+// Пластина у плані: форма за першою літерою ISO-коду, отвір під гвинт, фаска-стружколом, головна кромка помаранчева
+function insShape(sh, code) {
+  const rh = a => { const h = a / 2 * rad; return [[-Math.cos(h), 0], [0, Math.sin(h)], [Math.cos(h), 0], [0, -Math.sin(h)]]; };
+  const par = (w, a) => { const k = 1 / Math.tan(a * rad); return [[-w / 2 - k / 2, 0.5], [w / 2 - k / 2, 0.5], [w / 2 + k / 2, -0.5], [-w / 2 + k / 2, -0.5]]; };
+  const ngon = (n, r0 = 0) => Array.from({ length: n }, (_, i) => { const a = r0 + i * 2 * Math.PI / n; return [Math.cos(a), Math.sin(a)]; });
+  switch (sh) {
+    case 'A': return par(1.75, 85);
+    case 'B': return par(1.6, 82);
+    case 'K': return par(1.9, 55);
+    case 'L': return par(1.7, 90);
+    case 'C': return rh(80); case 'D': return rh(55); case 'E': return rh(75); case 'M': return rh(86); case 'V': return rh(35);
+    case 'T': return ngon(3, Math.PI / 2);
+    case 'W': { const o = []; for (let i = 0; i < 6; i++) { const a = Math.PI / 2 + i * Math.PI / 3, r = i % 2 ? 0.62 : 1; o.push([r * Math.cos(a), r * Math.sin(a)]); } return o; }
+    case 'H': return ngon(6); case 'O': return ngon(8, Math.PI / 8); case 'P': return ngon(5, Math.PI / 2);
+    case 'S': {
+      // SE..: квадрат з фасками на кутах (торцеві 45°)
+      const c = /^SE/i.test(code || '') ? 0.2 : 0.06;
+      return [[-1 + c, 1], [1 - c, 1], [1, 1 - c], [1, -1 + c], [1 - c, -1], [-1 + c, -1], [-1, -1 + c], [-1, 1 - c]];
+    }
+    default: return null;   // R — коло
+  }
+}
+function insertSVG(i, size) {
+  const big = size === 'lg', V = big ? 112 : 60, m = big ? 14 : 6;
+  const shape = (i && i.shape) || (i && i.code ? String(i.code)[0].toUpperCase() : 'S');
+  const pts = insShape(shape, i && i.code);
+  const box = V - 2 * m - (big ? 14 : 0), c0 = [V / 2, (V - (big ? 14 : 0)) / 2];
+  let outline, inner, edge, rr;
+  if (!pts) {
+    rr = box / 2; outline = `<circle cx="${c0[0]}" cy="${c0[1]}" r="${rr}"/>`;
+    inner = `<circle cx="${c0[0]}" cy="${c0[1]}" r="${rr * 0.8}"/>`;
+    edge = `<path d="M${c0[0] - rr} ${c0[1]}A${rr} ${rr} 0 0 0 ${c0[0] + rr} ${c0[1]}"/>`;
+  } else {
+    const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
+    const w = Math.max(...xs) - Math.min(...xs), h = Math.max(...ys) - Math.min(...ys), k = box / Math.max(w, h);
+    const ox = c0[0] - (Math.max(...xs) + Math.min(...xs)) / 2 * k, oy = c0[1] + (Math.max(...ys) + Math.min(...ys)) / 2 * k;
+    const P = pts.map(q => [ox + q[0] * k, oy - q[1] * k]);
+    const cxp = P.reduce((s, q) => s + q[0], 0) / P.length, cyp = P.reduce((s, q) => s + q[1], 0) / P.length;
+    outline = `<path class="dw" pathLength="1" d="${plateD(P)}"/>`;
+    inner = `<path d="${plateD(P.map(q => [cxp + (q[0] - cxp) * 0.8, cyp + (q[1] - cyp) * 0.8]))}"/>`;
+    const lo = P.reduce((b, q, j) => (q[1] + P[(j + 1) % P.length][1] > b.v ? { v: q[1] + P[(j + 1) % P.length][1], j } : b), { v: -1e9, j: 0 }).j;
+    edge = `<path d="M${P2(P[lo])}L${P2(P[(lo + 1) % P.length])}"/>`;
+    rr = Math.min(w, h) * k / 2;
+  }
+  const hole = Math.max(2, rr * 0.3);
+  const dim = big && i ? `<text x="${V / 2}" y="${V - 5}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--accent)">${esc([shape, num(i.len) ? `L${fmt(num(i.len), 1)}` : '', num(i.thick) ? `s${fmt(num(i.thick), 2)}` : ''].filter(Boolean).join(' · '))}</text>` : '';
+  const sz = big ? 'class="pv-art sq tsvg"' : `class="tsvg" width="${size === 'xs' ? 30 : 46}" height="${size === 'xs' ? 30 : 46}"`;
+  return `<svg viewBox="0 0 ${V} ${V}" ${sz} aria-hidden="true">
+    <path d="M${c0[0] - rr - 4} ${c0[1]}H${c0[0] + rr + 4}M${c0[0]} ${c0[1] - rr - 4}V${c0[1] + rr + 4}" stroke="var(--muted)" stroke-width=".5" stroke-dasharray="6 2 1.5 2"/>
+    <g fill="var(--ink)" fill-opacity=".14" stroke="var(--ink)" stroke-width="${big ? 1.3 : 1.1}" stroke-linejoin="round">${outline}</g>
+    <g fill="none" stroke="var(--ink)" stroke-width=".6" opacity=".55">${inner}</g>
+    <g fill="none" stroke="var(--accent)" stroke-width="${big ? 2.6 : 2.1}" stroke-linecap="round">${edge}</g>
+    <circle cx="${c0[0]}" cy="${c0[1]}" r="${(hole * 1.5).toFixed(2)}" fill="none" stroke="var(--ink)" stroke-width=".6" opacity=".6"/>
+    <circle cx="${c0[0]}" cy="${c0[1]}" r="${hole.toFixed(2)}" fill="var(--field)" stroke="var(--ink)" stroke-width="1"/>
+    ${dim}</svg>`;
+}
+// Трикутники ISO, як на коробках пластин
+const isoChips = arr => `<span class="iso">${Object.entries(ISO).map(([k, v]) => `<i class="${(arr || []).includes(k) ? '' : 'off'}" style="--c:${v.c}" title="${v.n}">${k}</i>`).join('')}</span>`;
+// Розбір ISO-коду фрезерної пластини: APMT1135PDER → форма A, кромка 11, товщина 3,5
+const THICK = { '01': 1.59, T1: 1.98, '02': 2.38, T2: 2.78, '03': 3.18, T3: 3.97, '04': 4.76, '05': 5.56, '06': 6.35, '07': 7.94, '09': 9.52 };
+function parseInsCode(code) {
+  const c = insKey(code), m = c.match(/^([ABCDEHKLMOPRSTVW])([A-Z])([A-Z])([A-Z])(\d{2})(T\d|\d{2})?(\d{2})?/);
+  if (!m) return {};
+  const o = { shape: m[1], len: +m[5] };
+  if (m[6]) o.thick = THICK[m[6]] || (+m[6] >= 10 ? +m[6] / 10 : undefined);
+  if (m[7]) o.re = +m[7] / 10;
+  return o;
 }
 // Штриховка матеріалу як на кресленні (ДСТУ/ГОСТ 2.306): метал — косі лінії, неметал — сітка, дерево — волокна
 function matSwatch(g, size = 30) {
@@ -854,8 +1101,9 @@ const Store = {
 };
 
 // ======================= База =======================
-// Ключі: t_<id> фреза, m_<id> матеріал (свій або змінений з довідника), s_<id> верстат, h_<id> історія, cfg, apikey
-const DB = { tools:{}, matOv:{}, machines:{}, hist:{}, cfg:{}, apiKey:'' };
+// Ключі: t_<id> фреза, i_<id> пластина, m_<id> матеріал (свій або змінений з довідника), s_<id> верстат, h_<id> історія,
+// ph_<id> мініатюра фото (до 4 КБ), cfg, apikey
+const DB = { tools:{}, inserts:{}, matOv:{}, machines:{}, hist:{}, photos:{}, cfg:{}, apiKey:'' };
 
 function defaultMachine() {
   return { id: genId(), name: 'Мій фрезер', ...MACHINE_TPL[1].m, units: 'mmmin', configured: false, approx: true, note: '' };
@@ -896,15 +1144,23 @@ async function loadDB() {
   for (const [k, v] of Object.entries(entries || {})) {
     if (v == null || v === '') continue;
     if (k === 'apikey') { DB.apiKey = v; continue; }
+    if (k.startsWith('ph_')) { DB.photos[k.slice(3)] = v; continue; }
     let o; try { o = JSON.parse(v); } catch (e) { continue; }
     if (!o) continue;
     if (k === 'cfg') DB.cfg = o || {};
     else if (k.startsWith('t_') && o.id) DB.tools[o.id] = o;
+    else if (k.startsWith('i_') && o.id) DB.inserts[o.id] = o;
     else if (k.startsWith('m_') && o.id) DB.matOv[o.id] = normalizeMat(o);
     else if (k.startsWith('s_') && o.id) DB.machines[o.id] = normalizeMachine(o);
     else if (k.startsWith('h_') && o.id) DB.hist[o.id] = o;
   }
   if (!Object.keys(DB.machines).length) { const m = defaultMachine(); DB.machines[m.id] = m; await Store.set('s_' + m.id, m); }
+  sortMachines();
+}
+// Сховище віддає ключі за абеткою — тримаємо стабільний порядок: спершу верстати цеху (ord), далі свої за назвою
+function sortMachines() {
+  const arr = Object.values(DB.machines).sort((a, b) => (a.ord ?? 50) - (b.ord ?? 50) || String(a.name).localeCompare(String(b.name), 'uk'));
+  DB.machines = Object.fromEntries(arr.map(m => [m.id, m]));
 }
 function allMats(withHidden) {
   const out = [];
@@ -919,25 +1175,43 @@ function allMats(withHidden) {
   return [...mine, ...out].sort((a, b) => order.indexOf(a.g) - order.indexOf(b.g));
 }
 const getMat = id => allMats(true).find(m => m.id === id);
+// Стабільний порядок, як у шухляді: кінцеві, кукурудзи, гравери, з пластинами, торцеві, свердла; всередині — за діаметром
+const TYPE_ORD = ['flat', 'rough', 'comp', 'straight', 'ball', 'taperball', 'vbit', 'engr', 'surf', 'imill', 'iface', 'drill'];
 function sortedTools() {
-  return Object.values(DB.tools).sort((a, b) => (b.lastUsed || 0) - (a.lastUsed || 0) || String(a.name).localeCompare(String(b.name), 'uk'));
+  const o = t => { const i = TYPE_ORD.indexOf(t.type); return i < 0 ? 99 : i; };
+  return Object.values(DB.tools).sort((a, b) => o(a) - o(b) || num(a.d) - num(b.d) || String(a.name).localeCompare(String(b.name), 'uk'));
 }
 function toolAutoName(t) {
+  if (INS_TYPES.includes(t.type)) return `${TOOL_SHORT[t.type]} Ø${fmt(num(t.d), 1)} ${num(t.z) || 1}пл`;
   return `${TOOL_SHORT[t.type] || 'Фреза'} Ø${fmt(num(t.d), 3)} ${num(t.z) || 1}з${num(t.lc) ? ' L' + fmt(num(t.lc), 1) : ''}`;
 }
 function toolSpec(t) {
   const z = num(t.z) || 1;
+  if (INS_TYPES.includes(t.type)) {
+    const i = DB.inserts[t.insertId];
+    return [`Ø${fmt(num(t.d), 1)}`, `${z} ${plural(z, 'пластина', 'пластини', 'пластин')}`, i ? i.code : 'пластину не вибрано',
+      t.type === 'iface' ? `${fmt(num(t.kappa) || 45)}°` : ''].filter(Boolean).join(' · ');
+  }
   return [`Ø${fmt(num(t.d), 3)}`, `${z} ${plural(z, 'зуб', 'зуби', 'зубів')}`,
     num(t.lc) ? `різальна ${fmt(num(t.lc), 1)}` : '', ['vbit', 'engr', 'taperball'].includes(t.type) && num(t.angle) ? `${fmt(num(t.angle), 1)}°` : '',
     (TM[t.tm] || TM.carbide).s].filter(Boolean).join(' · ');
 }
+// Фото предмета: з інвентаря (img/…) або мініатюра, зроблена при розпізнаванні (ph_<id>)
+const photoOf = o => (o && (DB.photos[o.id] || (/^img\/[\w.-]+$/.test(o.img || '') ? o.img : ''))) || '';
+const sortedInserts = () => Object.values(DB.inserts).sort((a, b) => String(a.code).localeCompare(String(b.code)));
+// Скільки пластин стоїть у фрезах
+function insUse(id) {
+  const ts = Object.values(DB.tools).filter(t => INS_TYPES.includes(t.type) && t.insertId === id);
+  return { tools: ts, pcs: ts.reduce((s, t) => s + (num(t.z) || 1) * (num(t.qty) || 1), 0) };
+}
+const insSpec = i => [i.maker, i.grade, i.shape && INS_SHAPES[i.shape] ? INS_SHAPES[i.shape].split(' (')[0] : ''].filter(Boolean).join(' · ');
 const matSpec = m => `V ${fmt(m.vmin)}–${fmt(m.vmax)} м/хв · fz Ø6: ${fmt(interp(m.fzMin, 6), 3)}–${fmt(interp(m.fzMax, 6), 3)} мм`;
 
 // ======================= Стан екрана =======================
 const S = {
   tab: 'calc', machineId: '', toolId: '', matId: 'p_wood', op: 'slot', mode: 'norm', depth: '18', engrDepth: '1', aePct: '',
   manual: { type:'flat', d:'6', z:'2', lc:'22', tm:'carbide', angle:'90', tip:'0.2' },
-  useVer: null, qTools: '', qHist: '', hRate: '',
+  useVer: null, qTools: '', qIns: '', qHist: '', hRate: '', toolsSub: 'tools', pathLen: '',
 };
 function initState() {
   const c = DB.cfg || {};
@@ -981,14 +1255,31 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
   const O = OPS[op];
   if (!O) return { error: 'Обери операцію.' };
   if (!mat) return { error: 'Обери матеріал.' };
-  const M = MODES[mode] || MODES.norm, RG = RIGID[mach.rigid] || RIGID.mid, T = TM[tool.tm] || TM.carbide;
+  // Фреза зі змінними пластинами: швидкість і подача — з пластини (або типові для ISO-групи), корпус сталевий
+  const insT = INS_TYPES.includes(tool.type), insert = insT ? (DB.inserts[tool.insertId] || null) : null, iso = matIso(mat);
+  const M = MODES[mode] || MODES.norm, RG = RIGID[mach.rigid] || RIGID.mid, T = insT ? TM.carbide : (TM[tool.tm] || TM.carbide);
   const D = num(tool.d);
   if (!(D > 0)) return { error: 'Вкажи діаметр фрези.' };
-  if (D > 120) return { error: 'Діаметр понад 120 мм — перевір число.' };
+  if (D > (insT ? 320 : 120)) return { error: `Діаметр понад ${insT ? 320 : 120} мм — перевір число.` };
   const zIn = Math.round(num(tool.z) || 1);
-  if (zIn < 1 || zIn > 12) return { error: 'Кількість зубів — від 1 до 12.' };
-  const z = op === 'drill' ? 2 : zIn;
-  const lc = num(tool.lc) > 0 ? num(tool.lc) : NaN;
+  if (zIn < 1 || zIn > (insT ? 30 : 12)) return { error: `Кількість ${insT ? 'пластин — від 1 до 30' : 'зубів — від 1 до 12'}.` };
+  // Кукурудза: зубчики дрібні й ріжуть не всі одразу — подачу виробники дають на оберт, рахуємо як 2 зуби
+  const corn = tool.type === 'rough' && mat.g !== 'metal';
+  const z = op === 'drill' ? 2 : corn ? Math.min(zIn, 2) : zIn;
+  if (corn && zIn > 2) say('i', 'Кукурудза: подачу рахую як для 2 зубів — дрібні зубчики ріжуть не всі одразу.');
+  // Ширина зняття як частка Ø (з операції або введена)
+  let aeFrac = O.ae || 0;
+  const aeU = num(aePctIn);
+  if (O.ae && aeU > 0) aeFrac = clamp(aeU, 1, 100) / 100;
+  // Чистова в металі: припуск ~0,25 мм, а не 8% Ø, як по дереву
+  else if (op === 'finish' && mat.g === 'metal') aeFrac = Math.min(O.ae, 0.25 / D);
+  // Пластина: «ap до» з коробки — межа для повного зняття; при вузькому (≤35% Ø) можна майже всю кромку (0,85 довжини)
+  const narrow = aeFrac > 0 && aeFrac <= 0.35 && op !== 'face';
+  const apBox = insT && insert && num(insert.apMax) > 0 ? num(insert.apMax) : NaN;
+  const apEdge = insT && insert && num(insert.len) > 0 ? num(insert.len) * 0.85 : NaN;
+  const apIns = apBox > 0 ? (narrow && apEdge > apBox ? apEdge : apBox) : NaN;
+  const lc0 = num(tool.lc) > 0 ? num(tool.lc) : NaN;
+  const lc = apIns > 0 ? (lc0 > 0 ? Math.min(lc0, apIns) : apIns) : lc0;
   const shank = num(tool.shank) > 0 ? num(tool.shank) : D;
   const metal = mat.g === 'metal';
   const rpmMax = num(mach.rpmMax) > 0 ? num(mach.rpmMax) : 24000;
@@ -1016,8 +1307,15 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
   // Дерево, пластики, піни: як у таблицях Amana/Onsrud — частка від максимуму шпинделя,
   // але не повільніше за V мін (дрібні фрези) і не швидше за жорстку межу V (великі фрези).
   let vMin = mat.vmin * T.v, vMax = mat.vmax * T.v;
+  if (insT) {
+    const vr = insRange(insert && insert.vc, Array.isArray(mat.vcIns) && mat.vcIns[1] > 0 ? mat.vcIns : INS_DEF[iso].vc);
+    vMin = vr[0]; vMax = vr[1];
+    if (insert && Array.isArray(insert.iso) && insert.iso.length && !insert.iso.includes(iso))
+      say('w', `Пластина ${insert.code || ''} призначена для груп ${insert.iso.join(', ')}, а «${mat.name}» — група ${iso}. Перевір марку сплаву.`);
+    if (!insert) say('i', `Пластину не вибрано — беру типові дані для групи ${iso} (${ISO[iso].n}). Точніше буде, якщо привʼязати пластину з коробки.`);
+  }
   if (op === 'drill') { vMin *= 0.7; vMax *= 0.7; }
-  const spindleMode = !metal && op !== 'drill';
+  const spindleMode = !metal && op !== 'drill' && !insT;
   const vCap = (num(mat.vcap) > 0 ? num(mat.vcap) : mat.vmax * 3) * T.v;
   let V = vMin + (vMax - vMin) * M.v, nIdeal;
   if (spindleMode) {
@@ -1033,7 +1331,7 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
   if (nCap < rpmMin) return { error: `Фреза дозволяє максимум ${fmt(nCap)} об/хв, а шпиндель крутить мінімум ${fmt(rpmMin)}. Цією фрезою на цьому верстаті працювати не можна.` };
   let n0 = clamp(Math.round(nIdeal / 100) * 100, rpmMin, nCap);
   if (fixed && num(fixed.n) > 0) n0 = num(fixed.n);
-  if (!fixed && nIdeal > nCap * 1.02) say('i', `Для Ø${fmt(Deff, 2)} мм ідеально ~${fmt(r100(nIdeal))} об/хв — ${capWhy === 'фреза' ? 'фреза дозволяє' : capWhy === 'шпиндель' ? 'шпиндель дає' : 'безпечна межа —'} максимум ${fmt(nCap)}, рахую від нього.`);
+  if (!fixed && nIdeal > nCap * 1.02) say(metal && nIdeal > nCap * 1.15 ? 'w' : 'i', `Для Ø${fmt(Deff, 2)} мм ідеально ~${fmt(r100(nIdeal))} об/хв — ${capWhy === 'фреза' ? 'фреза дозволяє' : capWhy === 'шпиндель' ? 'шпиндель дає' : 'безпечна межа —'} максимум ${fmt(nCap)}, тому оберти обмежено, а подачу перераховано від ${fmt(nCap)}.`);
   if (fixed && n0 > nCap) say('b', `Збережені оберти ${fmt(n0)} більші за допустимі ${fmt(nCap)} (${capWhy}).`);
   if (nIdeal < rpmMin * 0.98) {
     const Vr = Math.PI * Deff * n0 / 1000, hot = Vr > (spindleMode ? vCap : vMax) * 1.15;
@@ -1042,45 +1340,63 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
   }
 
   // 2. Подача на зуб — з діапазону довідника
-  const L = num(tool.lo) > 0 ? num(tool.lo) : (lc > 0 ? lc + 0.3 * D + 2 : 3 * D + 2);
+  // Виліт: з картки фрези; якщо не вписано — типовий (у фрез з пластинами корпус довгий, торцева сидить на короткій оправці)
+  const L = num(tool.lo) > 0 ? num(tool.lo) : insT ? (tool.type === 'iface' ? 0.35 * D + 25 : 3 * D + 10) : (lc > 0 ? lc + 0.3 * D + 2 : 3 * D + 2);
   // Довга фреза (L > 6D) — правило FrezyCNC «не більше 1D за прохід»; решту бере на себе модель відгину нижче
   const ld = L / D;
   const ldK = ld > 8 ? 0.55 : ld > 6 ? 0.75 : 1;
   if (ldK < 1 && O.cut) say('i', `Довгий виліт (${fmt(ld, 1)}×D) — глибину за прохід знижено. Якщо можна, засунь фрезу глибше в цангу.`);
-  const fzLo = interp(mat.fzMin, Deff) * T.fz, fzHi = interp(mat.fzMax, Deff) * T.fz;
+  const fzIns = insT ? insRange(insert && insert.fz, INS_DEF[iso].fz) : null;
+  // Кут у плані: у торцевої 45° стружка тонша за подачу (h = fz · sin κ) — питома сила трохи більша
+  const kap = insT ? (num(tool.kappa) > 0 ? num(tool.kappa) : tool.type === 'iface' ? 45 : 90) : 90;
+  const sK = kap > 0 && kap < 90 ? Math.sin(kap * rad) : 1;
+  // Свердло в металі: подача на оберт ≈ (0,009…0,014)·D з поправкою на групу ISO; на кромку — половина
+  const drillM = op === 'drill' && metal && !insT;
+  const fzLo = fzIns ? fzIns[0] : drillM ? 0.0045 * D * DRILL_K[iso] * T.fz : interp(mat.fzMin, Deff) * T.fz;
+  const fzHi = fzIns ? fzIns[1] : drillM ? 0.007 * D * DRILL_K[iso] * T.fz : interp(mat.fzMax, Deff) * T.fz;
   if (!(fzLo > 0) || !(fzHi > 0)) return { error: 'У матеріалу не заповнена таблиця подачі на зуб.' };
   const fzMode = fzLo + (fzHi - fzLo) * M.fz;
-  let fzBase = fzMode * O.fzK * RG.fz;
+  // Чистова пластинами: подача — з нижньої межі паспорта, без «компенсації тонкої стружки» (шорсткість важливіша)
+  const insFin = insT && O.fin;
+  // «Вирівнювання» ×0,6 — для фрез по дереву; пластини торцюють з повною подачею, а при κ < 90° — ще й з більшою (стружка тонша)
+  const opFzK = insT && op === 'face' ? 1 : O.fzK, kapK = insT && sK < 1 ? Math.min(1 / sK, 1.4) : 1;
+  let fzBase = insFin ? fzLo * RG.fz : Math.min(fzMode * opFzK * RG.fz * kapK, fzHi * Math.max(1, kapK * 0.85));
 
   // 3. Ширина (ae) і глибина (ap)
-  let aeFrac = O.ae || 0;
-  const aeU = num(aePctIn);
-  if (O.ae && aeU > 0) aeFrac = clamp(aeU, 1, 100) / 100;
   let ae = op === 'engrave' ? Deff : aeFrac > 0 ? aeFrac * D : NaN;
   if (fixed && num(fixed.ae) > 0 && op !== 'engrave') ae = num(fixed.ae);
-  const apK = M.ap * RG.ap;
+  const apK = M.ap * RG.ap, apBoost = metal && !insT && mach.rigid === 'heavy' ? 2.5 : 1;
   let apRaw = NaN;
-  if (O.ap === 'apSlot') apRaw = mat.apSlot * D * (O.apK || 1) * apK * ldK;
+  if (insT && (O.ap === 'apSlot' || O.ap === 'apSide'))   // пластини: від паспортної глибини, далі — перевірка міцності й потужності
+    apRaw = (lc > 0 ? lc : Math.min(0.25 * D, 4)) * Math.min(1, O.apK || 1) * apK * ldK;
+  // Важкий обробний центр: монолітна фреза в металі бере в пазу до 0,25·D (норма 0,1·D — для порталу); далі — перевірка міцності
+  else if (O.ap === 'apSlot') apRaw = mat.apSlot * apBoost * D * (O.apK || 1) * apK * ldK;
   else if (O.ap === 'apSide') {
     const base = aeFrac > 0.3 ? mat.apSide + (mat.apSlot - mat.apSide) * Math.min(1, (aeFrac - 0.3) / 0.6) : mat.apSide;
-    apRaw = base * D * (O.apK || 1) * apK * ldK;
+    apRaw = base * apBoost * D * (O.apK || 1) * apK * ldK;
   } else if (O.ap === 'apEngr') apRaw = mat.apEngr * apK;
-  else if (O.ap === 'face') apRaw = Math.min(1.5, mat.apSlot * D * 0.1) * M.ap;
+  else if (O.ap === 'face') apRaw = insT ? Math.min(lc > 0 ? lc : 3, metal ? 1.5 : 3) * M.ap * RG.ap : Math.min(1.5, mat.apSlot * D * 0.1) * M.ap;
   else if (O.ap === 'drill') apRaw = Math.max(0.2, mat.apSlot * D * 2);
   if (lc > 0 && apRaw > lc && op !== 'engrave') apRaw = lc;
-  if (lc > 0 && depth > lc && ['slot', 'pocket', 'contour', 'finish', 'r3d', 'drill'].includes(op))
+  // (у фрези з пластинами глибина понад кромку — просто кілька проходів; корпус вужчий за Ø пластин)
+  if (!insT && lc > 0 && depth > lc && ['slot', 'pocket', 'contour', 'finish', 'r3d', 'drill'].includes(op))
     say('b', `Глибина ${fmt(depth, 2)} мм більша за різальну частину (${fmt(lc, 1)} мм) — фреза не дістане, хвостовик тертиме об матеріал. Візьми довшу фрезу або зменш глибину.`);
+  // Виліт менший за глибину — цанга чи патрон зачепить заготовку
+  else if (num(tool.lo) > 0 && ((O.cut && op !== 'face') || op === 'drill') && depth > num(tool.lo) - 1)
+    say('b', `Глибина ${fmt(depth, 2)} мм більша за виліт ${insT ? 'фрези з оправки' : 'з цанги'} (${fmt(num(tool.lo), 1)} мм) — патрон зачепить заготовку. Висунь фрезу більше (обережно з відгином) або зменш глибину.`);
 
   // 4. Модель навантаження: сила різання → відгин і напруження у фрезі, потужність
-  const E = tool.tm === 'hss' ? 210000 : 600000;       // модуль пружності, Н/мм²
-  const sAllow = tool.tm === 'hss' ? 700 : 1000;        // допустиме напруження на згин, МПа (із запасом)
-  const De = D * (zIn <= 1 ? 0.7 : zIn === 2 ? 0.75 : 0.8); // «серцевина» фрези в зоні канавок
+  const E = insT || tool.tm === 'hss' ? 210000 : 600000;         // модуль пружності, Н/мм² (сталевий корпус / HSS / твердосплав)
+  const sAllow = insT ? 600 : tool.tm === 'hss' ? 700 : 1000;     // допустиме напруження на згин, МПа (із запасом)
+  const De = D * (insT ? 0.85 : zIn <= 1 ? 0.7 : zIn === 2 ? 0.75 : 0.8); // «серцевина» фрези в зоні канавок
   const lf = lc > 0 ? Math.min(lc, L) : Math.min(L, 3 * D);
   const checkForce = !!O.cut;
-  const deflLim = O.fin ? 0.03 : metal ? 0.06 : 0.1;
+  // Допустимий відгин: чистова — 0,03; чорнова пластинами лишає припуск 0,3–0,5 мм — до 0,2
+  // (сталий відгин на чистовій знімається корекцією D у стійці, тому 0,05)
+  const deflLim = O.fin ? 0.05 : insT ? 0.2 : metal ? 0.06 : 0.1;
   const aeR = ae > 0 ? Math.min(1, ae / (op === 'engrave' ? Deff : D)) : 1;
   // Вузьке зняття → стружка тонша за подачу на зуб, компенсуємо (не більше ×1,8)
-  const thin = O.cut && aeR < 0.5 ? Math.min(1.8, 1 / Math.sqrt(1 - Math.pow(1 - 2 * aeR, 2))) : 1;
+  const thin = O.cut && aeR < 0.5 && !insFin ? Math.min(1.8, 1 / Math.sqrt(1 - Math.pow(1 - 2 * aeR, 2))) : 1;
 
   function evalCut(apE, fz, nStart, noClamp) {
     let n = nStart, F = fz * z * n, nDrop = false;
@@ -1099,12 +1415,12 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
       const phi = Math.acos(1 - 2 * ratio);
       r.hMax = ratio < 0.5 ? fzR * Math.sin(phi) : fzR;
       const hm = fzR * 2 * ratio / phi;
-      const kcm = kcAt(mat.kc1, hm);
+      const kcm = kcAt(mat.kc1, hm * sK);
       const mrr = apE * ratio * Dc * F;                  // мм³/хв
       r.P = kcm * mrr / 60e6 / 0.8;                       // кВт, ККД 0,8
       if (checkForce) {
         const FtAvg = kcm * mrr / (Math.PI * Dc * n);    // середня колова сила, Н
-        const FtPk = kcAt(mat.kc1, r.hMax) * apE * r.hMax; // пік на одному зубі
+        const FtPk = kcAt(mat.kc1, r.hMax * sK) * apE * r.hMax; // пік на одному зубі (площа стружки ap·fz від κ не залежить)
         const Fr = 1.25 * Math.max(FtAvg, FtPk);          // + радіальна складова
         const a = Math.max(apE / 2, L - apE / 2);          // плече від цанги до центру різання
         const sEx = Math.min(Math.max(0, L - lf), a);       // відкритий хвостовик
@@ -1121,7 +1437,7 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
   }
 
   let res, apCur = apRaw, passes = NaN, apE = NaN, dK = 1, limAp = false, limFz = false, hardFail = false, first = null;
-  const apFloor = Math.max(0.05, 0.05 * D), fzFloor = fzLo * 0.6;
+  const apFloor = insT ? Math.max(0.1, (insert && Array.isArray(insert.ap) && insert.ap[0]) || 0.2) : Math.max(0.05, 0.05 * D), fzFloor = fzLo * 0.6;
   const plan = () => {
     if (op === 'f3d' || !(apCur > 0)) { passes = NaN; apE = NaN; return; }
     passes = Math.max(1, Math.ceil(depth / apCur - 1e-6)); apE = depth / passes;
@@ -1141,7 +1457,7 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
       const over = Math.max(parts.stress, parts.defl, parts.power);
       if (over <= 1) break;
       const k = Math.max(0.5, 0.97 / over);
-      if (O.cut && op !== 'face' && apE > apFloor * 1.01) { apCur = Math.max(apFloor, apE * k); limAp = true; continue; }
+      if (O.cut && (op !== 'face' || insT) && apE > apFloor * 1.01) { apCur = Math.max(apFloor, apE * k); limAp = true; continue; }
       if (fzBase * k * thin * dK >= fzFloor) { fzBase *= k; limFz = true; continue; }
       fzBase = fzFloor / (thin * dK); limFz = true; hardFail = true;
       plan(); dK = depthK(); res = evalCut(apE, fzBase * thin * dK, n0);
@@ -1168,12 +1484,38 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
   if (fixed && res.F > fLim * 1.001) say('b', `Подача ${fmt(res.F)} мм/хв більша за максимум верстата (${fmt(fLim)}).`);
   if (fixed && op !== 'f3d' && res.hMax > fzHi * dK * 1.5) say('b', `Стружка ${fmt(res.hMax, 3)} мм — це в ${fmt(res.hMax / (fzHi * dK), 1)} раза товща за максимум довідника. Ризик зламати фрезу або зірвати заготовку.`);
   // На глибині > 1D виробники самі радять тоншу стружку — норму зсуваємо на той самий коефіцієнт
-  const rubLo = fzLo * dK;
-  if (op !== 'f3d' && op !== 'engrave' && res.hMax < rubLo * 0.65) {
+  // Пластини: кромка з радіусом заокруглення ~0,02 мм — тертя лише при стружці тоншій за 0,02
+  const rubLo = fzLo * dK, cutOp = op !== 'f3d' && op !== 'engrave' && op !== 'drill';
+  const rubLim = insT ? 0.02 : rubLo * 0.65;
+  if (op !== 'f3d' && op !== 'engrave' && res.hMax < rubLim && O.fin && !insT) {
+    // Чистова з малим зняттям: в авто-розрахунку компенсацію вже дано; для своїх значень — підказка, на скільки підняти подачу
+    if (fixed) {
+      const Fs = rF(Math.min(res.F * Math.min(1.8, rubLo * 0.8 / Math.max(res.hMax, 1e-4)), fLim));
+      say('i', `Зняття мале — стружка лише ${fmt(res.hMax, 3)} мм (норма від ${fmt(rubLim, 3)}): кромка більше тре і швидше тупиться. Якщо шорсткість дозволяє — підніми подачу до ~${fmt(Fs)} мм/хв (fz лишиться робочим).`);
+    }
+  } else if (op !== 'f3d' && op !== 'engrave' && !insFin && res.hMax < rubLim) {
     const what = mat.g === 'wood' ? 'горітиме і тупитиметься' : mat.g === 'plastic' ? 'плавитиме пластик' : metal ? 'тертиме і перегріватиметься' : 'тертиме';
     const fix = res.n <= rpmMin + 1 ? 'Оберти вже мінімальні — візьми фрезу з меншою кількістю зубів або збільш крок.' : 'Зменш оберти або візьми фрезу з меншою кількістю зубів.';
-    say('w', `Стружка затонка (${fmt(res.hMax, 3)} мм при нормі від ${fmt(rubLo, 3)}) — фреза ${what}. ${fix}`);
+    say('w', `Стружка затонка (${fmt(res.hMax, 3)} мм при нормі від ${fmt(insT ? 0.02 : rubLo, 3)}) — ${insT ? 'пластина' : 'фреза'} ${what}. ${fix}`);
+  } else if (metal && cutOp && D >= 6 && res.fzR < 0.02)
+    say('w', `Подача на зуб ${fmt(res.fzR, 3)} мм — менше 0,02: кромка тертиме замість різати і перегріється. Підніми подачу або зменш оберти.`);
+  // Паспорт пластини: подача і глибина з коробки
+  const boxFz = insT && insert && Array.isArray(insert.fz) && insert.fz[0] > 0 ? insert.fz : null;
+  if (boxFz && cutOp) {
+    if (res.fzR > boxFz[1] * 1.05) say('b', `Подача на зуб ${fmt(res.fzR, 3)} мм більша за паспорт пластини (до ${fmt(boxFz[1], 2)}) — ризик сколу кромки.`);
+    else if (res.fzR < boxFz[0] * 0.95) say(O.fin ? 'i' : 'w', `Подача на зуб ${fmt(res.fzR, 3)} мм нижча за паспорт пластини (від ${fmt(boxFz[0], 2)})${O.fin ? ' — на чистовій це допустимо, але пластина тупиться швидше.' : ' — пластина тертиме і швидко зноситься.'}`);
   }
+  if (fixed && insT && apE > 0 && op !== 'f3d') {
+    if (apIns > 0 && apE > apIns * 1.05) say('w', `Глибина за прохід ${fmt(apE, 2)} мм більша за паспорт пластини (${narrow ? 'кромка ' : 'до '}${fmt(apIns, 1)} мм) — перевантаження пластини.`);
+    else if (insert && Array.isArray(insert.ap) && insert.ap[0] > 0 && apE < insert.ap[0] * 0.95) say('i', `Глибина ${fmt(apE, 2)} мм менша за паспортний мінімум пластини (${fmt(insert.ap[0], 2)}) — радіус кромки ковзає, чистота може бути гіршою.`);
+  }
+  if (fixed && cutOp) {
+    const Vr = Math.PI * Deff * res.n / 1000;
+    if (Vr > vMax * 1.1 && !spindleMode) say('w', `Швидкість різання ${fmt(Vr)} м/хв вища за норму (${fmt(vMin)}–${fmt(vMax)}) — швидкий знос ${insT ? 'пластин' : 'фрези'}.`);
+    else if (metal && Vr < vMin * 0.75) say('i', `Швидкість різання ${fmt(Vr)} м/хв нижча за норму (${fmt(vMin)}–${fmt(vMax)}) — неефективно, на сталі можливий наріст на кромці.`);
+  }
+  if (insFin && metal) say('tip', 'Биття пластинчастих фрез 0,03–0,05 мм, монолітних — 0,005–0,01. Для допуску ±0,05 чистову роби монолітною фрезою.');
+  if (O.fin && metal) say('tip', 'Після напівчистової заміряй розмір: різницю з теоретичним поділи навпіл і внеси в корекцію радіуса D у стійці.');
   const n = res.n, F = fixed ? res.F : Math.min(rF(res.F), fLim);
   let Fz = op === 'drill' ? F : rF(F * mat.plunge);
   if (fixed && num(fixed.Fz) > 0 && op !== 'drill') Fz = num(fixed.Fz);
@@ -1181,10 +1523,13 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
   if (n <= rpmMin && rpmMin > 0 && n < 9000) say('i', 'Шпиндель на мінімальних обертах слабкий, а з повітряним охолодженням ще й гріється — довго так не працюй.');
   if (mat.kc1 >= 1000 && mach.rigid !== 'heavy') say('w', 'Сталь і чавун на порталі по дереву — лише легкими проходами, з охолодженням і без вібрації. Почни з режиму «Обережно».');
   if (tool.tm === 'hss' && metal) say('i', 'HSS у металі — лише з СОЖ, швидкість різання знижено.');
-  if (O.cut && op !== 'face' && (metal || mat.g === 'plastic' || mat.g === 'composite')) say('tip', `Врізання — по спіралі або рампою під кутом до ${fmt(mat.ramp || 3, 1)}°, а не вертикально.`);
+  if (O.cut && op !== 'face' && (metal || mat.g === 'plastic' || mat.g === 'composite')) say('tip', `Врізання — по спіралі або рампою під кутом до ${fmt(mat.ramp || 3, 1)}°, а не вертикально.${metal ? ' Фрезеруй попутно (climb): менше наклепу і віджиму.' : ''}`);
   if (tool.type === 'surf') say('tip', 'Торцевою фрезою не врізайся вертикально — заходь з краю заготовки.');
   if (tool.type === 'comp' && O.cut) say('tip', 'Компресійна: перший прохід — глибше за висоту нижньої (up-cut) частини, зазвичай від 5–6 мм, інакше верхній край буде рваний.');
-  if (mat.cool) say('tip', 'Потрібне охолодження: СОЖ, масляний туман або хоча б сильний обдув.');
+  // Пластини на торцюванні — насухо: слабка емульсія на перервному різанні дає термоудар
+  const dry = insT && op === 'face' && metal;
+  if (dry) say('tip', 'Торцювання пластинами — насухо або з сильним обдувом: слабка емульсія дає термоудар і мікротріщини кромки. Монолітні фрези в глибоких пазах — навпаки, лише з рясною ЗОР.');
+  else if (mat.cool) say('tip', 'Потрібне охолодження: СОЖ, масляний туман або хоча б сильний обдув.');
 
   let scallop = NaN;
   if (op === 'f3d' && ae > 0) { const R = D / 2; scallop = R - Math.sqrt(Math.max(0, R * R - ae * ae / 4)); }
@@ -1194,7 +1539,8 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed) {
     total: depth, V, nIdeal, nCap, capWhy, Vreal: Math.PI * Deff * n / 1000, vMin, vMax, vCap, spindleMode, rpmMax,
     fzLo, fzHi, fzMode, fzR: res.fzR, hMax: res.hMax, thin, dK, ldK, L, ld,
     P: res.P, Pav: res.Pav, powerPct: res.powerPct, defl: res.defl, deflLim, stressPct: res.stressPct, Fr: res.Fr, checkForce,
-    limited: limAp || limFz, hardFail, scallop, W, rigid: RG, mode: M, fixed: !!fixed,
+    limited: limAp || limFz, hardFail, scallop, W, rigid: RG, mode: M, fixed: !!fixed, insT, insFin, insert, iso, kap,
+    mrr: apE > 0 && ae > 0 && op !== 'f3d' && op !== 'drill' ? apE * ae * res.F / 1000 : NaN, dry,
   };
 }
 
@@ -1214,7 +1560,7 @@ function recentCombos() {
     const key = `${h.tool}|${h.tool === '__manual' ? JSON.stringify(h.snap) : ''}|${h.mat}|${h.op}`;
     if (seen.has(key)) continue; seen.add(key);
     const t = h.tool === '__manual' ? h.snap : DB.tools[h.tool];
-    out.push({ h, c: GROUPS[mat.g]?.c, label: `${h.tool === '__manual' ? '✏️ ' : ''}Ø${fmt(num(t.d), 2)} ${num(t.z) || 1}з · ${mat.name.split(/[ ,(]/)[0]} · ${OPS[h.op].s}` });
+    out.push({ h, c: GROUPS[mat.g]?.c, label: `${h.tool === '__manual' ? '✏️ ' : ''}Ø${fmt(num(t.d), 2)} ${num(t.z) || 1}${INS_TYPES.includes(t.type) ? 'пл' : 'з'} ·${mat.name.split(/[ ,(]/)[0]} · ${OPS[h.op].s}` });
     if (out.length >= 6) break;
   }
   return out;
@@ -1303,6 +1649,8 @@ function renderCalc() {
 
 let lastCalc = null, lastState = '';
 const lvl = (x, w, b) => (x > b ? 'b' : x > w ? 'w' : 'ok');
+// Нижня межа «робочої» стружки: у пластин — абсолютна 0,02 мм (0,031 × 0,65); на чистовій монолітною — трохи нижча
+const rubBase = r => (r.insT ? 0.031 : r.fzLo * r.dK * (OPS[r.op]?.fin ? 0.75 : 1));
 // Стрілковий прилад: дуга заповнення + стрілка + лічильник
 function dialHTML(key, k, unit, valText, p, sub, lim, warn) {
   const P = clamp(p, 0, 1), P0 = clamp(+(PREV[key] ?? 0) || 0, 0, 1);
@@ -1334,7 +1682,7 @@ function meterHTML(key, cls, name, val, sub, lit, zoneOf, band) {
 function metersHTML(r) {
   const rows = [], zl = (w, b) => x => (x > b ? 'bad' : x > w ? 'warn' : 'ok'), cnt = x => Math.max(1, Math.round(clamp(x, 0, 1) * 24));
   if (r.op !== 'f3d' && r.op !== 'engrave') {
-    const lo = r.fzLo * r.dK, hi = r.fzHi * r.dK, max = hi * 1.5, a = lo * 0.65 / max, b = hi / max;
+    const lo = rubBase(r), hi = r.fzHi * r.dK, max = hi * 1.5, a = lo * 0.65 / max, b = hi / max;
     const c = r.hMax < lo * 0.65 ? 'b' : r.hMax > hi * 1.1 ? 'w' : 'ok';
     rows.push(meterHTML('mChip', c, 'Товщина стружки', `${fmt(r.hMax, 3)} мм`, c === 'b' ? 'тертя' : c === 'w' ? 'товста' : 'норма',
       cnt(r.hMax / max), x => (x < a ? 'bad' : x <= b ? 'ok' : 'warn'), x => x >= a && x <= b));
@@ -1353,10 +1701,10 @@ function howHTML(r, mat, mach) {
   u.push(r.spindleMode
     ? `<li><b>Оберти.</b> Для «${esc(mat.name)}» виробники фрез рахують від шпинделя: режим «${r.mode.n}» — ${Math.round(r.mode.fr * 100)}% від ${fmt(r.rpmMax)}, але швидкість різання в межах ${fmt(r.vMin)}–${fmt(r.vCap)} м/хв → <code>n = ${fmt(r100(r.nIdeal))}</code>, <code>V = ${fmt(r.V)} м/хв</code>${
       r.nIdeal > r.nCap * 1.02 ? ` → обмежено до ${fmt(r.nCap)} (${r.capWhy})` : ''}${r.n !== Math.min(r100(r.nIdeal), r.nCap) ? ` → взято <code>${fmt(r.n)}</code>` : ''}.</li>`
-    : `<li><b>Оберти.</b> Швидкість різання для «${esc(mat.name)}» — ${fmt(r.vMin)}–${fmt(r.vMax)} м/хв, режим «${r.mode.n}» бере <code>V = ${fmt(r.V)}</code>. <code>n = 1000·V/(π·${fmt(r.Deff, 2)}) = ${fmt(r100(r.nIdeal))}</code>${r.nIdeal > r.nCap * 1.02 ? ` → обмежено до ${fmt(r.nCap)} (${r.capWhy})` : ''}${r.n !== Math.min(r100(r.nIdeal), r.nCap) ? ` → взято <code>${fmt(r.n)}</code>` : ''}.</li>`);
+    : `<li><b>Оберти.</b> ${r.insT ? `Пластина ${esc(r.insert?.code || '(типова)')}: діапазон з коробки, звужений під групу ${r.iso} («${esc(mat.name)}») — ` : `Швидкість різання для «${esc(mat.name)}» — `}${fmt(r.vMin)}–${fmt(r.vMax)} м/хв, режим «${r.mode.n}» бере <code>V = ${fmt(r.V)}</code>. <code>n = 1000·V/(π·${fmt(r.Deff, 2)}) = ${fmt(r100(r.nIdeal))}</code>${r.nIdeal > r.nCap * 1.02 ? ` → обмежено до ${fmt(r.nCap)} (${r.capWhy})` : ''}${r.n !== Math.min(r100(r.nIdeal), r.nCap) ? ` → взято <code>${fmt(r.n)}</code>` : ''}.</li>`);
   const mods = [`жорсткість верстата ×${r.rigid.fz}`, r.thin > 1.001 ? `тонка стружка при кроці ${r.aePct}% ×${fmt(r.thin, 2)}` : '',
     r.dK < 0.999 ? `велика глибина ×${fmt(r.dK, 2)}` : '', O.fzK !== 1 ? `операція ×${O.fzK}` : '', r.limited ? 'захист фрези' : ''].filter(Boolean).join(', ');
-  u.push(`<li><b>Подача на зуб.</b> Довідник для Ø${fmt(r.Deff, 2)}: <code>${fmt(r.fzLo, 3)}–${fmt(r.fzHi, 3)} мм</code>, режим → <code>${fmt(r.fzMode, 3)}</code>; поправки: ${mods || 'немає'} → <code>fz = ${fmt(r.fzR, 3)} мм</code>.</li>`);
+  u.push(`<li><b>Подача на зуб.</b> ${r.insT ? `Паспорт пластини для групи ${r.iso}` : `Довідник для Ø${fmt(r.Deff, 2)}`}: <code>${fmt(r.fzLo, 3)}–${fmt(r.fzHi, 3)} мм</code>, ${r.insFin ? 'чистова пластинами — нижня межа, без поправки на тонку стружку (важлива шорсткість)' : `режим → <code>${fmt(r.fzMode, 3)}</code>; поправки: ${mods || 'немає'}`} → <code>fz = ${fmt(r.fzR, 3)} мм</code>.</li>`);
   u.push(`<li><b>Подача.</b> <code>F = fz·z·n = ${fmt(r.fzR, 3)}·${r.z}·${fmt(r.n)} = ${fmt(r.F)} мм/хв</code>${mach.feedMax ? `, межа верстата ${fmt(num(mach.feedMax))}` : ''}.</li>`);
   if (r.op !== 'f3d') u.push(`<li><b>Глибина.</b> Норма матеріалу × режим × жорсткість${r.ldK < 1 ? ' × виліт' : ''} = <code>${fmt(r.apRaw, 2)} мм</code>${r.limited && r.ap < r.apRaw ? `, захист → <code>${fmt(r.ap, 2)}</code>` : ''} → ${r.passes} × ${fmt(r.ap, 2)} мм на ${fmt(r.total, 2)} мм.</li>`);
   if (r.checkForce) u.push(`<li><b>Перевірка міцності.</b> Сила різання ≈ <code>${fmt(r.Fr, 0)} Н</code>, виліт ${fmt(r.L, 1)} мм → відгин <code>${fmt(r.defl, 3)} мм</code>, напруження ${Math.round(r.stressPct * 100)}% від допустимого, потужність ≈ ${fmt(r.P, 2)} кВт.</li>`);
@@ -1446,15 +1794,19 @@ function renderResult() {
       ${dialHTML('dF', 'F', UNITS[u], fP(vals.F), pF, fS(vals.F), u === 'mms' ? fmt(fLim / 60) : `${fmt(fLim / 1000, 1)}k`, pF >= 0.98)}
     </div>
     <div class="reads">${reads.join('')}</div>
-    <div class="gline"><code>S${Math.round(vals.n)} M3 <em>·</em> G1 F${Math.round(vals.F)}</code><button class="icon-btn" data-act="copyG" aria-label="Копіювати G-код">${ic('copy')}</button></div>
+    <div class="gline"><code>S${Math.round(vals.n)} M3${coolM(mat, mach, vals)} <em>·</em> G1 F${Math.round(vals.F)}</code><button class="icon-btn" data-act="copyG" aria-label="Копіювати G-код">${ic('copy')}</button></div>
+    ${S.op === 'f3d' || S.op === 'drill' || S.op === 'engrave' ? '' : `<section class="card tbox"><div class="label">${ic('hist')}Час і продуктивність</div>
+      <div class="tb-row"><label class="f"><span>Довжина траєкторії, мм</span><input id="pathLen" inputmode="decimal" autocomplete="off" value="${esc(S.pathLen)}" placeholder="з CAM"></label><div class="tb-out" id="tOut"></div></div>
+      <div class="hint" id="tHint"></div></section>`}
     ${metersHTML(g)}
     ${notes.length ? `<div class="sec"><i>04</i>Технічні вимоги</div><div class="req">${notes.map((w, i) => `<div class="note ${w.t}"><span class="no">${i + 1}.</span><div>${esc(w.m)}</div></div>`).join('')}</div>` : ''}
     <div class="actions"><button class="btn primary" data-act="saveRun">${ic('save')}Зберегти результат</button><button class="icon-btn" data-act="copyRun" aria-label="Копіювати">${ic('copy')}</button></div>
     <details class="card how"><summary>${ic('fx')}Як це пораховано${ic('chev', 'chev')}</summary>${howHTML(r, mat, mach)}</details>`;
   el._vals = vals;
+  renderTime();
   animateIn(el);
   // жива візуалізація різу
-  const chip = r.op === 'f3d' || r.op === 'engrave' ? 'ok' : g.hMax < g.fzLo * g.dK * 0.65 ? 'rub' : g.hMax > g.fzHi * g.dK * 1.1 ? 'heavy' : 'ok';
+  const chip = r.op === 'f3d' || r.op === 'engrave' ? 'ok' : g.hMax < rubBase(g) * 0.65 ? 'rub' : g.hMax > g.fzHi * g.dK * 1.1 ? 'heavy' : 'ok';
   const danger = g.checkForce ? Math.max(g.stressPct / 0.8, g.defl / g.deflLim) : 0;
   Viz.mount($('#vizc'), { op: S.op, type: tool.type, D: r.D, Deff: r.Deff, lc: num(tool.lc), shank: num(tool.shank), z: r.z, angle: num(tool.angle) || 90,
     n: vals.n, F: vals.F, ap: vals.ap, passes: vals.passes || 1, total: r.total, ae: vals.ae, g: mat.g, spark: mat.kc1 >= 1000,
@@ -1465,6 +1817,25 @@ function renderResult() {
   lastState = state;
 }
 
+// ЗОР у G-коді: на обробному центрі по металу — M8 (вимкнути — M9)
+const coolM = (mat, mach, r) => (mat.cool && machKind(mach) === 'metal' && !(r && r.dry) ? ' M8' : '');
+// Час різання за довжиною траєкторії з CAM, обʼєм зняття за хвилину, знос монолітної фрези в сталі
+function renderTime() {
+  const o = $('#tOut'), h = $('#tHint'), v = $('#result')?._vals;
+  if (!o || !v) return;
+  const Lmm = num(S.pathLen), mat = curMat(), tool = curTool(), out = [];
+  const mrr = v.ap > 0 && v.ae > 0 && v.F > 0 ? v.ap * v.ae * v.F / 1000 : NaN;
+  if (mrr > 0) out.push(`<b>${fmt(mrr, mrr < 10 ? 1 : 0)}</b><small>см³/хв</small>`);
+  if (Lmm > 0 && v.F > 0) {
+    const min = Lmm / v.F;
+    out.push(`<b>${min >= 60 ? `${Math.floor(min / 60)}:${String(Math.round(min % 60)).padStart(2, '0')}` : fmt(min, min < 10 ? 1 : 0)}</b><small>${min >= 60 ? 'год:хв' : 'хв'} різання</small>`);
+  }
+  o.innerHTML = out.map(x => `<div>${x}</div>`).join('');
+  const wear = Lmm > 0 && mat.g === 'metal' && mat.kc1 >= 1500 && !INS_TYPES.includes(tool.type);
+  h.textContent = wear
+    ? `Знос монолітної фрези на ${fmt(Lmm / 1000, 1)} м ходу в сталі ≈ ${fmt(0.02 * Lmm / 6400, 3)}–${fmt(0.04 * Lmm / 6400, 3)} мм по Ø (без ЗОР — більше). Для жорстких допусків плануй заміну.`
+    : 'Довжину бери з CAM: Fusion — «Cutting distance», ArtCAM — довжина траєкторії. Час — лише різання, без холостих ходів і зміни інструменту.';
+}
 function runSummary() {
   const tool = curTool(), mat = curMat(), mach = curMachine(), r = lastCalc, v = $('#result')?._vals || r;
   if (!r) return '';
@@ -1722,12 +2093,14 @@ function optHTML(o) {
 }
 function openPicker(kind) {
   if (kind === 'tool') {
-    const items = sortedTools().map(t => ({ kind, id: t.id, icon: toolSVG(t, 'xs'), t: t.name, s: `${TOOL_TYPES[t.type]} · ${toolSpec(t)}`, on: t.id === S.toolId }));
-    items.push({ kind, id: '__manual', icon: ic('edit'), t: 'Ввести вручну', s: 'Швидкий розрахунок без збереження фрези', on: S.toolId === '__manual' });
+    const item = t => ({ kind, id: t.id, icon: toolSVG(t, 'xs'), t: t.name + (num(t.qty) > 1 ? ` ×${num(t.qty)}` : ''), s: `${TOOL_TYPES[t.type]} · ${toolSpec(t)}`, on: t.id === S.toolId });
+    const groups = toolGroups(sortedTools());
+    const html = groups.map(([h, arr]) => (h ? `<div class="grp-h">${h}<em>${arr.length}</em></div>` : '') + `<div class="opts">${arr.map(t => optHTML(item(t))).join('')}</div>`).join('');
     openSheet('Фреза', `
-      <button class="btn primary block" data-act="newTool" style="margin-bottom:12px">${ic('plus')}Нова фреза в базу</button>
-      ${items.length > 6 ? `<div class="search">${ic('search')}<input data-filter="picker" placeholder="Пошук фрези"></div>` : ''}
-      <div class="opts">${items.map(optHTML).join('')}</div>`, true);
+      <div class="btns" style="margin:0 0 12px"><button class="btn primary" data-act="newTool">${ic('plus')}Нова фреза</button><button class="btn" data-act="findPhoto" data-kind="tool">${ic('camera')}За фото</button></div>
+      ${Object.keys(DB.tools).length > 6 ? `<div class="search">${ic('search')}<input data-filter="picker" placeholder="Пошук фрези"></div>` : ''}
+      ${html}
+      <div class="opts" style="margin-top:10px">${optHTML({ kind, id: '__manual', icon: ic('edit'), t: 'Ввести вручну', s: 'Швидкий розрахунок без збереження фрези', on: S.toolId === '__manual' })}</div>`, true);
   } else if (kind === 'mat') {
     const mats = allMats();
     let html = '', g0 = '';
@@ -1746,28 +2119,71 @@ function openPicker(kind) {
 
 // ---------- Фрези ----------
 function renderTools() {
+  const ins = S.toolsSub === 'ins';
   view.innerHTML = `
-    <div class="ph"><h2>Фрези</h2><button class="btn primary sm" data-act="newTool">${ic('plus')}Додати</button></div>
-    <div class="search">${ic('search')}<input data-filter="tools" placeholder="Пошук: діаметр, тип, назва" value="${esc(S.qTools)}"></div>
+    <div class="ph"><h2>${ins ? 'Пластини' : 'Фрези'}</h2>
+      <button class="icon-btn" data-act="findPhoto" data-kind="${ins ? 'ins' : 'tool'}" aria-label="Знайти за фото">${ic('camera')}</button>
+      <button class="btn primary sm" data-act="${ins ? 'newIns' : 'newTool'}">${ic('plus')}Додати</button></div>
+    <div class="seg sub"><button class="${ins ? '' : 'on'}" data-act="toolsSub" data-v="tools">Фрези<em>${Object.keys(DB.tools).length}</em></button><button class="${ins ? 'on' : ''}" data-act="toolsSub" data-v="ins">Пластини<em>${Object.keys(DB.inserts).length}</em></button></div>
+    <div class="search">${ic('search')}<input data-filter="tools" placeholder="${ins ? 'Пошук: код, марка, виробник' : 'Пошук: діаметр, тип, назва'}" value="${esc(ins ? S.qIns : S.qTools)}"></div>
     <div id="list" class="drawin"></div>`;
   renderToolList();
 }
+const rng = (a, d = 0) => (Array.isArray(a) && a[0] > 0 && a[1] >= a[0] ? (a[0] === a[1] ? fmt(a[0], d) : `${fmt(a[0], d)}–${fmt(a[1], d)}`) : '');
+function toolCard(t, i, act = 'editTool', grouped) {
+  const insT = INS_TYPES.includes(t.type), ins = insT ? DB.inserts[t.insertId] : null, ph = photoOf(t), m = grouped ? null : DB.machines[t.mach];
+  const tags = [`<span class="a">Ø${fmt(num(t.d), 3)}</span>`, `<span>${num(t.z) || 1}${insT ? 'пл' : 'з'}</span>`,
+    insT ? (ins ? `<span class="a">${esc(ins.code)}</span>` : '<span>без пластини</span>') : num(t.lc) ? `<span>L${fmt(num(t.lc), 1)}</span>` : '',
+    num(t.qty) > 1 ? `<span>×${num(t.qty)}</span>` : '', num(t.maxRpm) ? `<span>≤${fmt(num(t.maxRpm) / 1000, 1)}k</span>` : '',
+    insT ? '' : `<span>${(TM[t.tm] || TM.carbide).s}</span>`, t.coat && !insT ? `<span>${esc(t.coat)}</span>` : ''].join('');
+  return `<button class="tcard" data-act="${act}" data-id="${t.id}" data-no="№${String(i + 1).padStart(2, '0')}">
+    <span class="tc-art">${toolSVG(t, 'sm')}${ph ? `<img class="tc-ph" src="${esc(ph)}" alt="" loading="lazy">` : ''}</span>
+    <span class="tc-tx"><b>${esc(t.name)}</b><span class="tags">${tags}</span>
+      <small>${esc(TOOL_TYPES[t.type] || '')}${m ? ` · <span class="mtag">${esc(m.name)}</span>` : ''}${t.used ? ` · ${t.used} ${plural(t.used, 'раз', 'рази', 'разів')}` : ''}</small></span>
+  </button>`;
+}
+// Групи за верстатом: спершу активний, потім «будь-який», потім інші
+function toolGroups(tools) {
+  if (!tools.some(t => DB.machines[t.mach])) return [['', tools]];
+  const g = new Map(), rank = k => (k === S.machineId ? 0 : k === '' ? 1 : 2);
+  for (const t of tools) { const k = DB.machines[t.mach] ? t.mach : ''; if (!g.has(k)) g.set(k, []); g.get(k).push(t); }
+  return [...g.keys()].sort((a, b) => rank(a) - rank(b))
+    .map(k => [k ? `${machineArt(machKind(DB.machines[k]))}${esc(DB.machines[k].name)}` : `${ic('tools')}Для будь-якого верстата`, g.get(k)]);
+}
 function renderToolList() {
+  if (S.toolsSub === 'ins') return renderInsList();
   const q = S.qTools.trim().toLowerCase();
-  const tools = sortedTools().filter(t => !q || `${t.name} ${TOOL_TYPES[t.type]} ${toolSpec(t)} ${t.coat || ''} ${t.note || ''}`.toLowerCase().includes(q));
-  $('#list').innerHTML = tools.length ? tools.map((t, i) => `
-    <button class="tcard" data-act="editTool" data-id="${t.id}" data-no="№${String(i + 1).padStart(2, '0')}">
-      <span class="tc-art">${toolSVG(t, 'sm')}</span>
-      <span class="tc-tx"><b>${esc(t.name)}</b>
-        <span class="tags"><span class="a">Ø${fmt(num(t.d), 3)}</span><span>${num(t.z) || 1}з</span>${num(t.lc) ? `<span>L${fmt(num(t.lc), 1)}</span>` : ''}${num(t.maxRpm) ? `<span>≤${fmt(num(t.maxRpm) / 1000, 1)}k</span>` : ''}<span>${(TM[t.tm] || TM.carbide).s}</span>${t.coat ? `<span>${esc(t.coat)}</span>` : ''}</span>
-        <small>${esc(TOOL_TYPES[t.type])}${t.used ? ` · використана ${t.used} ${plural(t.used, 'раз', 'рази', 'разів')}` : ''}</small></span>
-    </button>`).join('')
-    : `<div class="card empty">${ic('tools')}<div>${q ? 'Нічого не знайдено' : 'Ще немає фрез.<br>Додай першу — вручну або сфотографуй 📷'}</div></div>`;
+  const tools = sortedTools().filter(t => !q || `${t.name} ${TOOL_TYPES[t.type]} ${toolSpec(t)} ${t.coat || ''} ${t.note || ''} ${DB.machines[t.mach]?.name || ''}`.toLowerCase().includes(q));
+  if (!tools.length) {
+    $('#list').innerHTML = `<div class="card empty">${ic('tools')}<div>${q ? 'Нічого не знайдено' : 'Ще немає фрез.<br>Додай першу — вручну або сфотографуй 📷'}</div></div>`;
+    return;
+  }
+  let n = 0;
+  $('#list').innerHTML = toolGroups(tools).map(([h, arr]) => (h ? `<div class="grp-h">${h}<em>${arr.length}</em></div>` : '') + arr.map(t => toolCard(t, n++, 'editTool', !!h)).join('')).join('');
+}
+function insCard(i, n, act = 'editIns') {
+  const u = insUse(i.id), ph = photoOf(i), q = num(i.qty);
+  return `<button class="tcard" data-act="${act}" data-id="${i.id}" data-no="П${String(n + 1).padStart(2, '0')}">
+    <span class="tc-art sq">${insertSVG(i, 'sm')}${ph ? `<img class="tc-ph" src="${esc(ph)}" alt="" loading="lazy">` : ''}</span>
+    <span class="tc-tx"><b>${esc(i.code)}</b>
+      <span class="tags">${isoChips(i.iso)}${Number.isFinite(q) ? `<span class="a">${fmt(q)} шт</span>` : ''}${rng(i.vc) ? `<span>Vc ${rng(i.vc)}</span>` : ''}${rng(i.fz, 2) ? `<span>fz ${rng(i.fz, 2)}</span>` : ''}</span>
+      <small>${esc(insSpec(i))}${u.tools.length ? ` · стоїть у ${u.tools.length} ${plural(u.tools.length, 'фрезі', 'фрезах', 'фрезах')} (${u.pcs} шт)` : ''}</small></span>
+  </button>`;
+}
+function renderInsList() {
+  const q = S.qIns.trim().toLowerCase();
+  const arr = sortedInserts().filter(i => !q || `${i.code} ${i.grade || ''} ${i.maker || ''} ${i.note || ''} ${(i.iso || []).join('')}`.toLowerCase().includes(q));
+  $('#list').innerHTML = arr.length ? arr.map((i, n) => insCard(i, n)).join('')
+    : `<div class="card empty">${ic('tools')}<div>${q ? 'Нічого не знайдено' : 'Ще немає пластин.<br>Додай вручну або сфотографуй коробку 📷 — апка прочитає етикетку.'}</div></div>`;
 }
 
-function toolForm(t) {
-  t = t || { type: 'flat', z: 2, tm: 'carbide', helix: 'up' };
-  const isNew = !t.id;
+let formThumb = '';   // мініатюра з фото, яке щойно розпізнали — збережеться разом із записом
+function toolForm(t, opts = {}) {
+  t = t || { type: 'flat', z: 2, tm: 'carbide', helix: 'up', mach: S.machineId };
+  formThumb = opts.thumb || '';
+  const isNew = !t.id || !DB.tools[t.id];
+  const machOpts = [['', 'Будь-який верстат'], ...Object.values(DB.machines).map(m => [m.id, m.name])];
+  const insOpts = [['', '— не вибрано —'], ...sortedInserts().map(i => [i.id, `${i.code}${i.grade ? ' · ' + i.grade : ''}`])];
   openSheet(isNew ? 'Нова фреза' : 'Фреза', `
     <form id="tf" autocomplete="off">
       <div class="preview" id="tfPrev"></div>
@@ -1778,39 +2194,65 @@ function toolForm(t) {
       </div>
       <label class="f"><span>Назва / маркування</span><input name="name" value="${esc(t.name || '')}" placeholder="напр. 1-зах 6×22 по дереву"></label>
       <label class="f"><span>Тип</span><select name="type">${optsFrom(TOOL_TYPES, t.type)}</select></label>
+      <div id="insBox">
+        <label class="f"><span>Пластина</span><select name="insertId">${insOpts.map(([v, l]) => opt(v, l, v === (t.insertId || ''))).join('')}</select></label>
+        <div class="hint" id="insHint"></div>
+      </div>
       <div class="g2">
         <label class="f"><span>Діаметр Ø, мм</span><input name="d" inputmode="decimal" value="${esc(t.d ?? '')}"></label>
-        <label class="f"><span>Зубів (заходів)</span><input name="z" inputmode="numeric" value="${esc(t.z ?? '')}"></label>
-        <label class="f"><span>Різальна частина, мм</span><input name="lc" inputmode="decimal" value="${esc(t.lc ?? '')}"></label>
-        <label class="f"><span>Виліт з цанги, мм</span><input name="lo" inputmode="decimal" value="${esc(t.lo ?? '')}" placeholder="бажано"></label>
+        <label class="f"><span id="zL">Зубів (заходів)</span><input name="z" inputmode="numeric" value="${esc(t.z ?? '')}"></label>
+        <label class="f" id="lcF"><span>Різальна частина, мм</span><input name="lc" inputmode="decimal" value="${esc(t.lc ?? '')}"></label>
+        <label class="f"><span id="loL">Виліт з цанги, мм</span><input name="lo" inputmode="decimal" value="${esc(t.lo ?? '')}" placeholder="бажано"></label>
         <label class="f"><span>Загальна довжина, мм</span><input name="ol" inputmode="decimal" value="${esc(t.ol ?? '')}"></label>
-        <label class="f"><span>Хвостовик, мм</span><input name="shank" inputmode="decimal" value="${esc(t.shank ?? '')}"></label>
+        <label class="f"><span id="shL">Хвостовик, мм</span><input name="shank" inputmode="decimal" value="${esc(t.shank ?? '')}"></label>
+        <label class="f" id="kapF"><span>Кут у плані, °</span><input name="kappa" inputmode="decimal" value="${esc(t.kappa ?? '')}" placeholder="45"></label>
       </div>
       <div class="g2" id="angRow">
         <label class="f"><span id="angL">Кут, °</span><input name="angle" inputmode="decimal" value="${esc(t.angle ?? '')}"></label>
         <label class="f" id="tipF"><span>Кінчик (пляма), мм</span><input name="tip" inputmode="decimal" value="${esc(t.tip ?? '')}"></label>
       </div>
-      <div class="g2">
+      <div class="g2" id="solidRow">
         <label class="f"><span>Матеріал фрези</span><select name="tm">${Object.entries(TM).map(([k, v]) => opt(k, v.n, k === (t.tm || 'carbide'))).join('')}</select></label>
         <label class="f"><span>Спіраль</span><select name="helix">${optsFrom(HELIX, t.helix || '')}</select></label>
         <label class="f"><span>Покриття</span><input name="coat" value="${esc(t.coat || '')}" placeholder="TiAlN, DLC…"></label>
-        <label class="f"><span>Макс. оберти фрези</span><input name="maxRpm" inputmode="numeric" value="${esc(t.maxRpm ?? '')}" placeholder="з упаковки"></label>
       </div>
-      <div class="hint">Виліт — скільки фреза стирчить з цанги. Від нього залежить, наскільки її віджимає: чим довший, тим обережніші режими.</div>
+      <div class="g2">
+        <label class="f"><span>Макс. оберти фрези</span><input name="maxRpm" inputmode="numeric" value="${esc(t.maxRpm ?? '')}" placeholder="з упаковки"></label>
+        <label class="f"><span>Кількість, шт</span><input name="qty" inputmode="numeric" value="${esc(t.qty ?? '')}" placeholder="1"></label>
+      </div>
+      <label class="f"><span>Верстат</span><select name="mach">${machOpts.map(([v, l]) => opt(v, l, v === (t.mach || ''))).join('')}</select></label>
+      <div class="hint" id="loHint"></div>
       <label class="f"><span>Нотатка</span><textarea name="note" rows="2" maxlength="400">${esc(t.note || '')}</textarea></label>
       <button class="btn primary block" type="submit">${ic('save')}Зберегти фрезу</button>
-      ${isNew ? '' : `<div class="btns"><button type="button" class="btn" data-act="dupTool" data-id="${t.id}">Копія</button>
+      ${isNew ? '' : `<div class="btns"><button type="button" class="btn" data-act="useTool" data-id="${t.id}">${ic('calc')}Розрахувати</button>
+        <button type="button" class="btn" data-act="dupTool" data-id="${t.id}">Копія</button>
         <button type="button" class="btn danger" data-act="delTool" data-id="${t.id}">Видалити</button></div>`}
     </form>`, true);
   const f = $('#tf');
   const upd = () => {
-    const ty = f.elements.type.value;
+    const ty = f.elements.type.value, insT = INS_TYPES.includes(ty);
     $('#angRow').classList.toggle('hide', !['vbit', 'engr', 'taperball'].includes(ty));
     $('#tipF').classList.toggle('hide', ty === 'taperball');
     $('#angL').textContent = ty === 'taperball' ? 'Кут конуса на сторону, °' : 'Кут при вершині, °';
+    $('#insBox').classList.toggle('hide', !insT);
+    $('#lcF').classList.toggle('hide', insT);
+    $('#kapF').classList.toggle('hide', ty !== 'iface');
+    $('#solidRow').classList.toggle('hide', insT);
+    $('#zL').textContent = insT ? 'Пластин, шт' : ty === 'rough' ? 'Зубів (кукурудза — 2)' : 'Зубів (заходів)';
+    $('#loL').textContent = insT ? 'Виліт з оправки, мм' : 'Виліт з цанги, мм';
+    $('#shL').textContent = ty === 'iface' ? 'Посадка (отвір), мм' : 'Хвостовик, мм';
+    $('#loHint').textContent = insT
+      ? 'Виліт — від торця оправки (патрона) до пластин. Від нього залежить, наскільки фрезу віджимає і чи не буде вібрації.'
+      : 'Виліт — скільки фреза стирчить з цанги. Від нього залежить, наскільки її віджимає: чим довший, тим обережніші режими.';
     const d = Object.fromEntries(new FormData(f));
+    const i = DB.inserts[d.insertId];
+    if (insT) $('#insHint').innerHTML = i
+      ? `${isoChips(i.iso)} ${esc([rng(i.vc) && 'Vc ' + rng(i.vc), rng(i.fz, 2) && 'fz ' + rng(i.fz, 2), num(i.apMax) && 'ap до ' + fmt(num(i.apMax), 1)].filter(Boolean).join(' · '))}`
+      : Object.keys(DB.inserts).length ? 'Вибери пластину — апка візьме з неї швидкість, подачу і глибину.'
+        : 'Пластин у базі ще немає — додай у вкладці «Фрези → Пластини». Поки що рахую за типовими даними.';
     const pv = { ...d, z: num(d.z) || 1 };
-    $('#tfPrev').innerHTML = `${toolSVG(pv, 'lg')}<div class="pv-tx"><b>${esc(d.name.trim() || toolAutoName(pv))}</b>${esc(TOOL_TYPES[ty])}<br>${esc(toolSpec(pv))}${num(d.lo) ? `<br>виліт ${fmt(num(d.lo), 1)} мм` : ''}</div>`;
+    const ph = formThumb || photoOf(t);
+    $('#tfPrev').innerHTML = `${toolSVG(pv, 'lg')}<div class="pv-tx"><b>${esc(d.name.trim() || toolAutoName(pv))}</b>${esc(TOOL_TYPES[ty])}<br>${esc(toolSpec(pv))}${num(d.lo) ? `<br>виліт ${fmt(num(d.lo), 1)} мм` : ''}${ph ? `<img class="pv-ph" src="${esc(ph)}" alt="">` : ''}</div>`;
   };
   upd();
   f.addEventListener('input', upd);
@@ -1819,18 +2261,26 @@ function toolForm(t) {
   f.addEventListener('submit', async e => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(f));
-    const o = { ...t, id: t.id || genId(), type: d.type, tm: d.tm, helix: d.helix, coat: d.coat.trim().slice(0, 40), note: d.note.trim().slice(0, 400) };
-    for (const k of ['d', 'z', 'lc', 'lo', 'ol', 'shank', 'angle', 'tip', 'maxRpm']) { const x = num(d[k]); if (x > 0) o[k] = x; else delete o[k]; }
-    if (!(o.d > 0) || o.d > 120) return toast('Вкажи діаметр (до 120 мм)', true);
+    const o = { ...t, id: t.id || genId(), type: d.type, tm: d.tm, helix: d.helix, coat: d.coat.trim().slice(0, 40), note: d.note.trim().slice(0, 400),
+      mach: DB.machines[d.mach] ? d.mach : '' };
+    const insT = INS_TYPES.includes(o.type);
+    for (const k of ['d', 'z', 'lc', 'lo', 'ol', 'shank', 'angle', 'tip', 'maxRpm', 'kappa', 'qty']) { const x = num(d[k]); if (x > 0) o[k] = x; else delete o[k]; }
+    if (insT) { o.insertId = DB.inserts[d.insertId] ? d.insertId : ''; o.tm = 'carbide'; delete o.lc; delete o.helix; delete o.coat; }
+    else { delete o.insertId; delete o.kappa; }
+    const dMax = insT ? 320 : 120;
+    if (!(o.d > 0) || o.d > dMax) return toast(`Вкажи діаметр (до ${dMax} мм)`, true);
     o.z = Math.round(o.z || 1);
-    if (o.z < 1 || o.z > 12) return toast('Кількість зубів — від 1 до 12', true);
+    if (o.z < 1 || o.z > (insT ? 30 : 12)) return toast(insT ? 'Пластин — від 1 до 30' : 'Кількість зубів — від 1 до 12', true);
+    if (o.qty) o.qty = Math.round(o.qty);
+    if (o.kappa && (o.kappa < 10 || o.kappa > 90)) return toast('Кут у плані — від 10 до 90°', true);
     if (o.lc && o.ol && o.lc > o.ol) return toast('Різальна частина не може бути довшою за фрезу', true);
-    if (o.lo && o.ol && o.lo > o.ol) return toast('Виліт не може бути більшим за довжину фрези', true);
+    if (o.lo && o.ol && o.lo > o.ol && !insT) return toast('Виліт не може бути більшим за довжину фрези', true);
     if (o.angle && (o.angle < 5 || o.angle > 175)) return toast('Кут — від 5 до 175°', true);
     o.name = d.name.trim().slice(0, 60) || toolAutoName(o);
     if (!o.created) o.created = Date.now();
     DB.tools[o.id] = o;
     if (!(await Store.set('t_' + o.id, o))) return;
+    if (formThumb) { DB.photos[o.id] = formThumb; await Store.set('ph_' + o.id, formThumb); }
     haptic('success'); toast('Фрезу збережено');
     closeSheet();
     if (isNew) { S.toolId = o.id; S.useVer = null; saveCfgSoon(); }
@@ -1838,12 +2288,109 @@ function toolForm(t) {
   });
 }
 
+// ---------- Пластини ----------
+function insForm(i, opts = {}) {
+  i = i || { iso: [] };
+  formThumb = opts.thumb || '';
+  const isNew = !i.id || !DB.inserts[i.id];
+  const r2 = (a, j) => (Array.isArray(a) && a[j] > 0 ? a[j] : '');
+  openSheet(isNew ? 'Нова пластина' : 'Пластина', `
+    <form id="inf" autocomplete="off">
+      <div class="preview" id="ifPrev"></div>
+      <div class="photo">
+        <button type="button" class="btn block" data-act="insPhoto">${ic('camera')}Прочитати коробку з фото</button>
+        <input type="file" accept="image/*" id="ph3" class="hide">
+        <div class="pst" id="ph3st">Сфотографуй етикетку коробки — Claude прочитає код, марку сплаву, групи ISO і режими (Vc, fz, ap).</div>
+      </div>
+      <label class="f"><span>Код пластини</span><input name="code" value="${esc(i.code || '')}" placeholder="напр. APMT1135PDER-M2" autocapitalize="characters"></label>
+      <div class="g2">
+        <label class="f"><span>Виробник</span><input name="maker" value="${esc(i.maker || '')}" placeholder="AGIR, Sandvik…"></label>
+        <label class="f"><span>Марка сплаву</span><input name="grade" value="${esc(i.grade || '')}" placeholder="напр. AU2035BZ"></label>
+      </div>
+      <label class="f"><span>Форма</span><select name="shape">${optsFrom(INS_SHAPES, i.shape || 'S')}</select></label>
+      <div class="g3">
+        <label class="f"><span>Кромка, мм</span><input name="len" inputmode="decimal" value="${esc(i.len ?? '')}"></label>
+        <label class="f"><span>Товщина</span><input name="thick" inputmode="decimal" value="${esc(i.thick ?? '')}"></label>
+        <label class="f"><span>Радіус</span><input name="re" inputmode="decimal" value="${esc(i.re ?? '')}"></label>
+      </div>
+      <div class="f"><span>Групи матеріалів ISO — як на коробці</span></div>
+      <div class="isosel" id="isoSel">${Object.entries(ISO).map(([k, v]) => `<button type="button" class="${(i.iso || []).includes(k) ? 'on' : ''}" data-v="${k}" style="--c:${v.c}" aria-label="${k} — ${v.n}">${k}</button>`).join('')}</div>
+      <div class="hint" id="isoHint"></div>
+      <div class="sec-h">Режими з коробки</div>
+      <div class="g2">
+        <label class="f"><span>Vc від, м/хв</span><input name="vc0" inputmode="decimal" value="${esc(r2(i.vc, 0))}"></label>
+        <label class="f"><span>Vc до, м/хв</span><input name="vc1" inputmode="decimal" value="${esc(r2(i.vc, 1))}"></label>
+        <label class="f"><span>fz від, мм/зуб</span><input name="fz0" inputmode="decimal" value="${esc(r2(i.fz, 0))}"></label>
+        <label class="f"><span>fz до, мм/зуб</span><input name="fz1" inputmode="decimal" value="${esc(r2(i.fz, 1))}"></label>
+        <label class="f"><span>ap від, мм</span><input name="ap0" inputmode="decimal" value="${esc(r2(i.ap, 0))}"></label>
+        <label class="f"><span>ap до, мм</span><input name="ap1" inputmode="decimal" value="${esc(r2(i.ap, 1) || i.apMax || '')}"></label>
+      </div>
+      <div class="hint">Діапазон на коробці — на всі групи разом (Vc 30–220 — це і титан, і сталь). Апка звужує його під групу матеріалу, а ap «до» — межа глибини для повного зняття.</div>
+      <div class="f stepper"><span>Є в наявності, шт</span><div class="st">
+        <button type="button" data-act="qtyStep" data-d="-1" aria-label="Мінус одна">−</button>
+        <input name="qty" inputmode="numeric" value="${esc(i.qty ?? '')}" placeholder="—">
+        <button type="button" data-act="qtyStep" data-d="1" aria-label="Плюс одна">+</button></div></div>
+      <div class="hint" id="useHint"></div>
+      <label class="f"><span>Нотатка</span><textarea name="note" rows="2" maxlength="400">${esc(i.note || '')}</textarea></label>
+      <button class="btn primary block" type="submit">${ic('save')}Зберегти пластину</button>
+      ${isNew ? '' : `<div class="btns"><button type="button" class="btn danger" data-act="delIns" data-id="${i.id}">Видалити</button></div>`}
+    </form>`, true);
+  const f = $('#inf'), sel = $('#isoSel');
+  const isoNow = () => [...sel.querySelectorAll('.on')].map(b => b.dataset.v);
+  const upd = () => {
+    const d = Object.fromEntries(new FormData(f)), pv = { ...d, iso: isoNow() };
+    const ph = formThumb || photoOf(i);
+    $('#ifPrev').innerHTML = `${insertSVG(pv, 'lg')}<div class="pv-tx"><b>${esc(d.code.trim().toUpperCase() || 'Пластина')}</b>${isoChips(pv.iso)}<br>${esc(insSpec(pv))}${ph ? `<img class="pv-ph" src="${esc(ph)}" alt="">` : ''}</div>`;
+    $('#isoHint').textContent = pv.iso.length ? pv.iso.map(k => `${k} — ${ISO[k].n.toLowerCase()}`).join(', ') : 'Натисни трикутники, позначені на коробці крапкою або колом.';
+  };
+  const u = isNew ? null : insUse(i.id);
+  $('#useHint').textContent = u && u.tools.length ? `Стоїть у фрезах: ${u.tools.map(t => t.name).join(', ')} — разом ${u.pcs} шт.` : '';
+  sel.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; b.classList.toggle('on'); haptic('sel'); upd(); });
+  f.elements.code.addEventListener('input', () => {
+    const p = parseInsCode(f.elements.code.value);
+    if (p.shape && INS_SHAPES[p.shape]) f.elements.shape.value = p.shape;
+    for (const k of ['len', 'thick', 're']) if (p[k] > 0 && !f.elements[k].value.trim()) f.elements[k].value = p[k];
+  });
+  upd();
+  f.addEventListener('input', upd);
+  f.addEventListener('change', upd);
+  $('#ph3').addEventListener('change', e => { const file = e.target.files[0]; e.target.value = ''; if (file) runInsPhoto(file, f, sel, upd); });
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(f));
+    const code = d.code.trim().toUpperCase().replace(/\s+/g, '').slice(0, 40);
+    if (!code) return toast('Вкажи код пластини', true);
+    const o = { ...i, id: i.id || genId(), code, maker: d.maker.trim().slice(0, 30), grade: d.grade.trim().toUpperCase().slice(0, 30),
+      shape: INS_SHAPES[d.shape] ? d.shape : 'S', iso: isoNow(), note: d.note.trim().slice(0, 400) };
+    for (const k of ['len', 'thick', 're']) { const x = num(d[k]); if (x > 0) o[k] = x; else delete o[k]; }
+    const pair = (a, b, lo, hi, label) => {
+      const x = num(d[a]), y = num(d[b]);
+      if (!(x > 0) && !(y > 0)) return null;
+      const p = [x > 0 ? x : y, y > 0 ? y : x].sort((m, n) => m - n);
+      if (p[0] < lo || p[1] > hi) throw new UserErr(`${label}: перевір числа (від ${lo} до ${hi})`);
+      return p;
+    };
+    try { o.vc = pair('vc0', 'vc1', 5, 2000, 'Vc'); o.fz = pair('fz0', 'fz1', 0.005, 2, 'fz'); o.ap = pair('ap0', 'ap1', 0.01, 30, 'ap'); }
+    catch (err) { return toast(err.message, true); }
+    for (const k of ['vc', 'fz', 'ap']) if (!o[k]) delete o[k];
+    if (o.ap) o.apMax = o.ap[1]; else delete o.apMax;
+    const q = num(d.qty);
+    if (d.qty.trim() !== '' && q >= 0) o.qty = Math.round(q); else delete o.qty;
+    if (!o.created) o.created = Date.now();
+    DB.inserts[o.id] = o;
+    if (!(await Store.set('i_' + o.id, o))) return;
+    if (formThumb) { DB.photos[o.id] = formThumb; await Store.set('ph_' + o.id, formThumb); }
+    haptic('success'); toast('Пластину збережено'); closeSheet(); S.toolsSub = 'ins'; render();
+  });
+}
+
 // ---------- Розпізнавання фото (Claude API) ----------
+const CUTTER_TYPES = ['flat', 'ball', 'taperball', 'vbit', 'engr', 'rough', 'comp', 'straight', 'surf', 'drill', 'imill', 'iface'];
 const CUTTER_SCHEMA = {
   type: 'object',
   properties: {
     is_cutter:         { type: 'boolean' },
-    type:              { type: 'string', enum: ['flat', 'ball', 'taperball', 'vbit', 'engr', 'rough', 'comp', 'straight', 'surf', 'drill', 'unknown'] },
+    type:              { type: 'string', enum: [...CUTTER_TYPES, 'unknown'] },
     diameter_mm:       { type: 'number' },
     flutes:            { type: 'integer' },
     cutting_length_mm: { type: 'number' },
@@ -1855,98 +2402,81 @@ const CUTTER_SCHEMA = {
     tool_material:     { type: 'string', enum: ['carbide', 'hss', 'unknown'] },
     coating:           { type: 'string' },
     helix:             { type: 'string', enum: ['up', 'down', 'comp', 'straight', 'unknown'] },
+    insert_code:       { type: 'string' },
+    kappa_deg:         { type: 'number' },
     name:              { type: 'string' },
     notes:             { type: 'string' },
     confidence:        { type: 'string', enum: ['high', 'medium', 'low'] },
   },
-  required: ['is_cutter', 'type', 'diameter_mm', 'flutes', 'cutting_length_mm', 'overall_length_mm', 'shank_mm',
-    'angle_deg', 'tip_mm', 'max_rpm', 'tool_material', 'coating', 'helix', 'name', 'notes', 'confidence'],
+  required: ['is_cutter', 'type', 'diameter_mm', 'flutes', 'cutting_length_mm', 'overall_length_mm', 'shank_mm', 'angle_deg', 'tip_mm',
+    'max_rpm', 'tool_material', 'coating', 'helix', 'insert_code', 'kappa_deg', 'name', 'notes', 'confidence'],
   additionalProperties: false,
 };
-const RECOG_SYSTEM = `You identify CNC milling tools (router bits, end mills, engravers, drills) from photos for a CNC machinist.
-Read every visible marking on the tool, its packaging or label (for example "6x22x50 2F", "D6 L22", "HRC55", "AlTiN", "1F 3.175", "max 24000 rpm"), and use visual cues (flute count, helix direction, tip shape) to fill the fields.
-Type codes: flat = spiral end mill with flat end; ball = ball nose; taperball = tapered ball nose (angle_deg = taper angle per side, diameter_mm = ball diameter); vbit = V-groove engraver with pointed tip (angle_deg = included angle); engr = conical engraver with a small flat tip (tip_mm = flat tip width); rough = roughing "corn" cutter; comp = compression up/down spiral; straight = straight-flute router bit; surf = surfacing / spoilboard bit; drill = drill.
-max_rpm is the maximum spindle speed printed on the tool or packaging, if any.
+const RECOG_SYSTEM = `You identify CNC milling tools (router bits, end mills, engravers, drills, indexable milling cutters) from photos for a CNC machinist.
+Read every visible marking on the tool, its packaging or label (for example "6x22x50 2F", "D6 L22", "D10x30x10x75", "10-30D10L075-4F", "HRC58", "AlTiN", "1F 3.175", "max 24000 rpm"), and use visual cues (flute count, helix direction, tip shape) to fill the fields.
+Type codes: flat = spiral end mill with flat end; ball = ball nose; taperball = tapered ball nose (angle_deg = taper angle per side, diameter_mm = ball diameter); vbit = V-groove engraver with pointed tip (angle_deg = included angle); engr = conical engraver with a small flat tip (tip_mm = flat tip width); rough = "corn" cutter with cross-cut (diamond / burr) teeth for carbon, composites and PCB, or a chip-breaker roughing end mill; comp = compression up/down spiral; straight = straight-flute router bit; surf = surfacing / spoilboard bit; drill = drill.
+imill = indexable end mill / shoulder mill with replaceable carbide inserts (body codes like SPAP10, SPAP1135, BAP300R, EMR, "D40-Z5-M16"). For it: diameter_mm = cutting diameter, flutes = NUMBER OF INSERTS (Vorgen "S01"/"S02"/"S03" = 1/2/3 inserts, "Z5" = 5 inserts), shank_mm = shank diameter, insert_code = insert family printed on the body or box (e.g. "APMT1135", "APKT10", "APXT10").
+iface = indexable face mill / shell mill (e.g. "VRF45 SE12T3 D125 d40 Z08" means diameter 125, bore 40 → shank_mm 40, flutes 8, kappa_deg 45, insert_code "SEET12T3").
+For solid end mills "D10x30x10x75" means diameter 10, cutting length 30, shank 10, overall length 75; "4F" = 4 flutes.
+kappa_deg = entering angle of face mills (45, 75, 90), otherwise 0. max_rpm is the maximum spindle speed printed on the tool or packaging, if any.
 Use 0 for any number you cannot determine, "unknown" for enums you cannot determine and "" for unknown text. Do not estimate dimensions from proportions alone unless a scale reference (ruler, caliper, readable marking) is visible; if you estimate anything, say so in notes.
-Write "name" (short tool name with key dimensions) and "notes" (what was read from markings, what is uncertain, what to measure) in Ukrainian.`;
-
-let sdkPromise = null;
-const loadSdk = () => sdkPromise || (sdkPromise = import(SDK_URL).catch(e => { sdkPromise = null; throw e; }));
-
-async function fileToJpegB64(file) {
-  const url = URL.createObjectURL(file);
-  try {
-    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new UserErr('Не вдалося відкрити фото')); i.src = url; });
-    const k = Math.min(1, 1568 / Math.max(img.naturalWidth, img.naturalHeight));
-    const c = document.createElement('canvas');
-    c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
-    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-    return c.toDataURL('image/jpeg', 0.85).split(',')[1];
-  } finally { URL.revokeObjectURL(url); }
-}
-function apiErrorText(e, mod) {
-  if (e instanceof UserErr) return e.message;
-  const A = (mod && (mod.default || mod.Anthropic)) || {};
-  const is = name => { const C = (mod && mod[name]) || A[name]; return typeof C === 'function' && e instanceof C; };
-  if (is('AuthenticationError')) return 'Ключ API не підходить. Перевір його в Налаштуваннях.';
-  if (is('PermissionDeniedError')) return 'Цей ключ не має доступу до моделі.';
-  if (is('RateLimitError')) return 'Забагато запитів — спробуй за хвилину.';
-  if (is('BadRequestError')) return 'Запит відхилено: ' + (e.message || '');
-  if (is('APIConnectionError')) return 'Немає звʼязку з Claude. Перевір інтернет.';
-  if (is('APIError')) return `Помилка Claude API${e.status ? ' (' + e.status + ')' : ''}: ${e.message || ''}`;
-  return 'Помилка: ' + ((e && e.message) || e);
-}
-const recognizeCutter = file => visionJSON(file, RECOG_SYSTEM, CUTTER_SCHEMA, 'Визнач параметри інструмента на цьому фото.');
-async function visionJSON(file, system, schema, prompt) {
-  const data = await fileToJpegB64(file);
-  let mod;
-  try { mod = await loadSdk(); } catch (e) { throw new UserErr('Не вдалося завантажити модуль Claude. Перевір інтернет.'); }
-  const Anthropic = mod.default || mod.Anthropic;
-  const client = new Anthropic({ apiKey: DB.apiKey, dangerouslyAllowBrowser: true, maxRetries: 1 });
-  try {
-    const resp = await client.beta.messages.create({
-      model: MODEL,
-      max_tokens: 16000,
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      system,
-      output_config: { effort: 'medium', format: { type: 'json_schema', schema } },
-      messages: [{ role: 'user', content: [
-        { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data } },
-        { type: 'text', text: prompt },
-      ] }],
-    });
-    if (resp.stop_reason === 'refusal') throw new UserErr('Claude не зміг обробити це фото. Спробуй інше.');
-    if (resp.stop_reason === 'max_tokens') throw new UserErr('Відповідь обірвалась — спробуй ще раз.');
-    const tb = resp.content.find(b => b.type === 'text');
-    if (!tb) throw new UserErr('Порожня відповідь від Claude.');
-    return JSON.parse(tb.text);
-  } catch (e) { throw new UserErr(apiErrorText(e, mod)); }
-}
-async function runPhoto(file, f, upd) {
-  const st = $('#phst'), btn = f.querySelector('[data-act="photo"]');
-  btn.disabled = true;
-  st.innerHTML = '<span class="spin"></span>Розпізнаю фрезу… зазвичай 10–30 секунд';
-  try {
-    const r = await recognizeCutter(file);
-    if (!r.is_cutter) { st.textContent = 'На фото не видно фрези. ' + (r.notes || ''); return; }
-    const set = (n, v) => { if (v !== undefined && v !== null && v !== '' && v !== 0 && v !== 'unknown' && f.elements[n]) f.elements[n].value = v; };
-    set('type', r.type); set('d', r.diameter_mm); set('z', r.flutes); set('lc', r.cutting_length_mm);
-    set('ol', r.overall_length_mm); set('shank', r.shank_mm); set('angle', r.angle_deg); set('tip', r.tip_mm);
-    set('maxRpm', r.max_rpm); set('tm', r.tool_material); set('coat', r.coating); set('helix', r.helix);
-    if (!f.elements.name.value.trim()) set('name', r.name);
-    if (r.notes && !f.elements.note.value.trim()) f.elements.note.value = r.notes.slice(0, 400);
-    upd();
-    const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
-    st.innerHTML = `✅ Заповнено з фото (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}<br><b>Перевір діаметр і довжину штангенциркулем.</b>`;
-    haptic('success');
-  } catch (e) {
-    st.textContent = '⚠️ ' + (e instanceof UserErr ? e.message : apiErrorText(e));
-    haptic('error');
-  } finally { btn.disabled = false; }
-}
-
-// ---------- Шильдик шпинделя (Claude API) ----------
+Write "name" (short tool name with key dimensions, keep the maker's code) and "notes" (what was read from markings, what is uncertain, what to measure) in Ukrainian.`;
+const INSERT_SCHEMA = {
+  type: 'object',
+  properties: {
+    is_insert:    { type: 'boolean' },
+    code:         { type: 'string' },
+    maker:        { type: 'string' },
+    grade:        { type: 'string' },
+    shape:        { type: 'string', enum: [...Object.keys(INS_SHAPES), 'unknown'] },
+    edge_mm:      { type: 'number' },
+    thickness_mm: { type: 'number' },
+    corner_mm:    { type: 'number' },
+    iso:          { type: 'array', items: { type: 'string', enum: Object.keys(ISO) } },
+    vc_min:       { type: 'number' }, vc_max: { type: 'number' },
+    fz_min:       { type: 'number' }, fz_max: { type: 'number' },
+    ap_min:       { type: 'number' }, ap_max: { type: 'number' },
+    qty:          { type: 'integer' },
+    notes:        { type: 'string' },
+    confidence:   { type: 'string', enum: ['high', 'medium', 'low'] },
+  },
+  required: ['is_insert', 'code', 'maker', 'grade', 'shape', 'edge_mm', 'thickness_mm', 'corner_mm', 'iso', 'vc_min', 'vc_max', 'fz_min', 'fz_max', 'ap_min', 'ap_max', 'qty', 'notes', 'confidence'],
+  additionalProperties: false,
+};
+const INSERT_SYSTEM = `You read indexable carbide insert boxes, labels and the inserts themselves from photos for a CNC machinist.
+code = full ISO designation with chipbreaker, e.g. "APMT1135PDER-M2", "SEET12T3-SM", "APKT1003PDSR-CM". grade = carbide grade, e.g. "AU2035BZ". maker = brand on the box.
+ISO application groups are coloured triangles P (blue), M (yellow), K (red), N (green), S (orange/brown), H (grey) with marks under them: filled dot = main application, open circle = secondary, nothing = not recommended. Put main and secondary groups into iso. Grade ranges like "P15-P30 | M20-M35" also name groups.
+Cutting data like "Vc=100~250 (m/min) fz=0.08~0.30 (mm/rev) ap=0.40~3.00 (mm)" → vc_min/vc_max, fz_min/fz_max (feed per tooth, mm), ap_min/ap_max (mm). qty = pieces per box if printed (e.g. "10PCS").
+shape = first letter of the code; edge_mm and thickness_mm from the code (APMT1135 → edge 11, thickness 3.5; SEET12T3 → edge 12, thickness 3.97; APKT1003 → edge 10, thickness 3.18).
+Use 0 for numbers you cannot read, "" for unknown text, "unknown" for unknown shape, [] for unknown groups. Never invent cutting data that is not printed.
+Write notes in Ukrainian: what was read and what is unclear.`;
+const MACH_SCHEMA = {
+  type: 'object',
+  properties: {
+    is_machine:    { type: 'boolean' },
+    brand:         { type: 'string' },
+    model:         { type: 'string' },
+    kind:          { type: 'string', enum: ['router', 'metal', 'hobby', 'atc', 'unknown'] },
+    control:       { type: 'string' },
+    spindle_taper: { type: 'string' },
+    rpm_min:       { type: 'number' }, rpm_max: { type: 'number' }, rpm_rated: { type: 'number' },
+    power_kw:      { type: 'number' },
+    feed_max_xy:   { type: 'number' }, feed_max_z: { type: 'number' },
+    rigid:         { type: 'string', enum: ['light', 'mid', 'heavy', 'unknown'] },
+    source:        { type: 'string' },
+    notes:         { type: 'string' },
+    confidence:    { type: 'string', enum: ['high', 'medium', 'low'] },
+  },
+  required: ['is_machine', 'brand', 'model', 'kind', 'control', 'spindle_taper', 'rpm_min', 'rpm_max', 'rpm_rated', 'power_kw', 'feed_max_xy', 'feed_max_z', 'rigid', 'source', 'notes', 'confidence'],
+  additionalProperties: false,
+};
+const MACH_SYSTEM = `You identify CNC milling machines for a machinist from a photo of the machine, its serial nameplate, spindle label or CNC control panel.
+1) Read every visible brand, model, nameplate and control name (e.g. "SGSK", "VMC1160", "SINUMERIK 808D", "HSD", "1325").
+2) When brand or model is known, use web search to find the manufacturer specification: max spindle speed (rpm), spindle motor power in kW (continuous S1 if several are given), base / rated speed, maximum CUTTING feed (not rapid traverse) for XY and Z, spindle taper, control.
+kind: router = gantry router for wood, plastics, composites; metal = vertical machining center or metal milling machine; hobby = small desktop machine; atc = industrial router with automatic tool change.
+rigid: light = aluminium-profile frame; mid = welded steel gantry; heavy = cast-iron machining center or heavy industrial router.
+Use 0 for numbers you could not confirm, "unknown" or "" otherwise. Never guess numbers without a source; prefer conservative values. source = where the specs came from (site name or "табличка на фото").
+Write notes in Ukrainian: what was identified and what the machinist should check on the nameplate.`;
 const PLATE_SCHEMA = {
   type: 'object',
   properties: {
@@ -1966,6 +2496,272 @@ const PLATE_SYSTEM = `You read CNC spindle motor nameplates (and VFD / inverter 
 Report: power_kw (convert HP to kW with 1 HP = 0.746 kW), max_rpm (highest speed), rated_rpm (speed at which rated power is reached; if only one speed is printed, use it for both), max_hz and rated_hz (frequencies in Hz, same logic), cooling ("air" or "water" if it is printed or clearly visible, e.g. water fittings).
 Use 0 for any number you cannot read and "unknown" for cooling if unsure. Never guess numbers that are not printed.
 Write "notes" in Ukrainian: what you read, what is unclear.`;
+
+let sdkPromise = null;
+const loadSdk = () => sdkPromise || (sdkPromise = import(SDK_URL).catch(e => { sdkPromise = null; throw e; }));
+
+async function loadImg(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    return await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new UserErr('Не вдалося відкрити фото')); i.src = url; });
+  } finally { setTimeout(() => URL.revokeObjectURL(url), 0); }
+}
+async function fileToJpegB64(file) {
+  const img = await loadImg(file);
+  const k = Math.min(1, 1568 / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.85).split(',')[1];
+}
+// Квадратна мініатюра ~3 КБ — влазить у запис хмари Telegram (до 4 КБ)
+async function makeThumb(file) {
+  try {
+    const img = await loadImg(file), s = Math.min(img.naturalWidth, img.naturalHeight);
+    for (const [px, q] of [[96, 0.7], [84, 0.6], [72, 0.55], [60, 0.5]]) {
+      const c = document.createElement('canvas'); c.width = c.height = px;
+      c.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, px, px);
+      const u = c.toDataURL('image/jpeg', q);
+      if (u.length < 3900) return u;
+    }
+  } catch (e) {}
+  return '';
+}
+function apiErrorText(e, mod) {
+  if (e instanceof UserErr) return e.message;
+  const A = (mod && (mod.default || mod.Anthropic)) || {};
+  const is = name => { const C = (mod && mod[name]) || A[name]; return typeof C === 'function' && e instanceof C; };
+  if (is('AuthenticationError')) return 'Ключ API не підходить. Перевір його в Налаштуваннях.';
+  if (is('PermissionDeniedError')) return 'Цей ключ не має доступу до моделі.';
+  if (is('RateLimitError')) return 'Забагато запитів — спробуй за хвилину.';
+  if (is('BadRequestError')) return 'Запит відхилено: ' + (e.message || '');
+  if (is('APIConnectionError')) return 'Немає звʼязку з Claude. Перевір інтернет.';
+  if (is('APIError')) return `Помилка Claude API${e.status ? ' (' + e.status + ')' : ''}: ${e.message || ''}`;
+  return 'Помилка: ' + ((e && e.message) || e);
+}
+// search — дозволити Claude пошукати характеристики в інтернеті (тоді JSON просимо текстом і розбираємо самі)
+async function visionJSON(file, system, schema, prompt, search) {
+  const data = await fileToJpegB64(file);
+  let mod;
+  try { mod = await loadSdk(); } catch (e) { throw new UserErr('Не вдалося завантажити модуль Claude. Перевір інтернет.'); }
+  const Anthropic = mod.default || mod.Anthropic;
+  const client = new Anthropic({ apiKey: DB.apiKey, dangerouslyAllowBrowser: true, maxRetries: 1 });
+  const image = { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data } };
+  const run = async web => {
+    const messages = [{ role: 'user', content: [image, { type: 'text', text: web
+      ? `${prompt}\n\nНаприкінці відповідай лише JSON-обʼєктом без пояснень, за цією JSON Schema:\n${JSON.stringify(schema)}` : prompt }] }];
+    const req = { model: MODEL, max_tokens: 16000, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default', system, messages };
+    if (web) { req.tools = [{ type: 'web_search_20260209', name: 'web_search', max_uses: 4 }]; req.output_config = { effort: 'medium' }; }
+    else req.output_config = { effort: 'medium', format: { type: 'json_schema', schema } };
+    let resp;
+    for (let k = 0; k < 4; k++) {
+      resp = await client.beta.messages.create(req);
+      if (resp.stop_reason !== 'pause_turn') break;
+      messages.push({ role: 'assistant', content: resp.content });   // довгий пошук — сервер продовжить з того ж місця
+    }
+    if (resp.stop_reason === 'refusal') throw new UserErr('Claude не зміг обробити це фото. Спробуй інше.');
+    if (resp.stop_reason === 'max_tokens') throw new UserErr('Відповідь обірвалась — спробуй ще раз.');
+    const text = resp.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    if (!text.trim()) throw new UserErr('Порожня відповідь від Claude.');
+    if (!web) return JSON.parse(text);
+    const m = text.match(/\{[\s\S]*\}/);
+    if (!m) throw new UserErr('Не вдалося прочитати відповідь Claude — спробуй ще раз.');
+    return JSON.parse(m[0]);
+  };
+  try {
+    try { return await run(!!search); }
+    catch (e) { if (search && e && e.status === 400) return await run(false); throw e; }   // пошук недоступний для ключа — без нього
+  } catch (e) { throw new UserErr(apiErrorText(e, mod)); }
+}
+const recognizeCutter = file => visionJSON(file, RECOG_SYSTEM, CUTTER_SCHEMA, 'Визнач параметри інструмента на цьому фото.');
+const recognizeInsert = file => visionJSON(file, INSERT_SYSTEM, INSERT_SCHEMA, 'Прочитай дані пластини з цього фото.');
+const recognizeMachine = file => visionJSON(file, MACH_SYSTEM, MACH_SCHEMA, 'Що це за верстат? Знайди його характеристики.', true);
+
+// Результат розпізнавання → запис бази
+const pos = x => (Number.isFinite(+x) && +x > 0 ? +x : undefined);
+const clean = o => { for (const k of Object.keys(o)) if (o[k] === undefined || o[k] === '') delete o[k]; return o; };
+function insByFamily(code) {
+  const p = parseInsCode(code), m = insKey(code).match(/^([A-Z])[A-Z]{0,3}(\d{2})/);
+  const sh = p.shape || (m && m[1]), len = p.len || (m && +m[2]);
+  if (!sh || !len) return null;
+  return sortedInserts().find(i => { const q = parseInsCode(i.code); return (q.shape || i.shape) === sh && (q.len || num(i.len)) === len; }) || null;
+}
+function cutterToTool(r) {
+  const t = { type: CUTTER_TYPES.includes(r.type) ? r.type : 'flat', d: pos(r.diameter_mm), z: pos(r.flutes), lc: pos(r.cutting_length_mm),
+    ol: pos(r.overall_length_mm), shank: pos(r.shank_mm), angle: pos(r.angle_deg), tip: pos(r.tip_mm), maxRpm: pos(r.max_rpm),
+    tm: r.tool_material === 'hss' ? 'hss' : 'carbide', coat: String(r.coating || '').slice(0, 40), helix: HELIX[r.helix] !== undefined && r.helix !== 'unknown' ? r.helix : '',
+    name: String(r.name || '').slice(0, 60), note: String(r.notes || '').slice(0, 400), mach: S.machineId };
+  if (INS_TYPES.includes(t.type)) {
+    t.kappa = pos(r.kappa_deg); delete t.lc; delete t.helix; delete t.coat;
+    const i = insByFamily(r.insert_code); if (i) t.insertId = i.id;
+  }
+  return clean(t);
+}
+function insFromRec(r) {
+  const p = parseInsCode(r.code), rg = (a, b) => (pos(a) || pos(b) ? [pos(a) || pos(b), pos(b) || pos(a)].sort((x, y) => x - y) : undefined);
+  const o = { code: insKey(r.code) ? String(r.code).toUpperCase().replace(/\s+/g, '').slice(0, 40) : '', maker: String(r.maker || '').slice(0, 30),
+    grade: String(r.grade || '').toUpperCase().slice(0, 30), shape: INS_SHAPES[r.shape] ? r.shape : p.shape, len: pos(r.edge_mm) || p.len,
+    thick: pos(r.thickness_mm) || p.thick, re: pos(r.corner_mm) || p.re, iso: (r.iso || []).filter(k => ISO[k]),
+    vc: rg(r.vc_min, r.vc_max), fz: rg(r.fz_min, r.fz_max), ap: rg(r.ap_min, r.ap_max), note: String(r.notes || '').slice(0, 400) };
+  if (o.ap) o.apMax = o.ap[1];
+  return clean(o);
+}
+function machFromRec(r) {
+  const kind = ['router', 'metal', 'hobby', 'atc'].includes(r.kind) ? r.kind : 'router';
+  const tpl = MACHINE_TPL.find(x => x.id === kind) || MACHINE_TPL[1];
+  const m = { ...defaultMachine(), ...tpl.m, id: undefined, kind, approx: true, configured: false,
+    name: [r.brand, r.model].filter(Boolean).join(' ').slice(0, 40) || tpl.name };
+  const set = (k, v) => { if (pos(v)) m[k] = Math.round(v * 100) / 100; };
+  set('rpmMin', r.rpm_min); set('rpmMax', r.rpm_max); set('rpmRated', r.rpm_rated); set('powerKw', r.power_kw); set('feedMax', r.feed_max_xy); set('feedMaxZ', r.feed_max_z);
+  if (RIGID[r.rigid]) m.rigid = r.rigid;
+  if (m.rpmRated > m.rpmMax) m.rpmRated = m.rpmMax;
+  if (m.rpmMin >= m.rpmMax) m.rpmMin = 0;
+  m.note = [r.control && `ЧПК: ${r.control}`, r.spindle_taper && `конус ${r.spindle_taper}`, r.source && `джерело: ${r.source}`, r.notes].filter(Boolean).join('. ').slice(0, 300);
+  return m;
+}
+// Пошук у базі того, що на фото
+function matchTools(o) {
+  if (!(o.d > 0)) return [];
+  const iT = INS_TYPES.includes(o.type);
+  return sortedTools().filter(t => {
+    if (INS_TYPES.includes(t.type) !== iT) return false;
+    if (!iT && t.type !== o.type && o.type !== 'flat' && t.type !== 'flat') return false;
+    if (Math.abs(num(t.d) - o.d) > Math.max(0.11, o.d * 0.01)) return false;
+    return !(o.z > 0) || t.type === 'rough' || num(t.z) === o.z;
+  });
+}
+function matchInserts(o) {
+  const k = insKey(o.code); if (!k) return [];
+  const p = parseInsCode(o.code);
+  return sortedInserts().map(i => {
+    const ki = insKey(i.code), pi = parseInsCode(i.code);
+    let s = ki === k ? 3 : k.length >= 8 && ki.slice(0, 8) === k.slice(0, 8) ? 2 : p.shape && pi.shape === p.shape && pi.len === p.len ? 1 : 0;
+    if (s && o.grade && insKey(i.grade) === insKey(o.grade)) s += 0.5;
+    return { i, s };
+  }).filter(x => x.s >= 1).sort((a, b) => b.s - a.s).map(x => x.i);
+}
+function matchMachines(o) {
+  const words = String(o.name || '').split(/\s+/).map(insKey).filter(w => w.length >= 3);
+  if (!words.length) return [];
+  return Object.values(DB.machines).filter(m => { const k = insKey(m.name + ' ' + (m.note || '')); return words.some(w => k.includes(w)); });
+}
+const machCard = m => `<button class="opt${m.id === S.machineId ? ' on' : ''}" data-act="chooseMach" data-id="${m.id}"><span class="opt-ic">${machineArt(machKind(m))}</span><span class="opt-tx"><b>${esc(m.name)}</b><small>${esc(machSpec(m))}</small></span>${m.id === S.machineId ? ic('check', 'ck') : ''}</button>`;
+const FIND = {
+  tool: { noun: 'фрезу', what: 'фрези', run: recognizeCutter, ok: r => r.is_cutter, conv: cutterToTool, match: matchTools,
+    art: o => toolSVG(o, 'lg'), title: o => o.name || toolAutoName(o), sub: o => `${TOOL_TYPES[o.type]} · ${toolSpec(o)}`, card: (x, i) => toolCard(x, i, 'useTool') },
+  ins: { noun: 'пластину', what: 'пластини', run: recognizeInsert, ok: r => r.is_insert, conv: insFromRec, match: matchInserts,
+    art: o => insertSVG(o, 'lg'), title: o => o.code || 'Пластина', sub: o => insSpec(o), card: (x, i) => insCard(x, i, 'editIns') },
+  mach: { noun: 'верстат', what: 'верстата', run: recognizeMachine, ok: r => r.is_machine, conv: machFromRec, match: matchMachines,
+    art: o => `<span class="pv-m">${machineArt(o.kind)}</span>`, title: o => o.name, sub: o => machSpec(o), card: m => machCard(m) },
+};
+let findSeq = 0, findPend = null;
+function pickFile(cb) {
+  const i = document.createElement('input');
+  i.type = 'file'; i.accept = 'image/*';
+  i.addEventListener('change', () => { const f = i.files && i.files[0]; if (f) cb(f); });
+  i.click();
+}
+async function findByPhoto(kind, file) {
+  const F = FIND[kind], seq = ++findSeq, url = URL.createObjectURL(file);
+  openSheet(`Знайти ${F.noun} за фото`, `<div class="scanbox" id="scb"><img src="${url}" alt=""><i class="beam"></i><b></b><b></b><b></b><b></b></div>
+    <div class="pst" id="fst"><span class="spin"></span>${kind === 'mach' ? 'Впізнаю верстат і шукаю його характеристики в інтернеті… до хвилини' : 'Розпізнаю… зазвичай 10–30 секунд'}</div>
+    <div id="fres" style="margin-top:12px"></div>`, true);
+  const thumb = await makeThumb(file);
+  try {
+    const r = await F.run(file);
+    if (seq !== findSeq || !$('#fres')) return;
+    $('#scb').classList.add('done');
+    if (!F.ok(r)) { $('#fst').textContent = `Не бачу на фото ${F.what}. ${r.notes || ''}`; haptic('warning'); return; }
+    const o = F.conv(r), found = F.match(o);
+    findPend = { kind, o, thumb };
+    const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
+    $('#fst').innerHTML = `✅ Розпізнано (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}`;
+    $('#fres').innerHTML = `<div class="preview">${F.art(o)}<div class="pv-tx"><b>${esc(F.title(o))}</b>${esc(F.sub(o))}</div></div>
+      ${found.length ? `<div class="sec-h">Вже є в базі</div>${found.slice(0, 5).map((x, i) => F.card(x, i)).join('')}`
+        : `<div class="note i">${ic('info')}<div>У базі такого ще немає.</div></div>`}
+      <button class="btn primary block" data-act="findAdd" style="margin-top:10px">${ic('plus')}${found.length ? 'Це інше — додати нове' : 'Додати в базу'}</button>`;
+    haptic('success');
+  } catch (e) {
+    if (seq !== findSeq || !$('#fst')) return;
+    $('#scb')?.classList.add('done');
+    $('#fst').textContent = '⚠️ ' + (e instanceof UserErr ? e.message : apiErrorText(e));
+    haptic('error');
+  }
+}
+async function runPhoto(file, f, upd) {
+  const st = $('#phst'), btn = f.querySelector('[data-act="photo"]');
+  btn.disabled = true;
+  st.innerHTML = '<span class="spin"></span>Розпізнаю фрезу… зазвичай 10–30 секунд';
+  const thumb = makeThumb(file);
+  try {
+    const r = await recognizeCutter(file);
+    if (!r.is_cutter) { st.textContent = 'На фото не видно фрези. ' + (r.notes || ''); return; }
+    const t = cutterToTool(r);
+    for (const [k, v] of Object.entries(t)) {
+      if (k === 'mach' || !f.elements[k]) continue;
+      if ((k === 'name' || k === 'note') && f.elements[k].value.trim()) continue;
+      f.elements[k].value = v;
+    }
+    formThumb = (await thumb) || formThumb;
+    upd();
+    const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
+    st.innerHTML = `✅ Заповнено з фото (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}<br><b>Перевір діаметр і довжину штангенциркулем.</b>`;
+    haptic('success');
+  } catch (e) {
+    st.textContent = '⚠️ ' + (e instanceof UserErr ? e.message : apiErrorText(e));
+    haptic('error');
+  } finally { btn.disabled = false; }
+}
+async function runInsPhoto(file, f, sel, upd) {
+  const st = $('#ph3st'), btn = f.querySelector('[data-act="insPhoto"]');
+  btn.disabled = true;
+  st.innerHTML = '<span class="spin"></span>Читаю етикетку… зазвичай 10–30 секунд';
+  const thumb = makeThumb(file);
+  try {
+    const r = await recognizeInsert(file);
+    if (!r.is_insert) { st.textContent = 'Не бачу пластини чи етикетки на фото. ' + (r.notes || ''); return; }
+    const o = insFromRec(r), E = f.elements;
+    for (const k of ['code', 'maker', 'grade', 'shape', 'len', 'thick', 're']) if (o[k] !== undefined && E[k]) E[k].value = o[k];
+    const pr = (a, k0, k1) => { if (o[a]) { E[k0].value = o[a][0]; E[k1].value = o[a][1]; } };
+    pr('vc', 'vc0', 'vc1'); pr('fz', 'fz0', 'fz1'); pr('ap', 'ap0', 'ap1');
+    if (o.iso && o.iso.length) sel.querySelectorAll('button').forEach(b => b.classList.toggle('on', o.iso.includes(b.dataset.v)));
+    if (pos(r.qty) && !E.qty.value.trim()) E.qty.value = r.qty;
+    if (o.note && !E.note.value.trim()) E.note.value = o.note;
+    formThumb = (await thumb) || formThumb;
+    upd();
+    const conf = { high: 'висока', medium: 'середня', low: 'низька' }[r.confidence] || '—';
+    st.innerHTML = `✅ Прочитано (впевненість: <b>${conf}</b>). ${esc(r.notes || '')}${pos(r.qty) ? `<br>У коробці ${r.qty} шт — вкажи, скільки є насправді.` : ''}`;
+    haptic('success');
+  } catch (e) {
+    st.textContent = '⚠️ ' + (e instanceof UserErr ? e.message : apiErrorText(e));
+    haptic('error');
+  } finally { btn.disabled = false; }
+}
+// Верстат з фото: модель → характеристики з інтернету → поля форми
+async function runMachPhoto(file, f) {
+  const st = $('#ph2st'), btn = f.querySelector('[data-act="machPhoto"]');
+  btn.disabled = true;
+  st.innerHTML = '<span class="spin"></span>Впізнаю верстат і шукаю характеристики… до хвилини';
+  try {
+    const r = await recognizeMachine(file);
+    if (!r.is_machine) { st.textContent = 'Не бачу верстата чи таблички на фото. ' + (r.notes || ''); return; }
+    const m = machFromRec(r), E = f.elements, got = [];
+    if (r.brand || r.model) { E.name.value = m.name; got.push('назва'); }
+    const set = (k, v, l) => { if (pos(v)) { E[k].value = m[k]; got.push(l); } };
+    set('rpmMin', r.rpm_min, 'мін. оберти'); set('rpmMax', r.rpm_max, 'макс. оберти'); set('rpmRated', r.rpm_rated, 'номінальні оберти');
+    set('powerKw', r.power_kw, 'потужність'); set('feedMax', r.feed_max_xy, 'подача XY'); set('feedMaxZ', r.feed_max_z, 'подача Z');
+    if (RIGID[r.rigid]) { E.rigid.value = r.rigid; got.push('жорсткість'); }
+    if (m.note) E.note.value = m.note;
+    f.dataset.kind = m.kind;
+    st.innerHTML = got.length ? `✅ Заповнено: ${esc(got.join(', '))}. ${esc(r.notes || '')}<br><b>Цифри з інтернету — звір з табличкою верстата.</b>` : `Модель не вдалося визначити. ${esc(r.notes || '')}`;
+    haptic(got.length ? 'success' : 'warning');
+  } catch (e) {
+    st.textContent = '⚠️ ' + (e instanceof UserErr ? e.message : apiErrorText(e));
+    haptic('error');
+  } finally { btn.disabled = false; }
+}
+
+// ---------- Шильдик шпинделя (Claude API) ----------
 async function runPlate(file, f) {
   const st = $('#ph2st'), btn = f.querySelector('[data-act="plate"]');
   btn.disabled = true;
@@ -2195,7 +2991,7 @@ function renderSettings() {
         <div><b>${fmt(m.feedMaxZ)}</b><small>F Z мм/хв</small></div>
         <div><b>${esc(RIGID[m.rigid]?.s || '')}</b><small>жорсткість</small></div>
       </div></section>`).join('')}
-    <div class="btns" style="margin:0 0 16px"><button class="btn" data-act="newMach">${ic('plus')}Додати верстат</button><button class="btn" data-act="machHelp">${ic('help')}Де взяти дані?</button></div>
+    <div class="btns" style="margin:0 0 16px"><button class="btn" data-act="newMach">${ic('plus')}Додати верстат</button><button class="btn" data-act="findPhoto" data-kind="mach">${ic('camera')}За фото</button><button class="btn" data-act="machHelp">${ic('help')}Де взяти дані?</button></div>
 
     <div class="sec"><i>02</i>Сервіс</div>
     <section class="card"><div class="label">${ic('key')}Розпізнавання фрез з фото</div>
@@ -2210,7 +3006,7 @@ function renderSettings() {
       <div class="hint" style="margin-top:10px">${Store.mode === 'cloud' ? '☁️ Дані в хмарі Telegram — однакові на телефоні й компʼютері.' : '💾 Апка відкрита поза Telegram — дані лише в цьому браузері.'}</div>
       <div class="spec-grid" style="margin-top:0">
         <div><b>${Object.keys(DB.tools).length}</b><small>фрез</small></div>
-        <div><b>${Object.values(DB.matOv).filter(m => m.vmin !== undefined).length}</b><small>своїх матер.</small></div>
+        <div><b>${Object.keys(DB.inserts).length}</b><small>пластин</small></div>
         <div><b>${Object.keys(DB.hist).length}</b><small>записів</small></div>
       </div>
       <div class="btns"><button class="btn" data-act="export">Експорт</button><button class="btn" data-act="import">Імпорт</button></div>
@@ -2256,6 +3052,7 @@ function machPicker() {
   openSheet('Верстат', `
     <div class="opts">${ms.map(m => optHTML({ kind: 'mach', id: m.id, icon: machineArt(machKind(m)), t: m.name + (m.approx ? ' · типові дані' : ''), s: machSpec(m), on: m.id === S.machineId })).join('')}</div>
     <div class="btns"><button class="btn" data-act="newMach">${ic('plus')}Додати</button><button class="btn" data-act="editMach" data-id="${S.machineId}">${ic('edit')}Змінити поточний</button></div>
+    <button class="btn block" data-act="findPhoto" data-kind="mach" style="margin-top:8px">${ic('camera')}Знайти верстат за фото</button>
     <button class="btn block" data-act="machHelp" style="margin-top:8px">${ic('help')}Де взяти дані верстата?</button>`);
 }
 function machForm(m, opts = {}) {
@@ -2266,9 +3063,10 @@ function machForm(m, opts = {}) {
     <form id="sf" autocomplete="off">
       ${base.approx ? `<div class="note i" style="margin-bottom:12px">${ic('info')}<div>Тут <b>типові цифри</b> для такого верстата — вони свідомо обережні. Можна зберегти як є, а точні вписати, коли дізнаєшся.</div></div>` : ''}
       <div class="photo">
-        <button type="button" class="btn block" data-act="plate">${ic('camera')}Сфотографувати табличку шпинделя</button>
+        <button type="button" class="btn block" data-act="machPhoto">${ic('camera')}Верстат з фото — знайти дані</button>
+        <button type="button" class="btn block" data-act="plate" style="margin-top:8px">${ic('camera')}Табличка шпинделя</button>
         <input type="file" accept="image/*" id="ph2" class="hide">
-        <div class="pst" id="ph2st">Claude прочитає потужність і оберти з таблички (шильдика) на шпинделі.</div>
+        <div class="pst" id="ph2st">Сфотографуй верстат або табличку з моделлю — Claude впізнає його і знайде характеристики в інтернеті. Або сфотографуй табличку шпинделя — прочитає потужність і оберти.</div>
       </div>
       <details class="help"><summary>${ic('help')}Де знайти ці дані?${ic('chev', 'chev')}</summary>${MACH_HELP}</details>
       <label class="f"><span>Назва</span><input name="name" value="${esc(base.name)}"></label>
@@ -2305,7 +3103,7 @@ function machForm(m, opts = {}) {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(f));
     const o = { id: base.id || genId(), name: d.name.trim().slice(0, 40) || 'Верстат', rigid: RIGID[d.rigid] ? d.rigid : 'mid', units: UNITS[d.units] ? d.units : 'mmmin',
-      note: d.note.trim().slice(0, 300), configured: true, approx: !d.exact, kind: base.kind || machKind({ ...base, rpmMax: num(d.rpmMax), rigid: d.rigid }) };
+      note: d.note.trim().slice(0, 300), configured: true, approx: !d.exact, kind: f.dataset.kind || base.kind || machKind({ ...base, rpmMax: num(d.rpmMax), rigid: d.rigid }) };
     for (const k of ['rpmMin', 'rpmMax', 'rpmRated', 'powerKw', 'feedMax', 'feedMaxZ']) o[k] = num(d[k]);
     if (!(o.rpmMax >= 1000 && o.rpmMax <= 100000)) return toast('Макс. оберти — від 1 000 до 100 000', true);
     if (!(o.rpmMin >= 0) || o.rpmMin >= o.rpmMax) return toast('Мін. оберти мають бути менші за максимальні', true);
@@ -2313,6 +3111,8 @@ function machForm(m, opts = {}) {
     if (!(o.feedMaxZ >= 50 && o.feedMaxZ <= 200000)) return toast('Перевір макс. подачу Z (мм/хв)', true);
     if (!(o.rpmRated > 0) || o.rpmRated > o.rpmMax) o.rpmRated = o.rpmMax;
     if (!(o.powerKw > 0) || o.powerKw > 100) return toast('Вкажи потужність шпинделя, кВт', true);
+    if (base.img) o.img = base.img;
+    if (base.ord !== undefined) o.ord = base.ord;
     DB.machines[o.id] = o;
     if (!(await Store.set('s_' + o.id, o))) return;
     if (isNew || welcome) { S.machineId = o.id; S.useVer = null; }
@@ -2322,10 +3122,41 @@ function machForm(m, opts = {}) {
   });
 }
 async function markOnboarded() { DB.cfg = { ...DB.cfg, onboarded: true }; await Store.set('cfg', DB.cfg); }
+// Видалене з інвентаря цеху більше не повертається; мініатюра фото видаляється разом із записом
+async function forget(id) {
+  if (DB.photos[id]) { delete DB.photos[id]; await Store.del('ph_' + id); }
+  if (String(id).startsWith('inv_')) { DB.cfg = { ...DB.cfg, invDel: [...new Set([...(DB.cfg.invDel || []), id])] }; await Store.set('cfg', DB.cfg); }
+}
+// Інвентар цеху (inventory.json поруч з апкою): верстати, пластини, фрези і перевірені режими.
+// Додає лише те, чого ще немає; нічого з того, що користувач змінив чи видалив, не чіпає.
+async function seedInventory() {
+  let inv;
+  try { const r = await fetch('inventory.json', { cache: 'no-cache' }); if (!r.ok) return null; inv = await r.json(); } catch (e) { return null; }
+  const ver = +inv.ver || 0;
+  if (!ver || (+DB.cfg.invVer || 0) >= ver) return null;
+  const del = new Set(DB.cfg.invDel || []), n = { m: 0, i: 0, t: 0, h: 0 };
+  const add = async (arr, key, target, prefix, norm = x => x) => {
+    for (const o0 of arr || []) {
+      if (!o0 || !o0.id || target[o0.id] || del.has(o0.id)) continue;
+      const o = norm({ ...o0 });
+      target[o.id] = o; await Store.set(prefix + o.id, o); n[key]++;
+    }
+  };
+  await add(inv.machines, 'm', DB.machines, 's_', normalizeMachine);
+  await add(inv.inserts, 'i', DB.inserts, 'i_');
+  await add(inv.tools, 't', DB.tools, 't_', o => ({ ...o, created: o.created || Date.now() }));
+  await add(inv.hist, 'h', DB.hist, 'h_');
+  // автоматичний верстат «Мій фрезер», якого ніхто не налаштовував, тепер зайвий
+  if (n.m) for (const m of Object.values(DB.machines)) if (!m.configured && !String(m.id).startsWith('inv_')) { delete DB.machines[m.id]; await Store.del('s_' + m.id); }
+  sortMachines();
+  DB.cfg = { ...DB.cfg, invVer: ver, onboarded: DB.cfg.onboarded || n.m > 0 };
+  await Store.set('cfg', DB.cfg);
+  return n;
+}
 function exportData() {
-  const data = JSON.stringify({ app: 'cnc-calc', v: 2, ts: Date.now(), tools: DB.tools, mats: DB.matOv, machines: DB.machines, hist: DB.hist });
+  const data = JSON.stringify({ app: 'cnc-calc', v: 3, ts: Date.now(), tools: DB.tools, ins: DB.inserts, mats: DB.matOv, machines: DB.machines, hist: DB.hist });
   openSheet('Експорт бази', `
-    <div class="hint">Резервна копія фрез, матеріалів, верстатів та історії (без ключа API). Скопіюй і збережи, наприклад, в «Збережене» в Telegram.</div>
+    <div class="hint">Резервна копія фрез, пластин, матеріалів, верстатів та історії (без ключа API і фото). Скопіюй і збережи, наприклад, в «Збережене» в Telegram.</div>
     <textarea rows="10" readonly id="exp">${esc(data)}</textarea>
     <button class="btn primary block" data-act="copyExp" style="margin-top:10px">${ic('copy')}Копіювати</button>`);
 }
@@ -2339,7 +3170,7 @@ function importData() {
 async function doImport() {
   let d; try { d = JSON.parse($('#imp').value); } catch (e) { return toast('Це не схоже на резервну копію', true); }
   if (!d || d.app !== 'cnc-calc') return toast('Це не резервна копія цієї апки', true);
-  const groups = [['tools', 't_', DB.tools, x => x], ['mats', 'm_', DB.matOv, normalizeMat], ['machines', 's_', DB.machines, normalizeMachine], ['hist', 'h_', DB.hist, x => x]];
+  const groups = [['tools', 't_', DB.tools, x => x], ['ins', 'i_', DB.inserts, x => x], ['mats', 'm_', DB.matOv, normalizeMat], ['machines', 's_', DB.machines, normalizeMachine], ['hist', 'h_', DB.hist, x => x]];
   const total = groups.reduce((s, [k]) => s + Object.keys(d[k] || {}).length, 0);
   if (!total) return toast('У копії немає записів', true);
   if (!(await ask(`Імпортувати ${total} записів?`))) return;
@@ -2407,7 +3238,7 @@ const ACT = {
   unVer: () => { S.useVer = null; renderResult(); },
   saveRun: () => saveRunForm(),
   copyRun: () => copyText(runSummary()),
-  copyG: () => { const v = $('#result')?._vals; if (v) copyText(`S${Math.round(v.n)} M3\nG1 F${Math.round(v.F)}`, 'G-код скопійовано'); },
+  copyG: () => { const v = $('#result')?._vals; if (v) copyText(`S${Math.round(v.n)} M3${coolM(curMat(), curMachine(), v)}\nG1 F${Math.round(v.F)}`, 'G-код скопійовано'); },
   closeSheet: () => closeSheet(),
   newTool: () => { closeSheet(); toolForm(null); },
   editTool: el => toolForm(DB.tools[el.dataset.id]),
@@ -2421,9 +3252,49 @@ const ACT = {
   },
   delTool: async el => {
     const t = DB.tools[el.dataset.id]; if (!t || !(await ask(`Видалити фрезу «${t.name}»? Історія з нею залишиться.`))) return;
-    delete DB.tools[t.id]; await Store.del('t_' + t.id);
+    delete DB.tools[t.id]; await Store.del('t_' + t.id); await forget(t.id);
     if (S.toolId === t.id) S.toolId = sortedTools()[0]?.id || '__manual';
     saveCfgSoon(); closeSheet(); render();
+  },
+  useTool: el => {
+    if (!DB.tools[el.dataset.id]) return;
+    S.toolId = el.dataset.id; S.useVer = null; S.tab = 'calc'; S.anim = true; saveCfgSoon(); closeSheet(); render(); window.scrollTo(0, 0); haptic('sel');
+  },
+  toolsSub: el => { if (S.toolsSub === el.dataset.v) return; S.toolsSub = el.dataset.v; render(); haptic('sel'); },
+  newIns: () => { closeSheet(); insForm(null); },
+  editIns: el => { const i = DB.inserts[el.dataset.id]; if (i) insForm(i); },
+  delIns: async el => {
+    const i = DB.inserts[el.dataset.id]; if (!i) return;
+    const u = insUse(i.id);
+    if (!(await ask(`Видалити пластину «${i.code}»?${u.tools.length ? ` Вона стоїть у ${u.tools.length} ${plural(u.tools.length, 'фрезі', 'фрезах', 'фрезах')} — там рахуватиму за типовими даними.` : ''}`))) return;
+    delete DB.inserts[i.id]; await Store.del('i_' + i.id); await forget(i.id);
+    closeSheet(); render();
+  },
+  insPhoto: () => {
+    if (!DB.apiKey) { toast('Спершу додай ключ Claude API в Налаштуваннях', true); return; }
+    $('#ph3').click();
+  },
+  qtyStep: el => {
+    const inp = el.closest('.st').querySelector('input');
+    inp.value = Math.max(0, Math.round((num(inp.value) || 0) + +el.dataset.d));
+    inp.dispatchEvent(new Event('input', { bubbles: true })); haptic('sel');
+  },
+  findPhoto: el => {
+    if (!DB.apiKey) { toast('Спершу додай ключ Claude API в Налаштуваннях', true); return; }
+    const kind = el.dataset.kind;
+    pickFile(f => findByPhoto(kind, f));
+  },
+  findAdd: () => {
+    const p = findPend; if (!p) return;
+    closeSheet();
+    if (p.kind === 'tool') toolForm(p.o, { thumb: p.thumb });
+    else if (p.kind === 'ins') insForm(p.o, { thumb: p.thumb });
+    else machForm(p.o);
+  },
+  machPhoto: el => {
+    if (!DB.apiKey) { toast('Спершу додай ключ Claude API в Налаштуваннях', true); return; }
+    const f = el.closest('form');
+    pickFile(file => runMachPhoto(file, f));
   },
   newMat: () => { closeSheet(); matForm(null); },
   editMat: el => matForm(getMat(el.dataset.id)),
@@ -2471,7 +3342,7 @@ const ACT = {
   newMach: () => { closeSheet(); tplPicker(null, false); },
   editMach: el => { const m = DB.machines[el.dataset.id]; if (!m) return; closeSheet(); if (m.configured) machForm(m); else tplPicker(m.id, false); },
   pickMach: () => machPicker(),
-  chooseMach: el => { if (!DB.machines[el.dataset.id]) return; S.machineId = el.dataset.id; S.useVer = null; saveCfgSoon(); render(); haptic('sel'); },
+  chooseMach: el => { if (!DB.machines[el.dataset.id]) return; S.machineId = el.dataset.id; S.useVer = null; saveCfgSoon(); closeSheet(); render(); haptic('sel'); },
   chooseTpl: el => tplPicker(el.dataset.id, false),
   tpl: el => {
     const t = MACHINE_TPL.find(x => x.id === el.dataset.tpl); if (!t) return;
@@ -2489,7 +3360,7 @@ const ACT = {
   skipWelcome: async () => { await markOnboarded(); closeSheet(); },
   delMach: async el => {
     const m = DB.machines[el.dataset.id]; if (!m || !(await ask(`Видалити верстат «${m.name}»?`))) return;
-    delete DB.machines[m.id]; await Store.del('s_' + m.id);
+    delete DB.machines[m.id]; await Store.del('s_' + m.id); await forget(m.id);
     if (S.machineId === m.id) S.machineId = Object.keys(DB.machines)[0];
     saveCfgSoon(); closeSheet(); render();
   },
@@ -2535,7 +3406,8 @@ document.addEventListener('change', e => {
 document.addEventListener('input', e => {
   const el = e.target;
   if (el.dataset.calc && el.tagName !== 'SELECT') setCalc(el.dataset.calc, el.value, false);
-  if (el.dataset.filter === 'tools') { S.qTools = el.value; renderToolList(); }
+  if (el.dataset.filter === 'tools') { if (S.toolsSub === 'ins') S.qIns = el.value; else S.qTools = el.value; renderToolList(); }
+  if (el.id === 'pathLen') { S.pathLen = el.value; renderTime(); }
   if (el.dataset.filter === 'hist') { S.qHist = el.value; renderHistList(); }
   if (el.dataset.filter === 'picker') {
     const q = el.value.trim().toLowerCase();
@@ -2561,13 +3433,22 @@ document.addEventListener('input', e => {
     initState();
     S.anim = true;
     render();
+    const n = TEST ? null : await seedInventory();
+    if (n && n.m + n.i + n.t + n.h) {
+      initState();
+      // перший запуск з інвентарем: фреза і матеріал під активний верстат
+      if (n.t && S.toolId === '__manual') S.toolId = Object.values(DB.tools).find(t => t.mach === S.machineId && t.type !== 'drill')?.id || sortedTools()[0]?.id || '__manual';
+      if (n.m && machKind(curMachine()) === 'metal' && getMat(S.matId)?.g !== 'metal') S.matId = 'p_40x';
+      saveCfgSoon(); render();
+      toast(`Додано з цеху: ${[n.m && `${n.m} верст.`, n.t && `${n.t} фрез`, n.i && `${n.i} пластин`, n.h && `${n.h} режимів`].filter(Boolean).join(', ')}`);
+    }
     const m = curMachine();
     if (!DB.cfg.onboarded && !m.configured && !TEST) tplPicker(m.id, true);
   } catch (e) {
     console.error(e);
     view.innerHTML = `<div class="card empty">Не вдалося завантажити: ${esc(e.message || e)}</div>`;
   }
-  if (TEST) window.__cnc = { calc, PRESET_MATS, getMat, MODES, OPS, interp, toolSVG };
+  if (TEST) window.__cnc = { calc, PRESET_MATS, getMat, MODES, OPS, interp, toolSVG, insertSVG, parseInsCode, insRange, DB, seedInventory };
 })();
 })();
 </script>

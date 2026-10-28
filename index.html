@@ -533,18 +533,46 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:12;padding:8px 10px ca
 
 .scan{display:none}
 
-/* ---- заставка: верстат SGSK відчиняє двері ---- */
-#intro{position:fixed;inset:0;z-index:9999;background:#0a0e15;transition:opacity .65s var(--ease),transform .65s var(--ease)}
-#intro canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-#intro.out{opacity:0;transform:scale(1.06);pointer-events:none}
-#intro .in-t{position:absolute;left:16px;right:16px;bottom:calc(16% + env(safe-area-inset-bottom,0px));text-align:center;color:#fff;pointer-events:none}
-#intro .in-t b{display:block;font:750 32px/1.05 var(--font);letter-spacing:-.015em}
-#intro .in-t span{display:block;margin-top:10px;font:600 11.5px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6)}
-#intro .in-bar{position:absolute;left:32%;right:32%;bottom:calc(11% + env(safe-area-inset-bottom,0px));height:2px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,.12);transition:opacity .4s}
-#intro .in-bar i{display:block;width:6%;height:100%;background:#4f8cff;transition:width .25s}
-#intro.play .in-bar{display:none}
+/* ---- заставка: цех вмикає світло, SGSK відчиняє двері, камера заходить до фрези ----
+   анімується лише прозорість і зсув (їх веде компоновщик) — без розмиття поверх WebGL, щоб кадри йшли рівно */
+#intro{position:fixed;inset:0;z-index:9999;overflow:hidden;background:#080b12;transition:opacity .75s cubic-bezier(.4,0,.2,1),transform .75s cubic-bezier(.4,0,.2,1)}
+#intro.fast{transition-duration:.28s}
+#intro.hold,#intro.hold *{transition:none!important;animation-duration:0s!important;animation-delay:0s!important}
+#intro.out{opacity:0;transform:scale(1.05);pointer-events:none}
+#intro canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .7s}
+#intro.play canvas{opacity:1}
+#intro .in-vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 95% at 50% 45%,transparent 52%,rgba(0,0,0,.6))}
+#intro .in-fr i{position:absolute;width:16px;height:16px;border:0 solid rgba(255,255,255,.3);opacity:0;transition:opacity .9s .4s;pointer-events:none}
+#intro.play .in-fr i{opacity:1}
+#intro .in-fr i:nth-child(1){left:14px;top:calc(58px + env(safe-area-inset-top,0px));border-width:1.5px 0 0 1.5px}
+#intro .in-fr i:nth-child(2){right:14px;top:calc(58px + env(safe-area-inset-top,0px));border-width:1.5px 1.5px 0 0}
+#intro .in-fr i:nth-child(3){left:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));border-width:0 0 1.5px 1.5px}
+#intro .in-fr i:nth-child(4){right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));border-width:0 1.5px 1.5px 0}
+#intro .in-st{position:absolute;left:16px;top:calc(24px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.85);font:600 10.5px/1 var(--mono);letter-spacing:.09em;opacity:0;transition:opacity .6s .25s;pointer-events:none}
+#intro.play .in-st{opacity:1}
+#intro .in-st i{width:7px;height:7px;border-radius:50%;background:#f5b400;box-shadow:0 0 9px #f5b400}
+#intro .in-st.run i{background:#2ee672;box-shadow:0 0 9px #2ee672}
+#intro .in-st b{font-weight:600;color:rgba(255,255,255,.5)}
+#intro .in-t{position:absolute;left:16px;right:16px;bottom:calc(15% + env(safe-area-inset-bottom,0px));text-align:center;color:#fff;pointer-events:none;transition:opacity .5s,transform .5s}
+#intro .in-t.off{opacity:0;transform:translateY(-10px)}
+#intro .in-t b{display:block;font:750 34px/1.05 var(--font);letter-spacing:-.015em;text-shadow:0 2px 24px rgba(0,0,0,.55)}
+#intro .in-t b span{display:inline-block;opacity:0;transform:translateY(.5em)}
+#intro.play .in-t b span{animation:inUp .75s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(.3s + var(--i) * 45ms)}
+#intro .in-t > span{display:block;margin-top:10px;font:600 11.5px/1.35 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65);opacity:0}
+#intro.play .in-t > span{animation:inFade .8s .95s forwards}
+@keyframes inUp{to{opacity:1;transform:none}}
+@keyframes inFade{to{opacity:1}}
+#intro .in-rd{position:absolute;left:12px;right:12px;bottom:calc(10% + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:clamp(14px,6vw,34px);opacity:0;transform:translateY(12px);transition:opacity .45s,transform .45s;pointer-events:none}
+#intro .in-rd.on{opacity:1;transform:none}
+#intro .in-rd div{display:flex;flex-direction:column;align-items:center;min-width:64px}
+#intro .in-rd span{font:600 9.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+#intro .in-rd b{margin-top:7px;font:700 27px/1 var(--mono);color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(79,140,255,.6)}
+#intro .in-rd em{margin-top:5px;font:500 10px/1 var(--mono);font-style:normal;color:rgba(255,255,255,.45)}
+#intro .in-bar{position:absolute;left:32%;right:32%;bottom:calc(10% + env(safe-area-inset-bottom,0px));height:2px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,.12);transition:opacity .4s}
+#intro .in-bar i{display:block;height:100%;background:#4f8cff;transform-origin:0 50%;transform:scaleX(.06);transition:transform .25s}
+#intro.play .in-bar{opacity:0}
 #intro .in-skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;padding:8px 15px;border-radius:20px;cursor:pointer;
-  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;font:600 13px/1 var(--font);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  border:1px solid rgba(255,255,255,.22);background:rgba(10,14,21,.55);color:#fff;font:600 13px/1 var(--font)}
 
 /* ---- просто / детально ---- */
 .lvlsw{display:flex;align-items:center;gap:10px;margin:2px 0 14px}
@@ -909,7 +937,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '8.1';
+const APP_VER = '8.2';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
@@ -2774,7 +2802,8 @@ const R3 = (() => {
     if (!todo.length) return;
     load().then(ok => {
       if (!ok) return;
-      for (const [el, ck] of todo) chain = chain.then(() => new Promise(res => setTimeout(() => {
+      // поки грає заставка — чекаємо: рендер картинки на головному потоці смикав би її кадри
+      for (const [el, ck] of todo) chain = chain.then(() => Intro.idle()).then(() => new Promise(res => setTimeout(() => {
         try {
           if (!cache.has(ck)) {
             const [view, w, h] = SIZES[el.dataset.r3][el.dataset.s] || SIZES.t.sm;
@@ -2869,7 +2898,8 @@ const R3 = (() => {
   }
   // при зміні теми/оформлення машини перефарбовуються (колір фарби — акцент)
   function retheme() { for (const el of document.querySelectorAll('[data-r3="m"].r3on')) { el.classList.remove('r3on'); el.querySelector('.r3i')?.remove(); } hydrate(); }
-  return { toolArt, machArt, watch, live, liveMach, retheme, load, get on() { return !dead; } };
+  // tool3 — та сама 3D-фреза для сцени заставки (у міліметрах, кінчик на y = 0)
+  return { toolArt, machArt, watch, live, liveMach, retheme, load, tool3: t => toolObj(t, false), get on() { return !dead; } };
 })();
 
 const toolSVG = (t, size) => R3.toolArt(t, size, toolDraw(t, size));
@@ -4821,6 +4851,7 @@ const Viz = (() => {
     raf = 0;
     if (!cv || !document.contains(cv)) { stop(); return; }
     if (!visible || document.hidden) return;
+    if (Intro.busy) { last = t; raf = requestAnimationFrame(frame); return; }   // під заставкою розріз не малюємо
     const dt = Math.min(0.05, (t - last) / 1000); last = t;
     advance(dt); draw(); raf = requestAnimationFrame(frame);
   }
@@ -7051,123 +7082,664 @@ document.addEventListener('input', e => {
 });
 
 // ======================= Старт =======================
-// ======================= Заставка: SGSK відчиняє двері — і камера заходить у програму =======================
-// Модель sgsk.glb (метри, Y — вгору, фронт кабіни на z = 0). Двері — окремі деталі «… ліві» / «… праві»: розсуваються на 0,66 м.
-// Показується на кожному запуску, поки не вимкнено в Налаштуваннях; тап «Пропустити» — одразу в програму.
+// ======================= Заставка: у цеху вмикається світло, SGSK відчиняє двері — і камера заходить до фрези =======================
+// Модель sgsk.glb: метри, Y — вгору, фронт кабіни на z = 0, деталі вже у світових координатах; двері — «… ліві» / «… праві».
+// Плавність: шейдери збираються ще до старту (поки на екрані назва); годинник заставки після важкого кадру не перескакує;
+// камера летить одним сплайном за довжиною дуги з гладкою швидкістю (без зупинок на стиках) і ще м'яко згладжується;
+// програма під заставкою нічого не малює (3D-картинки й розріз чекають). Слабкий телефон — менша роздільність, далі без світіння.
 const Intro = (() => {
-  const TH = 'https://cdn.jsdelivr.net/npm/three@0.160.0/', KEY = LS + 'intro';
-  let el = null, done = true, raf = 0, ren = null, scene = null, bye = null;
+  const TH = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/', KEY = LS + 'intro';
+  let el = null, phase = 'done', raf = 0, ren = null, scene = null, comp = null, bye = null, trash = [], waiters = [], appRes = null;
+  const appWait = new Promise(r => { appRes = r; });
   const on = () => { try { return localStorage.getItem(KEY) !== '0'; } catch (e) { return true; } };
   const set = v => { try { localStorage.setItem(KEY, v ? '1' : '0'); } catch (e) {} };
-  const ease = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2), cl = x => Math.min(1, Math.max(0, x));
-  function finish(fast) {
-    if (done) return; done = true;
-    cancelAnimationFrame(raf);
-    const e = el; el = null;
-    if (e) { e.classList.add('out'); setTimeout(() => e.remove(), fast ? 260 : 700); }
-    setTimeout(() => {
-      try { if (scene) scene.traverse(o => { if (o.isMesh) { o.geometry.dispose(); [].concat(o.material).forEach(m => m.dispose()); } }); } catch (x) {}
-      try { if (ren) { ren.dispose(); ren.forceContextLoss(); } } catch (x) {}
-      ren = null; scene = null;
-    }, 800);
-    if (bye) { const f = bye; bye = null; f(); }
+  const cl = x => Math.min(1, Math.max(0, x)), ss = (a, b, x) => { const t = cl((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const ease = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  // лампа вмикається: два короткі «клац», потім рівне світло
+  const flick = (t, t0) => { const x = t - t0; return x < 0 ? 0 : x < 0.05 ? 1 : x < 0.11 ? 0.12 : x < 0.16 ? 0.9 : x < 0.25 ? 0.35 : Math.min(1, 0.35 + (x - 0.25) * 6.5); };
+  const buzz = k => { try { if (tgv('6.1')) tg.HapticFeedback.impactOccurred(k); } catch (e) {} };
+  const busy = () => phase === 'prep' || phase === 'play' || phase === 'out';
+  // монотонна кубічна інтерполяція (Фріч — Карлсон): швидкість гладка на всьому шляху, без «перельотів» між ключовими точками
+  function mono(xs, ys, m0) {
+    const n = xs.length, d = [], m = [];
+    for (let i = 0; i < n - 1; i++) d.push((ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]));
+    m[0] = m0 != null ? m0 : d[0]; m[n - 1] = d[n - 2];
+    for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+    for (let i = 0; i < n - 1; i++) {
+      if (!d[i]) { m[i] = m[i + 1] = 0; continue; }
+      const a = m[i] / d[i], b = m[i + 1] / d[i], h = a * a + b * b;
+      if (h > 9) { const k = 3 / Math.sqrt(h); m[i] = k * a * d[i]; m[i + 1] = k * b * d[i]; }
+    }
+    return x => {
+      if (x <= xs[0]) return ys[0];
+      if (x >= xs[n - 1]) return ys[n - 1];
+      let i = 0; while (x > xs[i + 1]) i++;
+      const h = xs[i + 1] - xs[i], t = (x - xs[i]) / h, t2 = t * t, t3 = t2 * t;
+      return (2 * t3 - 3 * t2 + 1) * ys[i] + (t3 - 2 * t2 + t) * h * m[i] + (-2 * t3 + 3 * t2) * ys[i + 1] + (t3 - t2) * h * m[i + 1];
+    };
   }
+  function dispose() {
+    const s = scene, r = ren, c = comp; scene = ren = comp = null;
+    try {
+      if (s) s.traverse(o => {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material) [].concat(o.material).forEach(m => { for (const k of ['map', 'roughnessMap']) if (m[k]) m[k].dispose(); m.dispose(); });
+      });
+    } catch (x) {}
+    trash.forEach(t => { try { t.dispose(); } catch (x) {} }); trash = [];
+    try { if (c) c.dispose(); } catch (x) {}
+    try { if (r) { r.dispose(); r.forceContextLoss(); } } catch (x) {}
+  }
+  function end() {
+    if (phase === 'done') return;
+    phase = 'done'; cancelAnimationFrame(raf); raf = 0;
+    const e = el; el = null; if (e) e.remove();
+    const w = waiters; waiters = []; w.forEach(f => f());
+    setTimeout(dispose, 300);
+  }
+  // fast — «Пропустити» чи тап: швидко згасає; інакше — камера ще летить, поки заставка тане, а програма вже піднімається
+  function leave(fast) {
+    if (!el || phase === 'done' || (phase === 'out' && !fast)) return;
+    const e = el; phase = 'out';
+    e.classList.add('out'); if (fast) { e.classList.add('fast'); cancelAnimationFrame(raf); raf = 0; }
+    if (bye) { const f = bye; bye = null; f(); }
+    clearTimeout(e._end); e._end = setTimeout(end, fast ? 300 : 800);
+  }
+  async function getGLB(onp) {
+    const r = await fetch('sgsk.glb');
+    if (!r.ok) throw new Error(`sgsk.glb: ${r.status}`);
+    const total = +r.headers.get('content-length') || 4.1e6;
+    if (!r.body || !r.body.getReader) return r.arrayBuffer();
+    const rd = r.body.getReader(), parts = []; let got = 0;
+    for (;;) { const { done: fin, value } = await rd.read(); if (fin) break; parts.push(value); got += value.length; onp(Math.min(1, got / total)); }
+    const buf = new Uint8Array(got); let o = 0;
+    for (const p of parts) { buf.set(p, o); o += p.length; }
+    return buf.buffer;
+  }
+  const postFx = () => Promise.all(['EffectComposer', 'RenderPass', 'UnrealBloomPass', 'OutputPass'].map(n => import(`${TH}postprocessing/${n}.js`)))
+    .then(([a, b, c, d]) => ({ EffectComposer: a.EffectComposer, RenderPass: b.RenderPass, UnrealBloomPass: c.UnrealBloomPass, OutputPass: d.OutputPass }), () => ({}));
   // force — показати навіть якщо вимкнено (кнопка в Налаштуваннях)
   async function start(force, onDone) {
-    if (!done) return;
+    if (phase !== 'done') return;
     if (!force && (!on() || TEST || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches))) return;
-    done = false; bye = onDone || null;
-    el = document.createElement('div'); el.id = 'intro';
-    el.innerHTML = `<canvas aria-hidden="true"></canvas><div class="in-t"><b>Режими ЧПУ</b><span>оберти · подача · глибина — під твій верстат</span></div>
+    phase = 'load'; bye = onDone || null;
+    const me = el = document.createElement('div'); el.id = 'intro';
+    const word = [...'Режими ЧПУ'].map((c, i) => `<span style="--i:${i}">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
+    el.innerHTML = `<canvas aria-hidden="true"></canvas><div class="in-vig"></div><div class="in-fr"><i></i><i></i><i></i><i></i></div>
+      <div class="in-st"><i></i><span>SGSK VMC1160</span><b>ОЧІКУВАННЯ</b></div>
+      <div class="in-t"><b>${word}</b><span>оберти · подача · глибина — під твій верстат</span></div>
+      <div class="in-rd"><div><span>оберти</span><b>0</b><em>об/хв</em></div><div><span>подача</span><b>0</b><em>мм/хв</em></div><div><span>глибина</span><b>0</b><em>мм</em></div></div>
       <div class="in-bar"><i></i></div><button class="in-skip" type="button">Пропустити</button>`;
     document.body.appendChild(el);
-    el.querySelector('.in-skip').addEventListener('click', () => finish(true));
-    // модель не прийшла за 8 с (слабкий інтернет) — не тримаємо людину, одразу в програму
-    const slow = setTimeout(() => { if (!scene) finish(true); }, 8000);
+    el.querySelector('.in-skip').addEventListener('click', () => leave(true));
+    const bar = el.querySelector('.in-bar i');
+    // модель не прийшла за 9 с (слабкий інтернет) — не тримаємо людину, одразу в програму
+    const slow = setTimeout(() => { if (el === me && phase === 'load') leave(true); }, 9000);
     try {
-      const [T, { GLTFLoader }, { RoomEnvironment }] = await Promise.all([import('three'), import(TH + 'examples/jsm/loaders/GLTFLoader.js'), import(TH + 'examples/jsm/environments/RoomEnvironment.js')]);
-      if (done) return;
-      const bar = el.querySelector('.in-bar i');
-      const gltf = await new Promise((res, rej) => new GLTFLoader().load('sgsk.glb', res, p => { if (bar && p.total) bar.style.width = `${Math.round(p.loaded / p.total * 100)}%`; }, rej));
+      const glb = getGLB(p => { bar.style.transform = `scaleX(${Math.max(0.06, p)})`; });
+      const [T, { GLTFLoader }, { RoomEnvironment }, fx] = await Promise.all([import('three'), import(`${TH}loaders/GLTFLoader.js`), import(`${TH}environments/RoomEnvironment.js`), postFx()]);
+      const buf = await glb;
+      if (el !== me || phase !== 'load') return;
+      const gltf = await new Promise((res, rej) => new GLTFLoader().parse(buf, '', res, rej));
+      const r3 = await R3.load().catch(() => false);
       clearTimeout(slow);
-      if (done) return;
-      run(T, RoomEnvironment, gltf.scene);
-    } catch (e) { clearTimeout(slow); finish(true); }
+      if (el !== me || phase !== 'load') return;
+      await run(T, { RoomEnvironment, ...fx, r3 }, gltf.scene, me);
+    } catch (e) { clearTimeout(slow); console.warn('Заставка:', e); if (el === me) leave(true); }
   }
-  function run(T, RoomEnvironment, model) {
-    const cv = el.querySelector('canvas');
-    try { ren = new T.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance' }); } catch (e) { return finish(true); }
-    ren.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
-    ren.outputColorSpace = T.SRGBColorSpace; ren.toneMapping = T.ACESFilmicToneMapping; ren.toneMappingExposure = 1.0;
-    ren.shadowMap.enabled = true; ren.shadowMap.type = T.PCFSoftShadowMap;
-    const BG = 0x0a0e15, sc = scene = new T.Scene(), pm = new T.PMREMGenerator(ren);
-    sc.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; pm.dispose();
-    sc.background = new T.Color(BG); sc.fog = new T.Fog(BG, 10, 24);
-    // студія: ключове світло з тінню, холодне контрове, підлога, що ловить тінь
-    const key = new T.DirectionalLight(0xffffff, 2.4); key.position.set(-3.5, 7, 6.5); key.target.position.set(1.5, 0.8, -1.2);
-    key.castShadow = true; key.shadow.mapSize.set(1024, 1024); Object.assign(key.shadow.camera, { left: -4.5, right: 4.5, top: 4.5, bottom: -4.5, near: 1, far: 22 });
-    key.shadow.bias = -0.0005; key.shadow.normalBias = 0.02; sc.add(key, key.target);
-    const rim = new T.DirectionalLight(0x9db8ff, 0.9); rim.position.set(7, 4, -6); sc.add(rim);
-    const floor = new T.Mesh(new T.CircleGeometry(11, 72), new T.MeshStandardMaterial({ color: 0x151b26, roughness: 0.9 }));
-    floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; sc.add(floor);
-    const doors = [], glow = [];
+
+  async function run(T, A, model, me) {
+    const cv = me.querySelector('canvas'), PI = Math.PI, V = (x = 0, y = 0, z = 0) => new T.Vector3(x, y, z);
+    try { ren = new T.WebGLRenderer({ canvas: cv, antialias: !A.EffectComposer, powerPreference: 'high-performance', stencil: false }); } catch (e) { return leave(true); }
+    phase = 'prep';
+    const r = ren;
+    let PR = Math.min(2, window.devicePixelRatio || 1);
+    r.setPixelRatio(PR); r.outputColorSpace = T.SRGBColorSpace; r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1;
+    r.shadowMap.enabled = true; r.shadowMap.type = T.PCFSoftShadowMap; r.shadowMap.autoUpdate = false;   // тінь — лише коли щось рухається
+    const BG = 0x080b12, FOG = 0.042, sc = scene = new T.Scene(), aniso = Math.min(8, r.capabilities.getMaxAnisotropy());
+    const pm = new T.PMREMGenerator(r), envT = pm.fromScene(new A.RoomEnvironment(), 0.04).texture; pm.dispose(); trash.push(envT);
+    sc.environment = envT; sc.background = new T.Color(BG); sc.fog = new T.FogExp2(BG, FOG);
+    let seed = 11; const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
+    const tex = (w, h, draw, o = {}) => {
+      const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h);
+      const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = aniso;
+      if (o.rep) { t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(o.rep[0], o.rep[1]); }
+      trash.push(t); return t;
+    };
+    const std = (color, roughness, metalness = 0, o = {}) => new T.MeshStandardMaterial({ color, roughness, metalness, envMapIntensity: 0.5, ...o });
+    const add = (geo, mat, x = 0, y = 0, z = 0, par = sc) => { const m = new T.Mesh(geo, mat); m.position.set(x, y, z); par.add(m); return m; };
+    const Box = (a, b, c) => new T.BoxGeometry(a, b, c), mtx = new T.Matrix4(), col = new T.Color();
+    const glsl = `#include <tonemapping_fragment>
+      #include <colorspace_fragment>`;
+
+    // ---- цех: бетонна підлога з плитами, плямами й тріщинами ----
+    const conc = tex(1024, 1024, (g, w, h) => {
+      g.fillStyle = '#6c7076'; g.fillRect(0, 0, w, h);
+      for (let i = 0; i < 1500; i++) {
+        const x = rnd() * w, y = rnd() * h, rr = 6 + rnd() * 60, dk = rnd() < 0.6, gr = g.createRadialGradient(x, y, 0, x, y, rr);
+        gr.addColorStop(0, dk ? 'rgba(18,20,24,.08)' : 'rgba(255,255,255,.05)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = gr; g.fillRect(x - rr, y - rr, rr * 2, rr * 2);
+      }
+      for (let i = 0; i < 4; i++) {   // масляні плями
+        const x = rnd() * w, y = rnd() * h, rr = 40 + rnd() * 90, gr = g.createRadialGradient(x, y, 0, x, y, rr);
+        gr.addColorStop(0, 'rgba(10,10,12,.3)'); gr.addColorStop(0.7, 'rgba(10,10,12,.1)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, rr, rr * (0.5 + rnd() * 0.5), rnd() * 3, 0, 7); g.fill();
+      }
+      const id = g.getImageData(0, 0, w, h), d = id.data;
+      for (let i = 0; i < d.length; i += 4) { const n = (rnd() - 0.5) * 26; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+      g.putImageData(id, 0, 0);
+      g.strokeStyle = 'rgba(12,13,15,.6)'; g.lineWidth = 3; g.strokeRect(1.5, 1.5, w - 3, h - 3);   // шов між плитами
+      g.strokeStyle = 'rgba(12,13,15,.4)'; g.lineWidth = 1.2;
+      for (let k = 0; k < 4; k++) { let x = rnd() * w, y = rnd() * h; g.beginPath(); g.moveTo(x, y); for (let s = 0; s < 40; s++) { x += (rnd() - 0.5) * 16; y += (rnd() - 0.35) * 12; g.lineTo(x, y); } g.stroke(); }
+    }, { rep: [16, 16] });
+    const concR = conc.clone(); concR.colorSpace = T.NoColorSpace; concR.needsUpdate = true; trash.push(concR);
+    const floor = add(new T.PlaneGeometry(64, 64), std(0xb4b9c0, 1.6, 0, { map: conc, roughnessMap: concR, envMapIntensity: 0.12 }));
+    floor.rotation.x = -PI / 2; floor.receiveShadow = true;
+    // розмітка: жовто-чорна межа зони верстата і жовтий прохід
+    const hz = tex(256, 32, (g, w, h) => {
+      g.fillStyle = '#e3a70c'; g.fillRect(0, 0, w, h); g.fillStyle = '#141518';
+      for (let x = -h; x < w + h; x += 64) { g.beginPath(); g.moveTo(x, h); g.lineTo(x + 32, h); g.lineTo(x + 32 + h, 0); g.lineTo(x + h, 0); g.fill(); }
+      for (let i = 0; i < 700; i++) { g.fillStyle = `rgba(110,110,110,${rnd() * 0.4})`; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 4, 1 + rnd() * 2); }   // потерта фарба
+    }, { rep: [1, 1] });
+    const paint = o => std(0xffffff, 0.7, 0, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, ...o });
+    const hzM = paint({ map: hz }), ylM = paint({ color: 0xd7a414 });
+    const line = (ax, az, bx, bz, wd, mat, per) => {
+      const L = Math.hypot(bx - ax, bz - az), g = new T.PlaneGeometry(L, wd);
+      if (per) { const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * L / per); }
+      const m = add(g, mat, (ax + bx) / 2, 0.003, (az + bz) / 2); m.rotation.set(-PI / 2, Math.atan2(-(bz - az), bx - ax), 0, 'YXZ'); m.receiveShadow = true;
+    };
+    const X0 = -1.65, X1 = 3.85, Z0 = -3.15, Z1 = 1.5;
+    line(X0, Z1, X1, Z1, 0.1, hzM, 0.5); line(X0, Z0, X1, Z0, 0.1, hzM, 0.5); line(X0, Z0, X0, Z1, 0.1, hzM, 0.5); line(X1, Z0, X1, Z1, 0.1, hzM, 0.5);
+    line(-16, 2.9, 18, 2.9, 0.09, ylM); line(-16, 4.4, 18, 4.4, 0.09, ylM);
+    // м'яка тінь-«підошва» під верстатом: він стоїть на підлозі, а не висить
+    const aoT = tex(256, 200, (g, w, h) => {
+      const px = x => (x + 1.4) / 4.9 * w, pz = z => (z + 2.85) / 3.8 * h;
+      g.shadowColor = 'rgba(0,0,0,.95)'; g.shadowBlur = 22; g.shadowOffsetX = w * 3; g.fillStyle = '#000';
+      const rc = (x0, z0, x1, z1) => g.fillRect(px(x0) - w * 3, pz(z0), px(x1) - px(x0), pz(z1) - pz(z0));
+      rc(0.02, -2.6, 3.08, 0.04); rc(2.42, 0.1, 3.08, 0.72); rc(-1.15, -0.8, 0.5, -0.15);
+    });
+    const ao = add(new T.PlaneGeometry(4.9, 3.8), new T.MeshBasicMaterial({ map: aoT, transparent: true, depthWrite: false, opacity: 0.85 }), 1.05, 0.005, -0.95);
+    ao.rotation.x = -PI / 2;
+    // стіни з сендвіч-панелей і стрічкою вікон під дахом
+    const panel = tex(256, 64, (g, w, h) => { g.fillStyle = '#5a626d'; g.fillRect(0, 0, w, h); for (let x = 0; x < w; x += 32) { g.fillStyle = 'rgba(0,0,0,.38)'; g.fillRect(x, 0, 2, h); g.fillStyle = 'rgba(255,255,255,.07)'; g.fillRect(x + 2, 0, 3, h); } }, { rep: [9, 1] });
+    const win = tex(512, 64, (g, w, h) => {
+      const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#b7cdf5'); gr.addColorStop(1, '#5f7fb8'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      g.fillStyle = '#1a1f27'; for (let x = 0; x < w; x += 64) g.fillRect(x, 0, 6, h); g.fillRect(0, 0, w, 4); g.fillRect(0, h - 4, w, 4); g.fillRect(0, h / 2 - 2, w, 4);
+    }, { rep: [10, 1] });
+    const wallM = std(0xffffff, 0.85, 0.2, { map: panel, envMapIntensity: 0.2 }), winM = new T.MeshBasicMaterial({ map: win, color: new T.Color(1.5, 1.6, 1.9) });
+    const wall = (w, x, z, ry) => { const m = add(new T.PlaneGeometry(w, 12), wallM, x, 6, z); m.rotation.y = ry; const g = add(new T.PlaneGeometry(w - 4, 1.7), winM, x, 5.7, z); g.rotation.y = ry; g.translateZ(0.02); };
+    wall(70, 1, -17, 0); wall(40, -15, -1, PI / 2); wall(40, 17, -1, -PI / 2);
+    // колони-двотаври з жовто-чорним захистом знизу і ферми даху
+    const gdT = tex(128, 256, (g, w, h) => { g.fillStyle = '#e3a70c'; g.fillRect(0, 0, w, h); g.fillStyle = '#141518'; for (let y = -w; y < h + w; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y + w * 0.6); g.lineTo(w, y + w * 0.6 + 30); g.lineTo(0, y + 30); g.fill(); } });
+    const colM = std(0x34506e, 0.55, 0.35), gdM = std(0xffffff, 0.6, 0.1, { map: gdT });
+    const flG = Box(0.3, 8, 0.025), webG = Box(0.025, 8, 0.27), gdG = Box(0.42, 1, 0.42), trG = Box(34, 0.32, 0.16);
+    for (const x of [-6.8, 9.6]) for (const z of [-10, -3.5, 3]) { add(flG, colM, x, 4, z - 0.14); add(flG, colM, x, 4, z + 0.14); add(webG, colM, x, 4, z); add(gdG, gdM, x, 0.5, z); }
+    for (const z of [-10, -3.5, 3]) add(trG, colM, 1.4, 7.75, z);
+    // лампи під дахом: вмикаються рядами від дальньої стіни (кожна сьома — перегоріла)
+    const FX = []; for (const z of [-13, -8, -3, 2, 7]) for (const x of [-7, -1.5, 4, 9.5]) FX.push([x, z]);
+    const fix = new T.InstancedMesh(Box(1.8, 0.07, 0.3), new T.MeshBasicMaterial({ color: 0xffffff }), FX.length);
+    FX.forEach(([x, z], i) => { fix.setMatrixAt(i, mtx.makeTranslation(x, 7.35, z)); fix.setColorAt(i, col.setScalar(0.03)); }); sc.add(fix);
+    // прожектори над верстатами: корпус і лінза, що світиться
+    const hbG = new T.CylinderGeometry(0.2, 0.36, 0.26, 24, 1, true), lensG = new T.CircleGeometry(0.34, 24), hbM = std(0x2a2e35, 0.5, 0.6, { side: T.DoubleSide });
+    const highbay = p => { const g = new T.Group(); g.position.copy(p); add(hbG, hbM, 0, 0, 0, g); const lm = new T.MeshBasicMaterial({ color: 0x000000 }); add(lensG, lm, 0, -0.12, 0, g).rotation.x = PI / 2; sc.add(g); return lm; };
+    // промінь світла в запиленому повітрі: конус, яскравіший до осі й до лампи
+    const beams = [];
+    const beam = (apex, dir0, ang) => {
+      const dir = dir0.clone().normalize(), len = apex.y / -dir.y, g = new T.ConeGeometry(Math.tan(ang) * len, len, 40, 1, true); g.translate(0, -len / 2, 0);
+      const m = add(g, new T.ShaderMaterial({
+        uniforms: { uI: { value: 0 }, uCol: { value: new T.Color(1, 0.94, 0.84) }, uFog: { value: FOG } },
+        vertexShader: `varying vec3 vW; varying vec3 vN; varying float vH;
+          void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; vN = normalize(mat3(modelMatrix) * normal); vH = 1.0 - uv.y; gl_Position = projectionMatrix * viewMatrix * w; }`,
+        fragmentShader: `uniform float uI, uFog; uniform vec3 uCol; varying vec3 vW; varying vec3 vN; varying float vH;
+          void main(){ vec3 e = cameraPosition - vW; float d = length(e); float f = abs(dot(normalize(vN), e / d));
+            float a = uI * pow(f, 1.4) * (1.0 - 0.8 * vH) * smoothstep(0.0, 0.05, vH) * exp(-uFog * uFog * d * d) * smoothstep(0.3, 2.0, d);
+            gl_FragColor = vec4(uCol * a, 1.0);
+            ${glsl} }`,
+        transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide }), apex.x, apex.y, apex.z);
+      m.quaternion.setFromUnitVectors(V(0, -1, 0), dir); m.renderOrder = 3; m.frustumCulled = false;
+      beams.push({ m, apex, dir, cos: Math.cos(ang) });
+    };
+    const poolT = tex(128, 128, (g, w) => { const gr = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); gr.addColorStop(0, 'rgba(255,240,215,1)'); gr.addColorStop(0.5, 'rgba(255,240,215,.35)'); gr.addColorStop(1, 'rgba(255,240,215,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, w); });
+    const pool = (p, rad) => { const m = new T.MeshBasicMaterial({ map: poolT, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0 }); add(new T.PlaneGeometry(rad * 2, rad * 2), m, p.x, 0.006, p.z).rotation.x = -PI / 2; return m; };
+    // ---- світло ----
+    const hemi = new T.HemisphereLight(0x9fb4d6, 0x1a1612, 0.08); sc.add(hemi);
+    const rim = new T.DirectionalLight(0x86a6ff, 1.3); rim.position.set(6, 5, -8); sc.add(rim);
+    const fill = new T.DirectionalLight(0xc8d6ff, 0); fill.position.set(-6, 4, 6); sc.add(fill);
+    const SP = V(0.9, 7.1, 3.4), ST = V(1.45, 0.9, -0.9);
+    const spot = new T.SpotLight(0xfff1de, 0, 0, 0.34, 0.6, 2); spot.position.copy(SP); spot.target.position.copy(ST);
+    spot.castShadow = true; spot.shadow.mapSize.set(1536, 1536); spot.shadow.camera.near = 2; spot.shadow.camera.far = 14; spot.shadow.bias = -0.0002; spot.shadow.normalBias = 0.02;
+    sc.add(spot, spot.target);
+    const lens0 = highbay(SP.clone().add(V(0, 0.12, 0)));
+    beam(SP, ST.clone().sub(SP), 0.3);
+    const lamp = new T.PointLight(0xfff0dc, 0, 2.8, 2); lamp.position.set(2.62, 1.93, -0.6); sc.add(lamp);
+
+    // ---- верстат ----
+    // завантажувач міняє пробіли в назвах на «_» — повертаємо, щоб шукати деталі за звичними назвами
+    const by = {}, mats = {}, doors = [], nm = o => (o.name || '').replace(/_/g, ' ');
     model.traverse(o => {
       if (!o.isMesh) return;
+      by[nm(o)] = o; mats[o.material.name] = o.material;
       o.castShadow = o.receiveShadow = true;
       if (o.material.transparent) { o.material.depthWrite = false; o.castShadow = false; o.renderOrder = 2; }
-      const n = o.name || '';
-      if (/ліві$/.test(n)) doors.push([o, -1, o.position.x]); else if (/праві$/.test(n)) doors.push([o, 1, o.position.x]);
-      if (/LED|Світильник|логотип/i.test(n)) { o.material = o.material.clone(); o.material.emissive = o.material.color.clone(); o.material.emissiveIntensity = 0.2; glow.push(o); }
+      if (/ліві$/.test(o.name)) doors.push([o, -1]); else if (/праві$/.test(o.name)) doors.push([o, 1]);
     });
+    for (const m of Object.values(mats)) m.envMapIntensity = /glass/.test(m.name) ? 1 : m.metalness > 0.5 ? 0.5 : 0.22;
+    const glow = (n, c) => { const m = mats[n]; if (!m) return { emissiveIntensity: 0 }; m.emissive = new T.Color(c); m.emissiveIntensity = 0; return m; };
+    const mLed = glow('led', 0x2f6dff), mLamp = glow('lamp', 0xfff0d8), mTg = glow('tower_g', 0x2bff5a), mTy = glow('tower_y', 0xffae00), mGrn = glow('green', 0x2bff5a), mScr = glow('screen', 0x2a4c8a);
     sc.add(model);
-    // світло всередині робочої зони вмикається, коли двері відчиняються
-    const inner = new T.PointLight(0xffe2b0, 0, 3.2, 2); inner.position.set(1.5, 2.05, -0.55); sc.add(inner);
-    const cam = new T.PerspectiveCamera(42, 1, 0.03, 60);
-    const V = (x, y, z) => new T.Vector3(x, y, z);
-    // шлях: три чверті зліва → фронт → двері → до шпинделя з фрезою
-    const tool = V(1.55, 1.36, -0.85);
-    const P = [V(-3.2, 2.3, 4.6), V(-0.6, 2.0, 4.4), V(1.45, 1.75, 2.9), V(1.5, 1.55, 1.25), V(1.52, 1.45, 0.2), V(1.55, 1.42, -0.42)];
-    const Tg = [V(1.3, 1.15, -1.0), V(1.4, 1.2, -0.95), V(1.5, 1.35, -0.85), tool, tool, tool];
-    // три відрізки: облетіти до фронту (0–2,3 с) → постояти навпроти, поки розсуваються двері (2,3–3,5 с) → залетіти до фрези (3,5–5,6 с)
-    const P2b = V(1.5, 1.62, 2.05), tA = new T.CatmullRomCurve3(Tg.slice(0, 3), false, 'centripetal');
-    let cA = null, cC = null, A2 = null, B2 = null, W = 0, H = 0;
-    const fit = () => {
-      const w = el ? el.clientWidth : 0, h = el ? el.clientHeight : 0; if (!w || !h || (w === W && h === H)) return; W = w; H = h;
-      ren.setSize(w, h, false); cam.aspect = w / h; cam.fov = cam.aspect < 0.8 ? 50 : 42; cam.updateProjectionMatrix();
-      // відстань під ширину екрана: на телефоні (вузько) камера відходить, щоб було видно весь верстат, а потім — обидві стулки дверей
-      const tanH = Math.tan(cam.fov / 2 * Math.PI / 180) * cam.aspect;
-      const at = (p, t, hw) => { const d = p.clone().sub(t), L = d.length(); return t.clone().add(d.multiplyScalar(Math.max(L, hw / tanH) / L)); };
-      const pts = [at(P[0], Tg[0], 2.3), at(P[1], Tg[1], 2.0), at(P[2], Tg[2], 1.3)];
-      A2 = pts[2]; B2 = at(P2b, Tg[2], 1.08);
-      cA = new T.CatmullRomCurve3(pts, false, 'centripetal'); cC = new T.CatmullRomCurve3([B2, P[3], P[4], P[5]], false, 'centripetal');
+    // ще два такі верстати в глибині цеху — спрощені (без дрібних деталей), без тіней
+    const lod = /Ручка|Шланг|Кабель|Аварійна|Кнопка конвеєра|Напис SGSK|Гвинти|Клавіші|Колеса|Оправка/;
+    const lensB = [], pools = [];
+    for (const [x, z, ry] of [[-3.6, -8.6, 0.3], [5.4, -7.3, -0.42]]) {
+      const c = model.clone(); c.position.set(x, 0, z); c.rotation.y = ry; c.updateMatrixWorld(true);
+      c.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = false; if (lod.test(nm(o))) o.visible = false; } });
+      sc.add(c);
+      const ap = c.localToWorld(V(1.55, 7.1, 1.4)), to = c.localToWorld(V(1.55, 0, -0.3));
+      lensB.push(highbay(ap.clone().add(V(0, 0.12, 0)))); beam(ap, to.clone().sub(ap), 0.27); pools.push(pool(to, 2.6));
+    }
+    // екран пульта: програма й координати (оновлюється кілька разів на секунду)
+    const PROG = ['O0001 (РЕЖИМИ ЧПУ)', 'N10 G90 G54 G17', 'N20 T1 M6 (D10 4F)', 'N30 S4000 M3', 'N40 G0 X-8. Y0.', 'N50 G43 Z30. H1 M8', 'N60 G1 Z-5. F150', 'N70 X120. F495', 'N80 G0 Z30.', 'N90 M30'];
+    const scrC = document.createElement('canvas'); scrC.width = 512; scrC.height = 448;
+    const scrT = new T.CanvasTexture(scrC); scrT.colorSpace = T.SRGBColorSpace; scrT.anisotropy = aniso; trash.push(scrT);
+    const scrM = new T.MeshBasicMaterial({ map: scrT, color: 0x000000 });
+    const sm = by['Екран'];
+    if (sm) {
+      // лицьова грань екрана (дивиться на оператора) → площина з текстурою точно поверх неї
+      const g = sm.geometry.index ? sm.geometry.toNonIndexed() : sm.geometry, p = g.attributes.position, want = V(0, 0.45, 1).normalize(), tri = [];
+      for (let i = 0; i + 2 < p.count; i += 3) {
+        const a = V().fromBufferAttribute(p, i), b = V().fromBufferAttribute(p, i + 1), c = V().fromBufferAttribute(p, i + 2), n = b.clone().sub(a).cross(c.clone().sub(a));
+        if (n.length() > 1e-9) tri.push([n.normalize(), a, b, c]);
+      }
+      tri.sort((x, y) => y[0].dot(want) - x[0].dot(want));
+      if (tri.length) {
+        const n = tri[0][0], pts = tri.filter(t => t[0].dot(n) > 0.99).flatMap(t => t.slice(1));
+        const u = V(1, 0, 0).addScaledVector(n, -n.x).normalize(), v = n.clone().cross(u), o = pts[0];
+        let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
+        for (const q of pts) { const d = q.clone().sub(o), du = d.dot(u), dv = d.dot(v); u0 = Math.min(u0, du); u1 = Math.max(u1, du); v0 = Math.min(v0, dv); v1 = Math.max(v1, dv); }
+        const w = u1 - u0, h = v1 - v0;
+        if (w > 0.01 && h > 0.01) {
+          scrC.height = Math.round(512 * h / w);
+          const s = add(new T.PlaneGeometry(w * 0.93, h * 0.9), scrM);
+          s.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(u, v, n));
+          s.position.copy(o).addScaledVector(u, (u0 + u1) / 2).addScaledVector(v, (v0 + v1) / 2).addScaledVector(n, 0.0012);
+        }
+      }
+    }
+    let scrKey = '', scrAt = -1;
+    const drawScr = (ln, run, x) => {
+      const key = `${ln}|${run}|${x}`; if (key === scrKey) return; scrKey = key;
+      const g = scrC.getContext('2d'), w = scrC.width, h = scrC.height, f = h / 448;
+      g.fillStyle = '#031026'; g.fillRect(0, 0, w, h); g.fillStyle = '#0c3b8f'; g.fillRect(0, 0, w, 44 * f);
+      g.font = `700 ${22 * f}px monospace`; g.fillStyle = '#fff'; g.fillText('AUTO  O0001', 14, 30 * f);
+      g.fillStyle = run ? '#39ff86' : '#ffc23a'; g.fillText(run ? 'RUN' : 'STOP', w - 80, 30 * f);
+      g.font = `600 ${18 * f}px monospace`;
+      PROG.forEach((s, i) => { const y = (76 + i * 36) * f; if (i === ln) { g.fillStyle = '#1f62d8'; g.fillRect(8, y - 22 * f, 302, 30 * f); } g.fillStyle = i === ln ? '#fff' : '#8eaee6'; g.fillText(s, 14, y); });
+      g.fillStyle = '#0a2050'; g.fillRect(318, 54 * f, w - 326, h - 64 * f); g.font = `700 ${21 * f}px monospace`;
+      [['X', x.toFixed(3)], ['Y', '0.000'], ['Z', run ? '-5.000' : '30.000'], ['S', run ? '4000' : '0'], ['F', run ? '495' : '0']]
+        .forEach(([a, val], i) => { const y = (100 + i * 66) * f; g.fillStyle = '#6f95e0'; g.fillText(a, 330, y); g.fillStyle = '#e8f0ff'; g.fillText(val.padStart(8), 352, y); });
+      scrT.needsUpdate = true;
     };
-    const pos = new T.Vector3(), tgt = new T.Vector3();
-    const TT = 5600, t0 = performance.now(), title = el.querySelector('.in-t');
-    // ?introAt=мс — застигнути кадр (для перевірки ракурсів); інакше страховка: якщо кадри не йдуть (фонова вкладка) — у програму
-    const hold = /[?&]introAt=(\d+)/.exec(location.search), tHold = hold ? +hold[1] : NaN;
-    if (!hold) setTimeout(() => finish(true), TT + 2500);
-    el.classList.add('play');
-    el.addEventListener('pointerdown', e => { if (!e.target.closest('.in-skip') && performance.now() - t0 > 900) finish(true); });
+    drawScr(0, false, -8);
+
+    // ---- шпиндельна бабка: опускається по Z разом зі шпинделем, оправкою, фрезою і шлангом СОЖ ----
+    const head = new T.Group(); sc.add(head);
+    for (const n of ['Шпиндельна бабка', 'Шпиндель', 'Оправка з фрезою']) if (by[n]) head.add(by[n]);
+    const arbor = by['Оправка з фрезою'];
+    let cx = 1.55, cz = -0.85, tip0 = 1.32, R = 0.005, sleeve = null;
+    if (arbor) {
+      const g = arbor.geometry; g.computeBoundingBox(); const bb = g.boundingBox;
+      cx = (bb.min.x + bb.max.x) / 2; cz = (bb.min.z + bb.max.z) / 2; tip0 = bb.min.y;
+      g.translate(-cx, 0, -cz); arbor.position.set(cx, 0, cz);   // крутиться навколо своєї осі
+      const p = g.attributes.position, rr = i => Math.hypot(p.getX(i), p.getZ(i));
+      let rod = 0, cone = Infinity;
+      for (let i = 0; i < p.count; i++) if (p.getY(i) < tip0 + 0.004) rod = Math.max(rod, rr(i));
+      for (let i = 0; i < p.count; i++) if (rr(i) > rod * 1.4) cone = Math.min(cone, p.getY(i));
+      if (A.r3 && g.index && rod > 0 && cone < Infinity) {
+        // гладкий стрижень моделі → справжня фреза з канавками (та сама 3D-фреза, що в довіднику): Ø10, 4 зуби, AlTiN
+        const ix = g.index, keep = [];
+        for (let f = 0; f < ix.count; f += 3) {
+          const a = ix.getX(f), b = ix.getX(f + 1), c = ix.getX(f + 2);
+          if (Math.max(rr(a), rr(b), rr(c)) <= rod * 1.06 && Math.max(p.getY(a), p.getY(b), p.getY(c)) < cone + 0.002) continue;
+          keep.push(a, b, c);
+        }
+        g.setIndex(keep);
+        const mill = R3.tool3({ type: 'flat', d: '10', z: 4, lc: '22', shank: '10', tm: 'carbide', coat: 'AlTiN', helixAngle: 38 });
+        mill.scale.setScalar(0.001); arbor.add(mill); sc.updateMatrixWorld(true);
+        const mb = new T.Box3().setFromObject(mill), mc = mb.getCenter(V());
+        tip0 = cone - 0.034;
+        mill.position.set(cx - mc.x, tip0 - mb.min.y, cz - mc.z);
+        mill.traverse(o => { if (o.isMesh) o.castShadow = o.receiveShadow = true; });
+        // на обертах канавки зливаються в розмитий циліндр
+        sleeve = add(new T.CylinderGeometry(R * 1.02, R * 1.02, 0.022, 28, 1, true), new T.MeshStandardMaterial({ color: 0x4c4656, metalness: 0.9, roughness: 0.38, transparent: true, opacity: 0, depthWrite: false }), 0, tip0 + 0.011, 0, arbor);
+      } else R = rod || 0.005;
+    }
+    const DZ = 0.06, AP = 0.005, tipF = tip0 - DZ, TOP = tipF + AP, TY = 1.07, VB = TY + 0.17;
+    // світильник під стелею кабіни: світло на стіл і заготовку, вмикається разом із лампою
+    const work0 = new T.SpotLight(0xf4f7ff, 0, 1.8, 0.55, 0.7, 2); work0.position.set(2.3, 2.2, -0.55); work0.target.position.set(cx, TOP, cz); sc.add(work0, work0.target);
+    // шланг СОЖ «Loc-Line» від бабки до фрези, помаранчеве сопло і струмінь
+    const hoseM = std(0x1f5fd6, 0.35, 0.05, { envMapIntensity: 0.8 }), nozM = std(0xff7a1a, 0.4);
+    const noz = V(cx + 0.05, tip0 + 0.03, cz + 0.06), hit = V(cx + R * 0.8, tip0 + 0.004, cz + R * 0.5);
+    const hc = new T.CatmullRomCurve3([V(1.735, 1.66, -0.715), V(1.72, 1.56, -0.69), V(1.66, 1.47, -0.72), noz]);
+    const NB = Math.ceil(hc.getLength() / 0.009), balls = new T.InstancedMesh(new T.SphereGeometry(0.0074, 14, 10), hoseM, NB + 1);
+    for (let i = 0; i <= NB; i++) { const q = hc.getPointAt(i / NB); balls.setMatrixAt(i, mtx.makeTranslation(q.x, q.y, q.z)); }
+    balls.castShadow = true; head.add(balls);
+    const nd = hit.clone().sub(noz).normalize(), nz = add(new T.CylinderGeometry(0.0025, 0.0055, 0.018, 12), nozM, 0, 0, 0, head);
+    nz.quaternion.setFromUnitVectors(V(0, 1, 0), nd); nz.position.copy(noz).addScaledVector(nd, 0.009);
+    const jetM = new T.ShaderMaterial({
+      uniforms: { uT: { value: 0 }, uLen: { value: 0 } },
+      vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      fragmentShader: `uniform float uT, uLen; varying vec2 vUv;
+        void main(){ float n = 0.55 + 0.45 * sin(vUv.x * 70.0 - uT * 45.0) * sin(vUv.x * 23.0 - uT * 31.0 + vUv.y * 6.283);
+          float a = n * 0.8 * smoothstep(uLen, uLen - 0.12, vUv.x);
+          gl_FragColor = vec4(vec3(0.82, 0.92, 1.0) * 1.3, a);
+          ${glsl} }`,
+      transparent: true, depthWrite: false });
+    const n0 = noz.clone().addScaledVector(nd, 0.018);
+    head.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([n0, n0.clone().lerp(hit, 0.5).add(V(0, -0.003, 0)), hit]), 24, 0.0016, 8, false), jetM));
+    // ---- лещата і заготовка зі сталі 45: паз Ø10 глибиною 5 мм, стіл подає її під фрезу ----
+    const table = by['Стіл 1200×600'], work = new T.Group(); sc.add(work);
+    const vM = std(0x3a4a5c, 0.5, 0.35), jawM = std(0x9aa0a6, 0.45, 1, { envMapIntensity: 0.45 }), rawM = std(0x6a6f76, 0.6, 0.6);
+    const mcT = tex(256, 256, (g, w, h) => {
+      g.fillStyle = '#c3c8ce'; g.fillRect(0, 0, w, h); g.lineWidth = 1.4;
+      for (let x = -320; x < w + 320; x += 7) { g.strokeStyle = (x / 7) % 2 ? 'rgba(255,255,255,.2)' : 'rgba(40,44,50,.14)'; g.beginPath(); g.arc(x, -60, 300, 0.06 * PI, 0.94 * PI); g.stroke(); }
+    });
+    const machM = std(0xffffff, 0.3, 1, { map: mcT, envMapIntensity: 0.9 });
+    const X0w = cx - 0.15, X1w = cx + 0.07, ZH = 0.045, WB = VB - 0.07, SY = TOP - AP;
+    const piece = (x0, x1, y0, y1, z0, z1) => { const m = add(Box(x1 - x0, y1 - y0, z1 - z0), [rawM, rawM, machM, rawM, rawM, rawM], (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2, work); m.castShadow = m.receiveShadow = true; return m; };
+    piece(X0w, X1w, WB, SY, cz - ZH, cz + ZH);                // тіло; верх — фрезероване дно паза
+    piece(X0w, X1w, SY, TOP, cz - ZH, cz - R); piece(X0w, X1w, SY, TOP, cz + R, cz + ZH);   // стінки паза
+    const a0 = cx + 0.4 * R, ahead = piece(a0, X1w, SY, TOP, cz - R, cz + R);              // ще не прорізане — фреза йде туди
+    const vb = (sx, sy, sz, m, x, y, z) => { const o = add(Box(sx, sy, sz), m, x, y, z, work); o.castShadow = o.receiveShadow = true; };
+    vb(0.17, 0.12, 0.44, vM, cx - 0.04, TY + 0.06, cz + 0.06);                              // корпус лещат
+    vb(0.17, 0.05, 0.05, vM, cx - 0.04, VB - 0.025, cz - ZH - 0.037); vb(0.17, 0.05, 0.06, vM, cx - 0.04, VB - 0.025, cz + ZH + 0.042);
+    vb(0.16, 0.046, 0.012, jawM, cx - 0.04, VB - 0.024, cz - ZH - 0.006); vb(0.16, 0.046, 0.012, jawM, cx - 0.04, VB - 0.024, cz + ZH + 0.006);
+    const scr = add(new T.CylinderGeometry(0.008, 0.008, 0.08, 14), jawM, cx - 0.04, TY + 0.07, cz + 0.32, work); scr.rotation.x = PI / 2;
+    const hnd = add(new T.CylinderGeometry(0.006, 0.006, 0.2, 12), jawM, cx - 0.04, TY + 0.07, cz + 0.36, work); hnd.rotation.z = PI / 2;
+    for (const s of [-1, 1]) add(new T.SphereGeometry(0.011, 14, 10), vM, cx - 0.04 + s * 0.1, TY + 0.07, cz + 0.36, work);
+
+    // ---- стружка: кольорові завитки (сталь 45 на швидкості — від срібла до соломи й синяви), летять, відскакують і лягають ----
+    const NCH = 150, chips = new T.InstancedMesh(new T.TorusGeometry(0.0021, 0.00055, 3, 7, 4.3), std(0xffffff, 0.3, 1, { envMapIntensity: 1.3 }), NCH);
+    chips.frustumCulled = false; chips.instanceMatrix.setUsage(T.DynamicDrawUsage); sc.add(chips);
+    const CHC = [0xc3c8ce, 0xc3c8ce, 0xc9a35a, 0xa0623a, 0x4a5fb0, 0x6b4a9e];
+    const cP = new Float32Array(NCH * 3), cV = new Float32Array(NCH * 3), cR = new Float32Array(NCH * 3), cW = new Float32Array(NCH * 3), cZ = new Float32Array(NCH), cS = new Uint8Array(NCH);
+    for (let i = 0; i < NCH; i++) { chips.setColorAt(i, col.set(CHC[i % CHC.length])); chips.setMatrixAt(i, mtx.makeScale(0, 0, 0)); }
+    let chN = 0, chAcc = 0, fx = 0, spinA = 0;
+    const qq = new T.Quaternion(), ee = new T.Euler(), vs = V(), vp = V();
+    // висота поверхні під стружкою (стіл і лещата їдуть разом із заготовкою)
+    const floorAt = (x, z) => {
+      const xw = x + fx;
+      if (xw > X0w && xw < X1w && Math.abs(z - cz) < ZH) return Math.abs(z - cz) < R && xw < cx + fx ? SY : TOP;
+      if (xw > cx - 0.125 && xw < cx + 0.045 && z > cz - 0.16 && z < cz + 0.28) return VB;
+      if (xw > 0.95 && xw < 2.15 && z > -1.1 && z < -0.5) return TY;
+      return 0.86;
+    };
+    function spawnChip() {
+      // зуб виходить з металу: швидкість по дотичній (M3 — за годинниковою, якщо дивитись згори) і вгору
+      const i = chN++ % NCH, j = i * 3, a = rnd() * PI * 2, sp = 0.6 + rnd() * 1.0;
+      cP[j] = cx + R * Math.cos(a); cP[j + 1] = TOP - AP * rnd(); cP[j + 2] = cz + R * Math.sin(a);
+      cV[j] = -Math.sin(a) * sp; cV[j + 1] = 0.8 + rnd() * 1.0; cV[j + 2] = Math.cos(a) * sp;
+      for (let k = 0; k < 3; k++) { cR[j + k] = rnd() * 6; cW[j + k] = (rnd() - 0.5) * 50; }
+      cZ[i] = 0.7 + rnd() * 0.7; cS[i] = 1;
+    }
+    // бризки й туман СОЖ
+    const fxSys = (n, c) => {
+      const g = new T.BufferGeometry(), P = new Float32Array(n * 3), Sz = new Float32Array(n), Al = new Float32Array(n);
+      g.setAttribute('position', new T.BufferAttribute(P, 3).setUsage(T.DynamicDrawUsage));
+      g.setAttribute('aSize', new T.BufferAttribute(Sz, 1).setUsage(T.DynamicDrawUsage));
+      g.setAttribute('aAlpha', new T.BufferAttribute(Al, 1).setUsage(T.DynamicDrawUsage));
+      const pts = new T.Points(g, new T.ShaderMaterial({
+        uniforms: { uS: { value: 800 }, uCol: { value: new T.Color(...c) } },
+        vertexShader: `attribute float aSize; attribute float aAlpha; uniform float uS; varying float vA;
+          void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv; float d = -mv.z;
+            gl_PointSize = clamp(aSize * uS / d, 0.0, 90.0); vA = aAlpha * smoothstep(0.03, 0.12, d); }`,
+        fragmentShader: `uniform vec3 uCol; varying float vA;
+          void main(){ vec2 q = gl_PointCoord - 0.5; float a = smoothstep(0.25, 0.0, dot(q, q)) * vA; if (a < 0.003) discard; gl_FragColor = vec4(uCol, a);
+            ${glsl} }`,
+        transparent: true, depthWrite: false }));
+      pts.frustumCulled = false; pts.renderOrder = 4; sc.add(pts);
+      return { g, P, Sz, Al, Vl: new Float32Array(n * 3), life: new Float32Array(n).fill(9), max: new Float32Array(n).fill(1), n, i: 0, acc: 0, pts };
+    };
+    const spl = fxSys(160, [0.85, 0.93, 1]), mist = fxSys(50, [0.8, 0.86, 0.92]);
+    const CUT = V(cx + R * 0.85, TOP - AP * 0.5, cz + R * 0.3);
+    const emit = (S, rate, dt, init) => { S.acc += dt * rate; while (S.acc >= 1) { S.acc -= 1; const i = S.i++ % S.n; S.life[i] = 0; init(i, i * 3); } };
+    function step(dt, t) {
+      const kCut = ss(3.75, 3.95, t), kCool = ss(3.6, 3.85, t), nfx = 0.00825 * Math.max(0, t - 3.8), dfx = nfx - fx; fx = nfx;   // F495 = 8,25 мм/с
+      chAcc += dt * 60 * kCut; while (chAcc >= 1) { chAcc -= 1; spawnChip(); }
+      for (let i = 0; i < NCH; i++) {
+        const s = cS[i]; if (!s) continue;
+        const j = i * 3;
+        if (s === 1) {
+          const py = cP[j + 1];
+          cV[j + 1] -= 9.81 * dt;
+          for (let k = 0; k < 3; k++) { cP[j + k] += cV[j + k] * dt; cR[j + k] += cW[j + k] * dt; }
+          if (cP[j] < 0.27 || cP[j] > 2.83) { cV[j] *= -0.35; cP[j] = Math.min(2.83, Math.max(0.27, cP[j])); }
+          if (cP[j + 2] < -1.33) { cV[j + 2] *= -0.35; cP[j + 2] = -1.33; }
+          const gy = floorAt(cP[j], cP[j + 2]);
+          if (cP[j + 1] < gy) {
+            if (py >= gy - 0.004) {
+              cP[j + 1] = gy + 0.0008; cV[j + 1] *= -0.3; cV[j] *= 0.5; cV[j + 2] *= 0.5;
+              if (Math.abs(cV[j + 1]) < 0.22) { cS[i] = gy > 0.9 ? 3 : 2; cR[j] = -PI / 2 + (rnd() - 0.5) * 0.5; cR[j + 1] = (rnd() - 0.5) * 0.4; }
+            } else if (cP[j + 1] < 0.87) cS[i] = 2;
+          }
+        } else if (s === 3) cP[j] -= dfx;   // лежить на столі — їде разом із ним
+        vp.set(cP[j], cP[j + 1], cP[j + 2]); qq.setFromEuler(ee.set(cR[j], cR[j + 1], cR[j + 2])); vs.setScalar(cZ[i]);
+        chips.setMatrixAt(i, mtx.compose(vp, qq, vs));
+      }
+      chips.instanceMatrix.needsUpdate = true;
+      emit(spl, 110 * kCool, dt, (i, j) => {
+        const a = rnd() * PI * 2, v = 0.4 + rnd() * 1.2;
+        spl.P[j] = CUT.x; spl.P[j + 1] = CUT.y; spl.P[j + 2] = CUT.z; spl.Vl[j] = Math.cos(a) * v; spl.Vl[j + 1] = 0.3 + rnd() * 1.1; spl.Vl[j + 2] = Math.sin(a) * v;
+        spl.max[i] = 0.16 + rnd() * 0.24; spl.Sz[i] = 0.0012 + rnd() * 0.0022;
+      });
+      emit(mist, 16 * kCool, dt, (i, j) => {
+        mist.P[j] = CUT.x + (rnd() - 0.5) * 0.02; mist.P[j + 1] = CUT.y + rnd() * 0.01; mist.P[j + 2] = CUT.z + (rnd() - 0.5) * 0.02;
+        mist.Vl[j] = (rnd() - 0.5) * 0.12; mist.Vl[j + 1] = 0.05 + rnd() * 0.12; mist.Vl[j + 2] = (rnd() - 0.5) * 0.12; mist.max[i] = 1.4 + rnd();
+      });
+      for (const S of [spl, mist]) {
+        const isM = S === mist;
+        for (let i = 0; i < S.n; i++) {
+          if (S.life[i] >= S.max[i]) { S.Al[i] = 0; continue; }
+          const j = i * 3, k = (S.life[i] += dt) / S.max[i];
+          if (!isM) S.Vl[j + 1] -= 9.81 * dt;
+          S.P[j] += S.Vl[j] * dt; S.P[j + 1] += S.Vl[j + 1] * dt; S.P[j + 2] += S.Vl[j + 2] * dt;
+          if (isM) { S.Sz[i] = 0.015 + 0.05 * k; S.Al[i] = 0.045 * Math.sin(PI * Math.min(1, k)); } else S.Al[i] = 0.55 * Math.max(0, 1 - k);
+        }
+        for (const a of ['position', 'aSize', 'aAlpha']) S.g.attributes[a].needsUpdate = true;
+      }
+    }
+
+    // ---- пил у повітрі: світиться лише там, де проходять промені ----
+    const ND = 1600, dP = new Float32Array(ND * 3), dS = new Float32Array(ND), b0 = beams[0];
+    for (let i = 0; i < ND; i++) {
+      let x, y, z;
+      if (i < 500) {   // частина — прямо в промені над верстатом
+        const s = 1 + rnd() * (b0.apex.y / -b0.dir.y - 1.5), rad = Math.tan(0.3) * s * Math.sqrt(rnd()), a = rnd() * PI * 2;
+        const q = b0.apex.clone().addScaledVector(b0.dir, s), u = V(1, 0, 0).cross(b0.dir).normalize(), w = b0.dir.clone().cross(u);
+        q.addScaledVector(u, Math.cos(a) * rad).addScaledVector(w, Math.sin(a) * rad); x = q.x; y = q.y; z = q.z;
+      } else { x = -6 + rnd() * 15; y = 0.2 + rnd() * 6.3; z = -10 + rnd() * 16; }
+      dP[i * 3] = x; dP[i * 3 + 1] = y; dP[i * 3 + 2] = z; dS[i] = rnd();
+    }
+    const dG = new T.BufferGeometry(); dG.setAttribute('position', new T.BufferAttribute(dP, 3)); dG.setAttribute('aSeed', new T.BufferAttribute(dS, 1));
+    const dustM = new T.ShaderMaterial({
+      uniforms: { uT: { value: 0 }, uS: { value: 800 }, uFog: { value: FOG }, uBP: { value: beams.map(b => b.apex) }, uBD: { value: beams.map(b => b.dir) }, uBC: { value: beams.map(b => b.cos) }, uBI: { value: [0, 0, 0] } },
+      vertexShader: `attribute float aSeed; uniform float uT, uS, uFog; uniform vec3 uBP[3]; uniform vec3 uBD[3]; uniform float uBC[3]; uniform float uBI[3]; varying float vA;
+        void main(){
+          vec3 p = position + vec3(sin(uT * 0.21 + aSeed * 7.0) * 0.35, sin(uT * 0.15 + aSeed * 3.0) * 0.22 + uT * 0.02, cos(uT * 0.18 + aSeed * 5.0) * 0.35);
+          float L = 0.04;
+          for (int i = 0; i < 3; i++) L += uBI[i] * smoothstep(uBC[i], uBC[i] + 0.03, dot(normalize(p - uBP[i]), uBD[i]));
+          vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv; float d = -mv.z;
+          gl_PointSize = clamp((0.005 + fract(aSeed * 13.7) * 0.009) * uS / d, 1.0, 36.0);
+          vA = L * (0.35 + 0.65 * fract(aSeed * 91.3)) * (0.55 + 0.45 * sin(uT * 2.3 + aSeed * 40.0)) * exp(-uFog * uFog * d * d) * smoothstep(0.15, 0.8, d);
+        }`,
+      fragmentShader: `varying float vA;
+        void main(){ vec2 q = gl_PointCoord - 0.5; float a = smoothstep(0.25, 0.02, dot(q, q)) * vA; if (a < 0.004) discard; gl_FragColor = vec4(vec3(1.0, 0.95, 0.86) * a, 1.0);
+          ${glsl} }`,
+      transparent: true, depthWrite: false, blending: T.AdditiveBlending });
+    const dust = new T.Points(dG, dustM); dust.frustumCulled = false; dust.renderOrder = 5; sc.add(dust);
+
+    // ---- реквізит біля верстата: інструментальна шафа і палета з прутками ----
+    const chest = new T.Group(); chest.position.set(-2.5, 0, 1.05); chest.rotation.y = 0.5; sc.add(chest);
+    const redM = std(0xa3161c, 0.35, 0.25, { envMapIntensity: 0.7 }), chrM = std(0xdfe3e8, 0.14, 1, { envMapIntensity: 1 }), blkM = std(0x141518, 0.65, 0.1);
+    add(Box(0.72, 0.9, 0.46), redM, 0, 0.56, 0, chest); add(Box(0.75, 0.035, 0.49), blkM, 0, 1.03, 0, chest);
+    for (let k = 0; k < 6; k++) { const y0 = 0.11 + k * 0.15; if (k) add(Box(0.7, 0.005, 0.004), blkM, 0, y0, 0.232, chest); add(Box(0.46, 0.012, 0.016), chrM, 0, y0 + 0.118, 0.238, chest); }
+    for (const [x, z] of [[-0.31, -0.18], [0.31, -0.18], [-0.31, 0.18], [0.31, 0.18]]) add(new T.CylinderGeometry(0.045, 0.045, 0.03, 16), blkM, x, 0.05, z, chest).rotation.z = PI / 2;
+    for (const x of [-0.2, 0.05]) { add(new T.CylinderGeometry(0.022, 0.032, 0.065, 20), chrM, x, 1.08, 0.05, chest); add(new T.CylinderGeometry(0.034, 0.034, 0.016, 20), chrM, x, 1.12, 0.05, chest); add(new T.CylinderGeometry(0.019, 0.017, 0.05, 20), chrM, x, 1.153, 0.05, chest); }
+    const pal = new T.Group(); pal.position.set(4.35, 0, 1.75); pal.rotation.y = -0.3; sc.add(pal);
+    const wood = std(0x8b6a43, 0.85), barM = std(0x8f969e, 0.38, 1, { envMapIntensity: 0.9 }), endM = std(0xd8a51c, 0.6);
+    for (const z of [-0.36, 0, 0.36]) add(Box(1.2, 0.1, 0.1), wood, 0, 0.05, z, pal);
+    for (let i = 0; i < 7; i++) add(Box(0.1, 0.022, 0.82), wood, -0.55 + i * 0.183, 0.111, 0, pal);
+    const barG = new T.CylinderGeometry(0.03, 0.03, 1.1, 20), BR = []; for (let row = 0; row < 3; row++) for (let k = 0; k < 9 - row; k++) BR.push([0.122 + 0.03 + row * 0.052, -0.26 + (k + row * 0.5) * 0.065]);
+    const bars = new T.InstancedMesh(barG, [barM, endM, endM], BR.length);
+    BR.forEach(([y, z], i) => bars.setMatrixAt(i, mtx.makeRotationZ(PI / 2).setPosition(0, y, z))); pal.add(bars);
+
+    // ---- камера: ключові точки (час, позиція, куди дивиться, яку ширину вмістити) ----
+    const cam = new T.PerspectiveCamera(42, 1, 0.02, 80);
+    const KF = [
+      [0, V(-3.4, 1.3, 5.6), V(1.25, 1.25, -1.0), 2.5],            // цех у темряві, три чверті зліва
+      [1.4, V(-1.5, 1.72, 4.9), V(1.35, 1.32, -0.95), 2.15],        // світло ввімкнулось — підлітаємо
+      [2.75, V(1.18, 1.72, 3.1), V(1.5, 1.38, -0.86), 1.05],        // навпроти дверей — вони розсуваються
+      [3.55, V(1.42, 1.64, 2.2), V(cx, 1.36, cz), 0.82],
+      [4.35, V(1.5, 1.62, 1.05), V(cx, tipF + 0.03, cz), 0],
+      [4.95, V(1.52, 1.64, 0.15), V(cx, tipF + 0.02, cz), 0],      // крізь двері, вже трохи згори — нахил униз розтягнутий
+      [5.6, V(cx - 0.05, tipF + 0.21, cz + 0.37), V(cx - 0.008, tipF + 0.008, cz), 0],
+      [6.65, V(cx - 0.04, tipF + 0.145, cz + 0.21), V(cx - 0.005, tipF + 0.004, cz), 0],   // згори-спереду на паз і фрезу — і в програму
+    ];
+    const KT = KF.map(k => k[0]), gX = mono(KT, KF.map(k => k[2].x)), gY = mono(KT, KF.map(k => k[2].y)), gZ = mono(KT, KF.map(k => k[2].z));
+    let curve = null, sAt = null, fov0 = 42, W = 0, H = 0;
+    const smax = (a, b) => (a + b + Math.sqrt((a - b) * (a - b) + 0.36)) / 2;
+    function build() {
+      // вузький екран (телефон) — далекі точки відсуваються, щоб верстат, а потім обидві стулки вміщались по ширині
+      const tanH = Math.tan(fov0 * PI / 360) * cam.aspect;
+      const pts = KF.map(([, p, g, hw]) => { if (!hw) return p.clone(); const d = p.clone().sub(g), L = d.length(); return g.clone().add(d.multiplyScalar(smax(L, hw / tanH) / L)); });
+      curve = new T.CatmullRomCurve3(pts, false, 'centripetal'); curve.arcLengthDivisions = 1500;
+      const Ls = curve.getLengths(1500), tot = Ls[1500];
+      sAt = mono(KT, pts.map((_, i) => Ls[Math.round(i / (pts.length - 1) * 1500)] / tot), 0);
+    }
+    if (A.EffectComposer) try {
+      const rt = new T.WebGLRenderTarget(2, 2, { type: T.HalfFloatType, samples: r.capabilities.isWebGL2 ? 4 : 0 });
+      comp = new A.EffectComposer(r, rt); comp.setPixelRatio(PR);
+      comp.addPass(new A.RenderPass(sc, cam)); comp.addPass(new A.UnrealBloomPass(new T.Vector2(256, 256), 0.42, 0.5, 1.3)); comp.addPass(new A.OutputPass());
+    } catch (e) { comp = null; }
+    function fit() {
+      const w = me.clientWidth, h = me.clientHeight; if (!w || !h || (w === W && h === H)) return; W = w; H = h;
+      r.setSize(w, h, false); if (comp) comp.setSize(w, h);
+      cam.aspect = w / h; fov0 = cam.aspect < 0.8 ? 50 : 40; cam.fov = fov0; cam.updateProjectionMatrix(); build();
+    }
+    const draw = () => { if (comp) comp.render(); else r.render(sc, cam); };
+
+    // ---- що відбувається в кожен момент ----
+    const stEl = me.querySelector('.in-st'), stB = stEl.querySelector('b'), ttl = me.querySelector('.in-t'), rdEl = me.querySelector('.in-rd'), rdB = [...rdEl.querySelectorAll('b')];
+    const RD = [4000, 495, 5], rdv = [-1, -1, -1];
+    let rows = -1, stTxt = '', rdOn = false, ttlOff = false, bz1 = false, bz2 = false;
+    const cPos = V(), cVel = V(), cTg = V(), tVel = V(), pTo = V(), gTo = V();
+    // м'яка «пружина» за камерою: прибирає будь-який залишковий злам (зміна розміру екрана в Telegram, важкий кадр)
+    const follow = (x, v, to, dt) => { for (let s = dt; s > 1e-6; s -= 0.008) { const h = Math.min(0.008, s); v.x += (144 * (to.x - x.x) - 24 * v.x) * h; v.y += (144 * (to.y - x.y) - 24 * v.y) * h; v.z += (144 * (to.z - x.z) - 24 * v.z) * h; x.addScaledVector(v, h); } };
+    function update(t, dt, live, snap) {
+      // цех: лампи рядами, прожектори «клацають», промені й пил
+      hemi.intensity = 0.03 + 0.3 * ss(0.15, 1.1, t); rim.intensity = 0.3 + 0.6 * ss(0.1, 1.0, t);
+      const k1 = flick(t, 0.12), k2 = flick(t, 0.32), kS = flick(t, 0.55);
+      lensB[0].color.setScalar(6 * k1); lensB[1].color.setScalar(6 * k2); lens0.color.setScalar(7 * kS);
+      beams[0].m.material.uniforms.uI.value = 0.11 * kS; beams[1].m.material.uniforms.uI.value = 0.09 * k1; beams[2].m.material.uniforms.uI.value = 0.09 * k2;
+      pools[0].opacity = 0.32 * k1; pools[1].opacity = 0.32 * k2;
+      spot.intensity = 105 * kS; fill.intensity = 0.4 * ss(0.5, 1.3, t);
+      const bi = dustM.uniforms.uBI.value; bi[0] = 1.1 * kS; bi[1] = 0.9 * k1; bi[2] = 0.9 * k2; dustM.uniforms.uT.value = t;
+      const nr = Math.max(0, Math.min(5, Math.floor((t - 0.05) / 0.07) + 1));
+      if (nr !== rows) { rows = nr; FX.forEach((_, i) => fix.setColorAt(i, col.setScalar(Math.floor(i / 4) < rows && i % 7 !== 3 ? 4 : 0.03))); fix.instanceColor.needsUpdate = true; }
+      // верстат прокидається: LED, екран, жовтий «чекаю» → зелений «працюю»
+      const kOn = ss(0.6, 1.0, t), runs = t >= 3.0;
+      mLed.emissiveIntensity = 3.5 * kOn; mScr.emissiveIntensity = 1.2 * kOn; mGrn.emissiveIntensity = 2.5 * kOn; scrM.color.setScalar(1.25 * kOn);
+      mTy.emissiveIntensity = !runs && t > 0.6 && (t * 1.25) % 1 < 0.55 ? 5 : 0; mTg.emissiveIntensity = runs ? 5 : 0;
+      const kL = flick(t, 2.55); lamp.intensity = 3.5 * kL; mLamp.emissiveIntensity = 2.5 * kL; work0.intensity = 1.5 * kL;
+      // двері: розгін, гальмування і ледь помітний відскок на упорі
+      const dd = ease(cl((t - 2.35) / 1.2)) - (t > 3.55 ? 0.018 * Math.exp(-(t - 3.55) * 7) * Math.sin((t - 3.55) * 26) : 0);
+      for (const [o, s] of doors) o.position.x = s * 0.66 * dd;
+      // шпиндель розкручується, бабка опускається, СОЖ, подача столу
+      head.position.y = -DZ * ease(cl((t - 3.1) / 0.6));
+      spinA -= ss(3.0, 3.8, t) * 2 * PI * 7.5 * dt; if (arbor) arbor.rotation.y = spinA;
+      if (sleeve) sleeve.material.opacity = 0.62 * ss(3.25, 3.85, t);
+      jetM.uniforms.uT.value = t; jetM.uniforms.uLen.value = 1.15 * ss(3.6, 3.78, t);
+      work.position.x = -fx; if (table) table.position.x = -fx;
+      const as = a0 + fx; ahead.scale.x = (X1w - as) / (X1w - a0); ahead.position.x = (as + X1w) / 2;
+      if (t - scrAt > 0.2 || t < scrAt) { scrAt = t; drawScr(runs ? Math.min(7, 3 + Math.floor((t - 3) / 0.25)) : 1, runs, -8 + fx * 1000); }
+      // підписи поверх
+      if (!ttlOff && t >= 2.3) { ttlOff = true; ttl.classList.add('off'); }
+      const st = runs ? 'РІЗАННЯ' : t >= 2.35 ? 'ДВЕРІ ВІДЧИНЕНО' : 'ОЧІКУВАННЯ';
+      if (st !== stTxt) { stTxt = st; stB.textContent = st; stEl.classList.toggle('run', runs); }
+      const ro = runs && t < 5.45; if (ro !== rdOn) { rdOn = ro; rdEl.classList.toggle('on', ro); }
+      if (runs) { const k = ease(cl((t - 3.0) / 0.9)); RD.forEach((v, i) => { const x = Math.round(v * k); if (x !== rdv[i]) { rdv[i] = x; rdB[i].textContent = String(x); } }); }
+      if (live && !bz1 && t >= 2.35) { bz1 = true; buzz('soft'); }
+      if (live && !bz2 && t >= 3.0) { bz2 = true; buzz('light'); }
+      // камера: точка на сплайні за часом + легке «дихання» з рук
+      curve.getPointAt(cl(sAt(t)), pTo); gTo.set(gX(t), gY(t), gZ(t));
+      const wob = 0.004 * pTo.distanceTo(gTo); gTo.x += Math.sin(t * 1.9) * wob; gTo.y += Math.sin(t * 1.3 + 1) * wob * 0.7;
+      if (snap) { cPos.copy(pTo); cTg.copy(gTo); cVel.set(0, 0, 0); tVel.set(0, 0, 0); } else { follow(cPos, cVel, pTo, dt); follow(cTg, tVel, gTo, dt); }
+      cam.position.copy(cPos); cam.lookAt(cTg);
+      const f = fov0 - 6 * ss(5.5, 6.6, t); if (f !== cam.fov) { cam.fov = f; cam.updateProjectionMatrix(); }
+      const uS = H * PR / (2 * Math.tan(cam.fov * PI / 360)); dustM.uniforms.uS.value = uS; spl.pts.material.uniforms.uS.value = uS; mist.pts.material.uniforms.uS.value = uS;
+      if (t > 2.3 && t < 3.8) r.shadowMap.needsUpdate = true;   // рухаються двері й бабка — тінь перераховується
+    }
+    // слабкий телефон: спершу менша роздільність, потім без світіння — аби рух лишався рівним
+    let ema = 16.7, slowN = 0, drops = 0;
+    function perf(rdt) {
+      ema += (rdt - ema) * 0.08;
+      if (ema > 26) slowN++; else if (slowN > 0) slowN--;
+      if (slowN < 30 || drops >= 3) return;
+      slowN = 0; ema = 16.7; drops++;
+      if (PR > 1.05) { PR = Math.max(1, PR * 0.75); r.setPixelRatio(PR); if (comp) comp.setPixelRatio(PR); W = 0; }
+      else if (comp) { comp.dispose(); comp = null; }
+    }
+
+    // ---- прогрів: усі шейдери й буфери — до старту, щоб перший кадр не смикнувся ----
+    const hm = /[?&]introAt=(\d+)/.exec(location.search), hold = !!hm, stats = /[?&]introStats/.test(location.search) ? [] : null;
+    fit(); update(0, 0, false, true);
+    try { await r.compileAsync(sc, cam); } catch (e) { try { r.compile(sc, cam); } catch (x) {} }
+    if (el !== me || phase !== 'prep') return;
+    r.shadowMap.needsUpdate = true; draw(); draw();
+    // програма під заставкою встигає намалюватись до старту (і потім уже не заважає)
+    await Promise.race([appWait, new Promise(res => setTimeout(res, 1500))]);
+    if (el !== me || phase !== 'prep') return;
+    phase = 'play'; me.classList.add('play'); if (hold) me.classList.add('hold');   // застиглий кадр для перевірки — без переходів
+    // перевірка: скільки коштує кожен кадр усього проходу (з очікуванням GPU)
+    if (hold) window.__intro = { T, sc, cam, by, arbor, A, tip0, tipF, TOP, R, cx, cz, bench: (t0 = 0, t1 = 6.6) => {
+      const gl = r.getContext(), px = new Uint8Array(4), res = [], cp = [], dir = V();
+      for (let t = t0; t < t1; t += 1 / 60) {
+        const a = performance.now(); step(1 / 60, t); update(t, 1 / 60, false, false); draw(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); res.push(performance.now() - a);
+        cam.getWorldDirection(dir); cp.push([cam.position.x, cam.position.y, cam.position.z, dir.x, dir.y, dir.z]);
+      }
+      window.__intro.cp = cp; return res;
+    } };
+    let vt = hold ? hm[1] / 1000 : 0, last = performance.now(), simmed = false;
+    if (!hold) setTimeout(() => { if (el === me && phase === 'play') leave(true); }, 14000);   // кадри не йдуть (фонова вкладка) — у програму
+    me.addEventListener('pointerdown', e => { if (phase === 'play' && !e.target.closest('.in-skip') && vt > 0.9) leave(true); });
     const frame = now => {
-      if (done || !el) return;
-      fit();
-      const t = Number.isFinite(tHold) ? tHold : now - t0;
-      if (t < 2300) { const u = ease(cl(t / 2300)); pos.copy(cA.getPoint(u)); tgt.copy(tA.getPoint(u)); }
-      else if (t < 3500) { pos.lerpVectors(A2, B2, ease(cl((t - 2300) / 1200))); tgt.copy(Tg[2]); }
-      else { const u = ease(cl((t - 3500) / 2100)); pos.copy(cC.getPoint(u)); tgt.lerpVectors(Tg[2], tool, u); }
-      cam.position.copy(pos); cam.lookAt(tgt);
-      const d = ease(cl((t - 2000) / 1300));
-      for (const [o, s, x0] of doors) o.position.x = x0 + s * 0.66 * d;
-      inner.intensity = 3.5 * ease(cl((t - 2400) / 1000));
-      for (const o of glow) o.material.emissiveIntensity = 0.2 + 1.6 * d;
-      if (title) title.style.opacity = String(1 - cl((t - 1400) / 700));
-      ren.render(sc, cam);
-      if (t >= TT - 700 && !hold) return finish(false);
+      if (el !== me || phase === 'done') return;
       raf = requestAnimationFrame(frame);
+      const rdt = Math.max(0, now - last); last = now;
+      // важкий кадр не дає стрибка: час заставки на мить пригальмовує, а не перескакує
+      const dt = Math.min(rdt, 34) / 1000;
+      fit();
+      if (hold) { if (!simmed) { for (let x = 0; x < vt; x += 1 / 60) step(1 / 60, x); simmed = true; } }
+      else { vt += dt; step(dt, vt); }
+      update(vt, dt, !hold, hold);
+      draw();
+      if (hold) return;
+      perf(rdt);
+      if (stats) stats.push(rdt);
+      if (phase === 'play' && vt >= 5.85) {
+        if (stats) { const s = stats.slice(2), avg = s.reduce((a, b) => a + b, 0) / s.length; window.__introStats = { n: s.length, avg: +avg.toFixed(2), max: +Math.max(...s).toFixed(1), over20: s.filter(x => x > 20).length, over34: s.filter(x => x > 34).length, pr: PR, bloom: !!comp }; console.log('introStats', JSON.stringify(window.__introStats)); }
+        leave(false);
+      }
     };
     raf = requestAnimationFrame(frame);
   }
-  return { start, on, set, get playing() { return !done; } };
+  return {
+    start, on, set,
+    // 3D-картинки програми чекають, поки заставка грає, — щоб не смикати кадри
+    idle: () => (busy() ? new Promise(r => waiters.push(r)) : Promise.resolve()),
+    appReady: () => appRes(),
+    get playing() { return phase !== 'done'; },
+    get busy() { return busy(); },
+  };
 })();
 (async function start() {
   applyTheme();
@@ -7197,6 +7769,7 @@ const Intro = (() => {
     }
     S.anim = true;
     render();
+    Intro.appReady();
     if (n && n.m + n.i + n.t + n.h) {
       toast(`Додано з цеху: ${[n.m && `${n.m} ${plural(n.m, "верстат", "верстати", "верстатів")}`, n.t && `${n.t} ${plural(n.t, "фрезу", "фрези", "фрез")}`, n.i && `${n.i} ${plural(n.i, "пластину", "пластини", "пластин")}`, n.h && `${n.h} ${plural(n.h, "режим", "режими", "режимів")}`].filter(Boolean).join(', ')}`);
     }
@@ -7205,6 +7778,7 @@ const Intro = (() => {
   } catch (e) {
     console.error(e);
     view.innerHTML = `<div class="card empty">Не вдалося завантажити: ${esc(e.message || e)}</div>`;
+    Intro.appReady();
   }
   if (TEST) window.__cnc = { calc, PRESET_MATS, GRADES, statesOf, gradeId, rankTools, toolFit, OPS_BY_TYPE, matMatch, skey, thrSpec, chooseTask, S, getMat, MODES, OPS, interp, toolSVG, insertSVG, endSVG, parseInsCode, insRange, DB, seedInventory, fixRun, lifeShare, isoLimits, partTotals, partOpCalc, RC, edgesOf };
 })();

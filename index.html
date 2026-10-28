@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Geist+Mono:wght@400..800&family=Handjet:wght@500..700&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js"}}</script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
 (function () {
@@ -532,6 +533,27 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:12;padding:8px 10px ca
 
 .scan{display:none}
 
+/* ---- заставка: верстат SGSK відчиняє двері ---- */
+#intro{position:fixed;inset:0;z-index:9999;background:#0a0e15;transition:opacity .65s var(--ease),transform .65s var(--ease)}
+#intro canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#intro.out{opacity:0;transform:scale(1.06);pointer-events:none}
+#intro .in-t{position:absolute;left:16px;right:16px;bottom:calc(16% + env(safe-area-inset-bottom,0px));text-align:center;color:#fff;pointer-events:none}
+#intro .in-t b{display:block;font:750 32px/1.05 var(--font);letter-spacing:-.015em}
+#intro .in-t span{display:block;margin-top:10px;font:600 11.5px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+#intro .in-bar{position:absolute;left:32%;right:32%;bottom:calc(11% + env(safe-area-inset-bottom,0px));height:2px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,.12);transition:opacity .4s}
+#intro .in-bar i{display:block;width:6%;height:100%;background:#4f8cff;transition:width .25s}
+#intro.play .in-bar{display:none}
+#intro .in-skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;padding:8px 15px;border-radius:20px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;font:600 13px/1 var(--font);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+
+/* ---- просто / детально ---- */
+.lvlsw{display:flex;align-items:center;gap:10px;margin:2px 0 14px}
+.lvlsw .seg2{display:flex;flex:none;gap:3px;padding:3px;border-radius:11px;background:var(--field)}
+.lvlsw .seg2 button{padding:8px 13px;border:0;border-radius:8px;background:none;color:var(--muted);font:650 12.5px/1 var(--font);cursor:pointer}
+.lvlsw .seg2 button.on{color:var(--text);background:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.lvlsw > span{font:500 12px/1.35 var(--font);color:var(--muted)}
+.introset{margin:4px 0 10px}
+
 /* ---- поява екрана: коротко і без масштабу (150–250 мс) ---- */
 .enter > *{animation:rise .32s var(--ease) both;animation-delay:calc(var(--i,0) * 35ms)}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -887,7 +909,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '8.0';
+const APP_VER = '8.1';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
@@ -3880,6 +3902,8 @@ function aeQuick(op, mat, D) {
 // Операція: тонкі операції одразу отримують типову глибину (дно — припуск, торцювання — шар зверху),
 // а при поверненні до основної обробки відновлюється її глибина
 const THIN_OPS = ['floor', 'face'];
+// Рівень екрана: «Просто» (за замовчуванням) або «Детально»
+const isSimple = () => DB.cfg.simple !== false;
 // ---------- Підбір фрези під задачу ----------
 // Чи може фреза зробити операцію в цьому матеріалі на цьому верстаті і наскільки вона тут доречна (бали + пояснення)
 function toolFit(t, op, mat, mach, ctx = {}) {
@@ -4047,11 +4071,13 @@ function renderCalc() {
   const th = S.op === 'thread' ? THREADS.find(x => x[0] === S.thM) || THREADS[7] : null;
   const machines = Object.values(DB.machines);
   const mi = Math.max(0, Object.keys(MODES).indexOf(S.mode)), mFrom = PREV.mode ?? mi;
-  const D = num(tool.d), showAe = O.ae && S.op !== 'slot', aeDef = D > 0 ? aeDefault(O, mat, D) * D : NaN;
+  // «Просто»: лише задача, матеріал, фреза і глибина; ширина, виліт, кути й режим — типові (рахунок той самий, повний)
+  const SIMPLE = isSimple();
+  const D = num(tool.d), showAe = O.ae && S.op !== 'slot' && !SIMPLE, aeDef = D > 0 ? aeDefault(O, mat, D) * D : NaN;
   const insT = INS_TYPES.includes(manual ? mt.type : tool.type), metal = mat.g === 'metal';
   // виліт потрібен усім операціям із силою різання і свердлінню (чи не зачепить патрон)
-  const showLo = !!(O.cut || HOLE_OPS.includes(S.op)), loV = num(tool.lo) > 0 ? String(num(tool.lo)) : '', loGuess = !!tool.loGuess || !loV;
-  const showCorner = CORNER_OPS.includes(S.op);
+  const showLo = !!(O.cut || HOLE_OPS.includes(S.op)) && !SIMPLE, loV = num(tool.lo) > 0 ? String(num(tool.lo)) : '', loGuess = !!tool.loGuess || !loV;
+  const showCorner = CORNER_OPS.includes(S.op) && !SIMPLE;
   const lc = num(tool.lc), tooDeep = !insT && lc > 0 && ((O.cut && S.op !== 'face' && S.op !== 'thread') || HOLE_OPS.includes(S.op)) && num(S[depthKey]) > lc;
   const angT = ANG_TYPES.includes(mt.type), coarseP = mt.type === 'tap' ? tapPitch(mt) : NaN;
   const qk = showAe ? aeQuick(S.op, mat, D) : [], aeFin = metal && (S.op === 'finish' || S.op === 'semi');
@@ -4060,6 +4086,8 @@ function renderCalc() {
     <span>Один дотик — і апка підставить типові дані. Від них залежать ліміти безпеки.</span></div>${ic('chev', 'chev')}</button>` : ''}
   ${machines.length > 1 ? `<div class="mswitch">${machines.map(m => `<button class="msw${m.id === mach.id ? ' on' : ''}" data-act="chooseMach" data-id="${m.id}">${machineArt(machModelOf(m))}<span>${esc(m.name)}</span>${m.approx ? '<em>≈</em>' : ''}</button>`).join('')}</div>` : ''}
   ${rec.length ? `<div class="chips">${rec.map((c, i) => `<button class="chip" data-act="combo" data-i="${i}" style="--c:${c.c}"><i></i>${esc(c.label)}</button>`).join('')}</div>` : ''}
+  <div class="lvlsw"><div class="seg2" role="tablist"><button class="${SIMPLE ? 'on' : ''}" data-act="simple" data-v="1">Просто</button><button class="${SIMPLE ? '' : 'on'}" data-act="simple" data-v="0">Детально</button></div>
+    <span>${SIMPLE ? 'Обери задачу, матеріал і фрезу — готові оберти й подача внизу.' : 'Усі поля: ширина зняття, виліт, кути, режим.'}</span></div>
   <div class="sec"><i>01</i>Що робиш</div>
   <section class="card spec">
     <div class="opsel top"><div class="opsel-h"><span class="balloon">1</span><span class="spec-l">Задача</span><em>${esc(O.kind || '')}</em></div>
@@ -4093,21 +4121,21 @@ function renderCalc() {
     ${S.op === 'chamfer' ? `<div class="qk"><span>Фаска</span>${[0.2, 0.3, 0.5, 1, 1.5, 2].map(x => `<button class="${num(S.chamC) === x ? 'on' : ''}" data-act="chamQ" data-v="${x}">C${fmt(x, 1)}</button>`).join('')}</div>` : ''}
     ${qk.length ? `<div class="qk"><span>${aeFin ? 'Припуск' : S.op === 'f3d' ? 'Крок' : 'Ширина'}</span>${qk.map(x => `<button class="${num(S.aeMm) === x ? 'on' : ''}" data-act="aeQ" data-v="${x}">${fmt(x, 2)}${aeFin ? '' : `<small>${Math.round(x / D * 100)}%</small>`}</button>`).join('')}</div>` : ''}
     <div class="hint inhint${tooDeep ? ' bad' : ''}">${tooDeep ? `Глибина більша за різальну частину фрези (${fmt(lc, 1)} мм) — не дістане. ` : ''}${esc(DEPTH_HINT[S.op] || '')}${showAe ? ' Порожня ширина — типова.' : ''}</div>
-    ${showLo || showCorner || S.op === 'bore' ? `<div class="lorow">
+    ${showLo || showCorner || (S.op === 'bore' && !SIMPLE) ? `<div class="lorow">
       ${showLo ? `<div class="f stepper lof"><span>Виліт, мм${loGuess ? '<em class="guess">≈</em>' : ''}</span><div class="st">
         <button data-act="step" data-k="lo" data-d="-1" aria-label="Менше">−</button>
         <input data-calc="lo" inputmode="decimal" autocomplete="off" value="${esc(loV)}" placeholder="—">
         <button data-act="step" data-k="lo" data-d="1" aria-label="Більше">+</button></div></div>` : ''}
       ${showCorner ? `<label class="f cornerf"><span>Радіус кутів, мм</span><input data-calc="cornerR" inputmode="decimal" autocomplete="off" value="${esc(S.cornerR || '')}" placeholder="немає"></label>` : ''}
-      ${S.op === 'bore' ? `<label class="f cornerf"><span>Вже є отвір Ø</span><input data-calc="preD" inputmode="decimal" autocomplete="off" value="${esc(S.preD || '')}" placeholder="немає"></label>` : ''}
+      ${S.op === 'bore' && !SIMPLE ? `<label class="f cornerf"><span>Вже є отвір Ø</span><input data-calc="preD" inputmode="decimal" autocomplete="off" value="${esc(S.preD || '')}" placeholder="немає"></label>` : ''}
     </div>
     <div class="hint inhint">${showLo ? `Виліт — від ${insT ? 'оправки' : 'цанги'} до кінчика${loGuess ? ' (≈ — типовий, заміряй свій)' : ''}; запамʼятовується у фрезі.` : ''}${showCorner ? ' Радіус кутів — апка сповільнить подачу в кутах.' : ''}</div>` : ''}
-    <div class="knobrow">
+    ${SIMPLE ? '' : `<div class="knobrow">
       <div class="knob-l">${knobLbl('safe', '')}</div>
       <div class="knob-c">${knobLbl('norm', ' top')}<button class="knob" data-act="modeNext" aria-label="Режим: ${esc(MODES[S.mode].n)}. Натисни, щоб перемкнути" style="--a:${MODE_ANG[Object.keys(MODES)[mFrom]] ?? 0}deg"><i></i></button></div>
       <div class="knob-l r">${knobLbl('fast', '')}</div>
     </div>
-    <div class="mseg">${Object.entries(MODES).map(([k, m]) => `<button class="${S.mode === k ? 'on' : ''}" data-act="mode" data-v="${k}"><b>${esc(m.n)}</b><small>${esc(m.s)}</small></button>`).join('')}</div>
+    <div class="mseg">${Object.entries(MODES).map(([k, m]) => `<button class="${S.mode === k ? 'on' : ''}" data-act="mode" data-v="${k}"><b>${esc(m.n)}</b><small>${esc(m.s)}</small></button>`).join('')}</div>`}
   </section>
   <div id="result"></div>`;
   // перемикач доїжджає зі старого положення в нове (пружина)
@@ -4460,15 +4488,15 @@ function renderResult() {
     ${alerts.length ? `<div class="sec"><i>${sn()}</i>Зверни увагу</div><div class="req">${alerts.map((w, i) => `<div class="note ${w.t}"><span class="no">${i + 1}.</span><div>${esc(w.m)}</div></div>`).join('')}</div>` : ''}
     ${fbHTML(g, how, mat, mach)}
     <div class="actions"><button class="btn primary" data-act="saveRun">${ic("save")}Зберегти</button><button class="icon-btn" data-act="copyRun" aria-label="Копіювати все">${ic('copy')}</button><button class="btn" data-act="checkMine">${ic('edit')}Свої значення</button><button class="btn" data-act="addToPart">${ic('parts')}В деталь</button></div>
-    ${metersHTML(g) ? `<div class="sec"><i>${sn()}</i>Прилади</div>${metersHTML(g)}` : ''}
-    <section class="card viz"><div class="viz-head"><b>РОЗРІЗ А–А</b><span class="viz-tag">${esc(OPS[S.op].s)} · ${esc(mach.name)}</span></div><canvas id="vizc" aria-label="Анімація різу"></canvas></section>
-    ${['f3d', 'drill', 'engrave', 'bore', 'tap', 'ream', 'thread'].includes(S.op) ? '' : `<section class="card tbox"><div class="label">${ic('hist')}Час, продуктивність, ресурс</div>
+    ${!isSimple() && metersHTML(g) ? `<div class="sec"><i>${sn()}</i>Прилади</div>${metersHTML(g)}` : ''}
+    ${isSimple() ? '' : `<section class="card viz"><div class="viz-head"><b>РОЗРІЗ А–А</b><span class="viz-tag">${esc(OPS[S.op].s)} · ${esc(mach.name)}</span></div><canvas id="vizc" aria-label="Анімація різу"></canvas></section>`}
+    ${isSimple() || ['f3d', 'drill', 'engrave', 'bore', 'tap', 'ream', 'thread'].includes(S.op) ? '' : `<section class="card tbox"><div class="label">${ic('hist')}Час, продуктивність, ресурс</div>
       <div class="g2" style="margin-top:12px"><label class="f"><span>Траєкторія, мм</span><input id="pathLen" inputmode="decimal" autocomplete="off" value="${esc(S.pathLen)}" placeholder="з CAM"></label>
         <label class="f"><span>або обʼєм, см³</span><input id="volCm3" inputmode="decimal" autocomplete="off" value="${esc(S.volCm3)}" placeholder="що зняти"></label></div>
       <div class="tb-out" id="tOut"></div>
       <div class="hint" id="tHint"></div></section>`}
     ${tips.length ? `<details class="card how tips"><summary>${ic('tip')}Поради<em>${tips.length}</em>${ic('chev', 'chev')}</summary><div class="req">${tips.map((w, i) => `<div class="note ${w.t}"><span class="no">${i + 1}.</span><div>${esc(w.m)}</div></div>`).join('')}</div></details>` : ''}
-    <details class="card how"><summary>${ic('fx')}Як це пораховано${ic('chev', 'chev')}</summary>${howHTML(r, mat, mach)}</details>`;
+    ${isSimple() ? '' : `<details class="card how"><summary>${ic('fx')}Як це пораховано${ic('chev', 'chev')}</summary>${howHTML(r, mat, mach)}</details>`}`;
   el._vals = vals; el._g = g; el._how = how;
   renderTime();
   animateIn(el);
@@ -4481,7 +4509,8 @@ function renderResult() {
   // жива візуалізація різу
   const chip = ['f3d', 'engrave', 'chamfer', 'tap', 'ream'].includes(r.op) ? 'ok' : g.hMax < g.rubMin ? 'rub' : g.hMax > g.fzHi * g.dK * 1.1 ? 'heavy' : 'ok';
   const danger = g.checkForce ? Math.max(g.stressPct / 0.8, g.defl / g.deflLim) : 0;
-  Viz.mount($('#vizc'), { op: HOLE_OPS.includes(S.op) || S.op === 'thread' ? 'drill' : S.op === 'chamfer' ? 'engrave' : S.op, type: tool.type, D: r.D, Deff: r.Deff, lc: num(tool.lc), shank: num(tool.shank), z: r.z, angle: num(tool.angle) || 90,
+  if (isSimple()) Viz.stop();
+  else Viz.mount($('#vizc'), { op: HOLE_OPS.includes(S.op) || S.op === 'thread' ? 'drill' : S.op === 'chamfer' ? 'engrave' : S.op, type: tool.type, D: r.D, Deff: r.Deff, lc: num(tool.lc), shank: num(tool.shank), z: r.z, angle: num(tool.angle) || 90,
     n: vals.n, F: vals.F, ap: vals.ap, passes: vals.passes || 1, total: r.total, ae: vals.ae, g: mat.g, spark: mat.kc1 >= 1000,
     chip, chatter: clamp((danger - 0.85) * 8, 0, 3), label: mat.name.split(/[ ,(]/)[0].toUpperCase(), state });
   // шпиндель у логотипі розкручується при перерахунку; небезпека — вібровідгук
@@ -6365,6 +6394,8 @@ function renderSettings() {
     <div class="skins">${Object.entries(SKINS).map(([k, v]) => `<button class="skin${skinOf() === k ? ' on' : ''}" data-act="skin" data-v="${k}">
       <span class="sk-sw" style="background:linear-gradient(135deg,${v.sw[0]} 0 45%,${v.sw[1]} 45% 75%,${v.sw[2]} 75%${v.sw[3] ? ` 88%,${v.sw[3]} 88%` : ''})"></span>
       <span class="sk-tx"><b>${esc(v.n)}${v.fresh ? '<em class="sk-new">спробуй</em>' : ''}</b><small>${esc(v.s)}</small></span>${skinOf() === k ? ic('check', 'ck') : ''}</button>`).join('')}</div>
+    <label class="check introset"><input type="checkbox" id="introOn"${Intro.on() ? ' checked' : ''}>Заставка з верстатом під час запуску</label>
+    <div class="btns" style="margin:0 0 16px"><button class="btn" data-act="introPlay">${ic('rot')}Показати заставку</button></div>
     <div class="sec" style="margin-top:4px"><i>01</i>Верстати</div>
     ${ms.map(m => `<section class="card mcard${m.id === S.machineId ? ' active' : ''}">
       <div class="mcard-h"><span class="v3m" data-act="view3dM" data-id="${m.id}" role="button" aria-label="Покрутити верстат у 3D">${machineArt(machModelOf(m))}</span><div style="min-width:0"><b>${esc(m.name)}</b>${m.id === S.machineId ? '<span class="badge">активний</span>' : ''}
@@ -6716,6 +6747,14 @@ const ACT = {
     haptic('sel');
   },
   v3zoom: el => { if (!V3) return; const on = V3.zoom(); el.innerHTML = `${ic('search')}${on ? 'Уся фреза' : 'Наблизити кромку'}`; haptic('sel'); },
+  introPlay: () => Intro.start(true, () => enterAnim()),
+  simple: el => {
+    const v = el.dataset.v === '1'; if (v === isSimple()) return;
+    DB.cfg = { ...DB.cfg, simple: v }; Store.set('cfg', DB.cfg);
+    // у простому — типові ширина, кути й режим «Норма», щоб приховані поля не впливали на цифри
+    if (v) { S.mode = 'norm'; S.aeMm = ''; S.cornerR = ''; S.preD = ''; S.useVer = null; S.mine = null; saveCfgSoon(); }
+    renderCalc(); haptic('sel');
+  },
   skin: async el => {
     const v = el.dataset.v; if (!SKINS[v] || v === skinOf()) return;
     DB.cfg = { ...DB.cfg, skin: v }; await Store.set('cfg', DB.cfg);
@@ -6979,6 +7018,7 @@ document.addEventListener('change', e => {
     DB.cfg = { ...DB.cfg, [key]: ok ? v : undefined }; Store.set('cfg', DB.cfg);
     toast(ok ? (key === 'tol' ? `Допуск ±${fmt(v, 3)} мм` : `Ціль Ra ${fmt(v, 1)} мкм`) : 'Повернуто типове значення');
   }
+  if (el.id === 'introOn') { Intro.set(el.checked); toast(el.checked ? 'Заставка буде під час запуску' : 'Заставку вимкнено'); }
   if (el.id === 'rate') { const v = num(el.value); DB.cfg = { ...DB.cfg, rate: v > 0 ? v : undefined }; Store.set('cfg', DB.cfg); toast(v > 0 ? `Ставка ${fmt(v)} грн/год збережена` : 'Ставку прибрано'); }
   { const rc = el.closest && el.closest('[data-rc]'); if (rc && el.tagName === 'SELECT') rcUpdate(rc.dataset.rc); }
   if (el.dataset.calc && el.tagName === 'SELECT') setCalc(el.dataset.calc, el.value, true);
@@ -7011,8 +7051,128 @@ document.addEventListener('input', e => {
 });
 
 // ======================= Старт =======================
+// ======================= Заставка: SGSK відчиняє двері — і камера заходить у програму =======================
+// Модель sgsk.glb (метри, Y — вгору, фронт кабіни на z = 0). Двері — окремі деталі «… ліві» / «… праві»: розсуваються на 0,66 м.
+// Показується на кожному запуску, поки не вимкнено в Налаштуваннях; тап «Пропустити» — одразу в програму.
+const Intro = (() => {
+  const TH = 'https://cdn.jsdelivr.net/npm/three@0.160.0/', KEY = LS + 'intro';
+  let el = null, done = true, raf = 0, ren = null, scene = null, bye = null;
+  const on = () => { try { return localStorage.getItem(KEY) !== '0'; } catch (e) { return true; } };
+  const set = v => { try { localStorage.setItem(KEY, v ? '1' : '0'); } catch (e) {} };
+  const ease = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2), cl = x => Math.min(1, Math.max(0, x));
+  function finish(fast) {
+    if (done) return; done = true;
+    cancelAnimationFrame(raf);
+    const e = el; el = null;
+    if (e) { e.classList.add('out'); setTimeout(() => e.remove(), fast ? 260 : 700); }
+    setTimeout(() => {
+      try { if (scene) scene.traverse(o => { if (o.isMesh) { o.geometry.dispose(); [].concat(o.material).forEach(m => m.dispose()); } }); } catch (x) {}
+      try { if (ren) { ren.dispose(); ren.forceContextLoss(); } } catch (x) {}
+      ren = null; scene = null;
+    }, 800);
+    if (bye) { const f = bye; bye = null; f(); }
+  }
+  // force — показати навіть якщо вимкнено (кнопка в Налаштуваннях)
+  async function start(force, onDone) {
+    if (!done) return;
+    if (!force && (!on() || TEST || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches))) return;
+    done = false; bye = onDone || null;
+    el = document.createElement('div'); el.id = 'intro';
+    el.innerHTML = `<canvas aria-hidden="true"></canvas><div class="in-t"><b>Режими ЧПУ</b><span>оберти · подача · глибина — під твій верстат</span></div>
+      <div class="in-bar"><i></i></div><button class="in-skip" type="button">Пропустити</button>`;
+    document.body.appendChild(el);
+    el.querySelector('.in-skip').addEventListener('click', () => finish(true));
+    // модель не прийшла за 8 с (слабкий інтернет) — не тримаємо людину, одразу в програму
+    const slow = setTimeout(() => { if (!scene) finish(true); }, 8000);
+    try {
+      const [T, { GLTFLoader }, { RoomEnvironment }] = await Promise.all([import('three'), import(TH + 'examples/jsm/loaders/GLTFLoader.js'), import(TH + 'examples/jsm/environments/RoomEnvironment.js')]);
+      if (done) return;
+      const bar = el.querySelector('.in-bar i');
+      const gltf = await new Promise((res, rej) => new GLTFLoader().load('sgsk.glb', res, p => { if (bar && p.total) bar.style.width = `${Math.round(p.loaded / p.total * 100)}%`; }, rej));
+      clearTimeout(slow);
+      if (done) return;
+      run(T, RoomEnvironment, gltf.scene);
+    } catch (e) { clearTimeout(slow); finish(true); }
+  }
+  function run(T, RoomEnvironment, model) {
+    const cv = el.querySelector('canvas');
+    try { ren = new T.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance' }); } catch (e) { return finish(true); }
+    ren.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    ren.outputColorSpace = T.SRGBColorSpace; ren.toneMapping = T.ACESFilmicToneMapping; ren.toneMappingExposure = 1.0;
+    ren.shadowMap.enabled = true; ren.shadowMap.type = T.PCFSoftShadowMap;
+    const BG = 0x0a0e15, sc = scene = new T.Scene(), pm = new T.PMREMGenerator(ren);
+    sc.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; pm.dispose();
+    sc.background = new T.Color(BG); sc.fog = new T.Fog(BG, 10, 24);
+    // студія: ключове світло з тінню, холодне контрове, підлога, що ловить тінь
+    const key = new T.DirectionalLight(0xffffff, 2.4); key.position.set(-3.5, 7, 6.5); key.target.position.set(1.5, 0.8, -1.2);
+    key.castShadow = true; key.shadow.mapSize.set(1024, 1024); Object.assign(key.shadow.camera, { left: -4.5, right: 4.5, top: 4.5, bottom: -4.5, near: 1, far: 22 });
+    key.shadow.bias = -0.0005; key.shadow.normalBias = 0.02; sc.add(key, key.target);
+    const rim = new T.DirectionalLight(0x9db8ff, 0.9); rim.position.set(7, 4, -6); sc.add(rim);
+    const floor = new T.Mesh(new T.CircleGeometry(11, 72), new T.MeshStandardMaterial({ color: 0x151b26, roughness: 0.9 }));
+    floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; sc.add(floor);
+    const doors = [], glow = [];
+    model.traverse(o => {
+      if (!o.isMesh) return;
+      o.castShadow = o.receiveShadow = true;
+      if (o.material.transparent) { o.material.depthWrite = false; o.castShadow = false; o.renderOrder = 2; }
+      const n = o.name || '';
+      if (/ліві$/.test(n)) doors.push([o, -1, o.position.x]); else if (/праві$/.test(n)) doors.push([o, 1, o.position.x]);
+      if (/LED|Світильник|логотип/i.test(n)) { o.material = o.material.clone(); o.material.emissive = o.material.color.clone(); o.material.emissiveIntensity = 0.2; glow.push(o); }
+    });
+    sc.add(model);
+    // світло всередині робочої зони вмикається, коли двері відчиняються
+    const inner = new T.PointLight(0xffe2b0, 0, 3.2, 2); inner.position.set(1.5, 2.05, -0.55); sc.add(inner);
+    const cam = new T.PerspectiveCamera(42, 1, 0.03, 60);
+    const V = (x, y, z) => new T.Vector3(x, y, z);
+    // шлях: три чверті зліва → фронт → двері → до шпинделя з фрезою
+    const tool = V(1.55, 1.36, -0.85);
+    const P = [V(-3.2, 2.3, 4.6), V(-0.6, 2.0, 4.4), V(1.45, 1.75, 2.9), V(1.5, 1.55, 1.25), V(1.52, 1.45, 0.2), V(1.55, 1.42, -0.42)];
+    const Tg = [V(1.3, 1.15, -1.0), V(1.4, 1.2, -0.95), V(1.5, 1.35, -0.85), tool, tool, tool];
+    // три відрізки: облетіти до фронту (0–2,3 с) → постояти навпроти, поки розсуваються двері (2,3–3,5 с) → залетіти до фрези (3,5–5,6 с)
+    const P2b = V(1.5, 1.62, 2.05), tA = new T.CatmullRomCurve3(Tg.slice(0, 3), false, 'centripetal');
+    let cA = null, cC = null, A2 = null, B2 = null, W = 0, H = 0;
+    const fit = () => {
+      const w = el ? el.clientWidth : 0, h = el ? el.clientHeight : 0; if (!w || !h || (w === W && h === H)) return; W = w; H = h;
+      ren.setSize(w, h, false); cam.aspect = w / h; cam.fov = cam.aspect < 0.8 ? 50 : 42; cam.updateProjectionMatrix();
+      // відстань під ширину екрана: на телефоні (вузько) камера відходить, щоб було видно весь верстат, а потім — обидві стулки дверей
+      const tanH = Math.tan(cam.fov / 2 * Math.PI / 180) * cam.aspect;
+      const at = (p, t, hw) => { const d = p.clone().sub(t), L = d.length(); return t.clone().add(d.multiplyScalar(Math.max(L, hw / tanH) / L)); };
+      const pts = [at(P[0], Tg[0], 2.3), at(P[1], Tg[1], 2.0), at(P[2], Tg[2], 1.3)];
+      A2 = pts[2]; B2 = at(P2b, Tg[2], 1.08);
+      cA = new T.CatmullRomCurve3(pts, false, 'centripetal'); cC = new T.CatmullRomCurve3([B2, P[3], P[4], P[5]], false, 'centripetal');
+    };
+    const pos = new T.Vector3(), tgt = new T.Vector3();
+    const TT = 5600, t0 = performance.now(), title = el.querySelector('.in-t');
+    // ?introAt=мс — застигнути кадр (для перевірки ракурсів); інакше страховка: якщо кадри не йдуть (фонова вкладка) — у програму
+    const hold = /[?&]introAt=(\d+)/.exec(location.search), tHold = hold ? +hold[1] : NaN;
+    if (!hold) setTimeout(() => finish(true), TT + 2500);
+    el.classList.add('play');
+    el.addEventListener('pointerdown', e => { if (!e.target.closest('.in-skip') && performance.now() - t0 > 900) finish(true); });
+    const frame = now => {
+      if (done || !el) return;
+      fit();
+      const t = Number.isFinite(tHold) ? tHold : now - t0;
+      if (t < 2300) { const u = ease(cl(t / 2300)); pos.copy(cA.getPoint(u)); tgt.copy(tA.getPoint(u)); }
+      else if (t < 3500) { pos.lerpVectors(A2, B2, ease(cl((t - 2300) / 1200))); tgt.copy(Tg[2]); }
+      else { const u = ease(cl((t - 3500) / 2100)); pos.copy(cC.getPoint(u)); tgt.lerpVectors(Tg[2], tool, u); }
+      cam.position.copy(pos); cam.lookAt(tgt);
+      const d = ease(cl((t - 2000) / 1300));
+      for (const [o, s, x0] of doors) o.position.x = x0 + s * 0.66 * d;
+      inner.intensity = 3.5 * ease(cl((t - 2400) / 1000));
+      for (const o of glow) o.material.emissiveIntensity = 0.2 + 1.6 * d;
+      if (title) title.style.opacity = String(1 - cl((t - 1400) / 700));
+      ren.render(sc, cam);
+      if (t >= TT - 700 && !hold) return finish(false);
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+  }
+  return { start, on, set, get playing() { return !done; } };
+})();
 (async function start() {
   applyTheme();
+  // заставка — одразу, поки вантажиться база; коли двері відчинились і камера зайшла, екран програми «піднімається»
+  Intro.start(false, () => enterAnim());
   if (IN_TG) {
     tg.ready(); tg.expand();
     if (tgv('7.7')) tg.disableVerticalSwipes();

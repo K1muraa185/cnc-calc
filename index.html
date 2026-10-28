@@ -3127,6 +3127,8 @@ function calcHoleTool(op, mach, tool, mat, mode, depthIn, fixed, W, say) {
   }
   const nIdeal = 1000 * V / (Math.PI * D);
   let n = clamp(rN(nIdeal), rpmMin, nCap), nDrop = false;
+  // мітчик: оберти поруч, при яких подача S × P ціла — її легко вписати без помилки (M8×1,25: 528 → F660, а не 530 → F662,5)
+  if (op === 'tap') for (let d = 0; d <= 40; d++) { const m = [n - d, n + d].find(x => x >= rpmMin && x <= nCap && Math.abs(x * P - Math.round(x * P)) < 1e-6); if (m) { n = m; break; } }
   if (fixed && num(fixed.n) > 0) n = num(fixed.n);
   if (nIdeal < rpmMin * 0.98) say(op === 'tap' ? 'b' : 'w', op === 'tap'
     ? `Мітчику потрібно ~${fmt(r10(nIdeal))} об/хв, а мінімум шпинделя ${fmt(rpmMin)} — у ${fmt(rpmMin / nIdeal, 1)} раза швидше: мітчик згорить або зламається. Нарізай на верстаті з нижчими обертами, різьбофрезою або вручну.`

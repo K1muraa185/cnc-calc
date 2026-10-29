@@ -1366,71 +1366,108 @@ html[data-skin="carbon"]{--r:10px;--rk:7px;--font:"Roboto Flex","Geist",system-u
 :root:root[data-skin=carbon][data-theme] .v3c{background:radial-gradient(120% 80% at 50% 32%,#2E3239,#0C0D0F)}
 :root:root[data-skin=carbon][data-theme] .banner{border:1px solid rgba(243,178,60,.45);background:linear-gradient(90deg,rgba(243,178,60,.1),#121417)}
 :root:root[data-skin=carbon][data-theme] .simbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:calc(100% - 20px);margin:0 10px 12px;height:50px}
+:root{--sf:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Roboto Flex","Geist",system-ui,sans-serif}
 /* ---- симуляція різу ---- */
-.simcard{position:relative;display:flex;align-items:center;gap:14px;width:100%;margin:0 0 12px;padding:14px 16px;text-align:left;cursor:pointer;color:#F2F3F5;border-radius:var(--r);overflow:hidden;
-  border:1px solid #2A2E34;background:radial-gradient(120% 140% at 0% 50%,rgba(227,36,44,.22),transparent 55%),linear-gradient(180deg,#191B1F,#0F1012);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 18px 36px -24px rgba(0,0,0,1)}
-.simcard::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 22px,rgba(255,255,255,.025) 22px 23px);pointer-events:none}
-.sim-play{display:grid;place-items:center;width:46px;height:46px;flex:none;border-radius:50%;background:linear-gradient(180deg,#F0353C,#B5121A);box-shadow:0 0 0 4px rgba(227,36,44,.18),0 0 24px rgba(227,36,44,.55),inset 0 1px 0 rgba(255,255,255,.4);animation:simpulse 2.4s ease-in-out infinite}
-.sim-play svg{width:20px;height:20px;fill:#fff;margin-left:2px}
-@keyframes simpulse{50%{box-shadow:0 0 0 8px rgba(227,36,44,.06),0 0 30px rgba(227,36,44,.7),inset 0 1px 0 rgba(255,255,255,.4)}}
+.simcard{position:relative;display:flex;align-items:center;gap:14px;width:100%;margin:0 0 12px;padding:14px 16px;text-align:left;cursor:pointer;color:#F5F6F8;border-radius:var(--r);overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);background:radial-gradient(120% 160% at 0% 50%,rgba(61,220,132,.2),transparent 55%),linear-gradient(180deg,#1A1D22,#101215);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 18px 36px -24px rgba(0,0,0,1)}
+.sim-play{display:grid;place-items:center;width:46px;height:46px;flex:none;border-radius:50%;background:#F5F6F8;box-shadow:0 0 0 5px rgba(255,255,255,.08),0 10px 24px -6px rgba(0,0,0,.8)}
+.sim-play svg{width:20px;height:20px;fill:#0B0C0E;margin-left:2px}
 .sim-tx{flex:1;min-width:0}
-.sim-tx b{display:block;font:800 14px/1.1 var(--font);font-stretch:135%;letter-spacing:.08em;text-transform:uppercase}
-.sim-tx small{display:block;margin-top:5px;font:500 12px/1.35 var(--font);color:#9AA0A9}
-.sim-go{flex:none;padding:6px 8px;border-radius:6px;border:1px solid #33373E;font:800 11px/1 var(--mono);font-style:normal;color:#fff;letter-spacing:.06em}
-.sim{position:fixed;inset:0;z-index:300;color:#F2F3F5;opacity:0;transition:opacity .25s;font-family:var(--font);
-  background:radial-gradient(110% 70% at 50% 34%,#262A31,#0B0C0E 72%)}
+.sim-tx b{display:block;font:700 15px/1.15 var(--sf)}
+.sim-tx small{display:block;margin-top:4px;font:500 12px/1.35 var(--sf);color:#9AA0A9}
+.sim-go{flex:none;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.08);font:700 11px/1 var(--sf);font-style:normal;color:#fff}
+.sim{--sf:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Roboto Flex","Geist",system-ui,sans-serif;--gl:rgba(18,20,24,.58);--gb:rgba(255,255,255,.09);
+  position:fixed;inset:0;z-index:300;color:#F5F6F8;opacity:0;transition:opacity .3s;font-family:var(--sf);background:#0B0C0E;-webkit-user-select:none;user-select:none}
 .sim.on{opacity:1}
 .sim-c{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.sim-top{position:absolute;left:0;right:0;top:0;display:flex;gap:12px;align-items:flex-start;padding:calc(12px + env(safe-area-inset-top)) 14px 22px;background:linear-gradient(rgba(8,9,11,.92),transparent);pointer-events:none}
-.sim-top > *{pointer-events:auto}
-.sim-x{display:grid;place-items:center;width:40px;height:40px;flex:none;padding:0;border-radius:9px;border:1px solid #2C3036;background:rgba(20,22,25,.9);color:#fff;cursor:pointer}
-.sim-x svg.i{width:18px;height:18px}
-.sim-ttl{min-width:0}
-.sim-ttl b{display:block;font:800 11px/1 var(--font);font-stretch:140%;letter-spacing:.16em;text-transform:uppercase;color:#FF555C}
-.sim-ttl span{display:block;margin-top:6px;font:700 15px/1.15 var(--font);font-stretch:110%}
-.sim-ttl small{display:block;margin-top:4px;font:500 10.5px/1.3 var(--mono);color:#8D939C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sim-dro{position:absolute;right:12px;top:calc(76px + env(safe-area-inset-top));min-width:124px;padding:8px 10px;border-radius:10px;background:rgba(8,9,11,.8);border:1px solid #23262B;font:600 12px/1.35 var(--mono);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.sim-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(8,9,11,.7),transparent 22%,transparent 58%,rgba(8,9,11,.55))}
+.sim :is(.sim-top,.sim-hud,.sim-views,.sim-panel,.sim-gcd){position:absolute}
+.sim-top{left:0;right:0;top:0;display:flex;align-items:flex-start;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 14px 0}
+.sim-ib{display:grid;place-items:center;width:40px;height:40px;flex:none;padding:0;border-radius:50%;cursor:pointer;color:#fff;border:1px solid var(--gb);background:var(--gl);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.sim-ib svg{width:19px;height:19px}
+.sim-ttl{flex:1;min-width:0;text-align:center;padding-top:1px}
+.sim-ttl small{display:block;font:600 10.5px/1 var(--sf);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.sim-ttl b{display:block;margin-top:5px;font:700 16px/1.15 var(--sf);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-ttl span{display:block;margin-top:3px;font:500 11.5px/1.3 var(--sf);color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-hud{left:12px;right:12px;top:calc(68px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:flex-start;gap:10px;pointer-events:none}
+.sim-st{--c:#3DDC84;display:flex;flex-wrap:wrap;align-items:center;gap:7px;max-width:58%;padding:8px 12px;border-radius:14px;background:var(--gl);border:1px solid var(--gb);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.sim-st[data-c="r"]{--c:#9CA3AF}.sim-st[data-c="e"]{--c:#F2B33D}.sim-st[data-c="f"]{--c:#5AA9FF}
+.sim-st > i{width:8px;height:8px;flex:none;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c)}
+.sim-st b{flex:1;min-width:0;font:600 12.5px/1.25 var(--sf)}
+.sim-st span{display:flex;flex-basis:100%;gap:3px}
+.sim-st span:empty{display:none}
+.sim-st u{width:12px;height:3px;border-radius:2px;background:rgba(255,255,255,.18)}
+.sim-st u.d{background:rgba(255,255,255,.6)}.sim-st u.c{background:var(--c);box-shadow:0 0 6px var(--c)}
+.sim-dro{min-width:118px;padding:8px 11px;border-radius:14px;background:var(--gl);border:1px solid var(--gb);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font:500 12px/1.4 ui-monospace,"SF Mono","Geist Mono",monospace}
 .sim-dro div{display:flex;align-items:baseline;gap:8px}
-.sim-dro i{width:12px;font-style:normal;font-weight:800;color:#FF4A50}
-.sim-dro b{flex:1;text-align:right;font-weight:600;color:#fff}
-.sim-dro .sd2 i{color:#9AA0A9}
-.sim-dro div:nth-child(4){margin-top:3px;padding-top:4px;border-top:1px solid #23262B}
-.sim-dro small{font-size:8.5px;color:#8D939C}
-.sim-ph{position:absolute;left:14px;top:calc(80px + env(safe-area-inset-top));max-width:calc(100% - 170px);padding:7px 10px;border-radius:7px;background:rgba(8,9,11,.8);border-left:3px solid #46D38A;font:700 12px/1.25 var(--font)}
-.sim-ph:empty{display:none}
-.sim-gc{position:absolute;left:14px;top:calc(124px + env(safe-area-inset-top));max-width:calc(100% - 170px);font:500 10.5px/1.55 var(--mono);color:#666C75;pointer-events:none}
-.sim-gc div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sim-gc i{margin-right:6px;font-style:normal;color:#40454C}
-.sim-gc .on{color:#fff;text-shadow:0 0 10px rgba(255,255,255,.35)}
-.sim-gc .on i{color:#FF4A50}
-.sim-bot{position:absolute;left:0;right:0;bottom:0;padding:26px 14px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(8,9,11,.94) 26%)}
-.sim-met{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:6px;margin-bottom:10px}
-.sim-met > div{min-width:0;padding:8px 10px;border-radius:9px;background:rgba(20,22,25,.88);border:1px solid #23262B}
-.sim-met span{display:block;margin-bottom:3px;font:700 7.5px/1.2 var(--font);font-stretch:125%;letter-spacing:.12em;text-transform:uppercase;color:#8D939C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sim-met b{font:650 19px/1.1 var(--font)}
-.sim-met small{margin-left:3px;font:600 9px var(--mono);color:#8D939C}
-.sm-ld i{display:block;height:4px;margin-top:5px;border-radius:2px;background:#26292E;overflow:hidden}
-.sm-ld u{display:block;width:0;height:100%;background:#46D38A;transition:width .2s,background .2s}
-.sm-ld u.w{background:#F3B23C}.sm-ld u.b{background:#FF4A50}
-.sim .sim-tl{-webkit-appearance:none;appearance:none;display:block;width:100%;height:24px;margin:0;padding:0;border:0!important;border-radius:0;background:transparent!important;box-shadow:none!important}
-.sim .sim-tl::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,#E3242C var(--p,0%),#2A2E34 var(--p,0%))}
-.sim .sim-tl::-moz-range-track{height:4px;border-radius:2px;background:#2A2E34}
-.sim .sim-tl::-moz-range-progress{height:4px;border-radius:2px;background:#E3242C}
-.sim .sim-tl::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;background:#F2F3F5;border:3px solid #E3242C;box-shadow:0 0 12px rgba(227,36,44,.7)}
-.sim .sim-tl::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#F2F3F5;border:3px solid #E3242C}
-.sim-time{display:flex;justify-content:space-between;gap:8px;margin:2px 0 10px;font:600 10.5px/1 var(--mono);color:#8D939C}
-.sim-time span:nth-child(2){color:#C9CDD3;text-align:center}
+.sim-dro i{width:11px;font-style:normal;font-weight:700;color:rgba(255,255,255,.45)}
+.sim-dro b{flex:1;text-align:right;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.sim-dro div:nth-child(4){margin-top:4px;padding-top:4px;border-top:1px solid var(--gb)}
+.sim-dro small{font-size:8.5px;color:rgba(255,255,255,.45)}
+.sim-views{right:12px;left:12px;bottom:calc(254px + env(safe-area-inset-bottom));display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.sim-views::-webkit-scrollbar{display:none}
+.sim-views button{flex:none;height:32px;padding:0 13px;border-radius:16px;cursor:pointer;color:rgba(255,255,255,.85);border:1px solid var(--gb);background:var(--gl);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font:600 12px/1 var(--sf)}
+.sim-views button.on{color:#0B0C0E;background:#F5F6F8;border-color:transparent}
+.sim-panel{left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));padding:12px 12px 10px;border-radius:24px;background:var(--gl);border:1px solid var(--gb);
+  -webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.sim-ins{display:grid;grid-template-columns:1.25fr 1.12fr .85fr;gap:6px;margin-bottom:10px}
+.si{display:flex;align-items:center;gap:7px;min-width:0;padding:8px 8px;border-radius:16px;background:rgba(255,255,255,.05)}
+.si > div{min-width:0;flex:1}
+.si b{display:block;font:700 19px/1.05 var(--sf);font-variant-numeric:tabular-nums}
+.si span{display:block;margin-top:2px;font:500 10px/1.2 var(--sf);color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si small{display:block;margin-top:2px;font:500 10px/1.2 var(--sf);color:rgba(255,255,255,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si svg{width:34px;height:34px;flex:none}
+.si .ring circle{fill:none;stroke:rgba(255,255,255,.1);stroke-width:4.5}
+.si .ring circle + circle{stroke:#3DDC84;stroke-linecap:round;transform:rotate(-90deg);transform-origin:22px 22px;transition:stroke-dasharray .25s,stroke .25s}
+.si .eng circle{fill:rgba(255,255,255,.06);stroke:rgba(255,255,255,.18);stroke-width:1.5}
+.si .eng path{fill:none;stroke:#FF8A3D;stroke-width:4;stroke-linecap:round;filter:drop-shadow(0 0 3px rgba(255,138,61,.8))}
+.si-ld canvas{display:block;width:100%;height:16px;margin-top:3px}
+.sim-tlw{position:relative;height:26px}
+.sim-bands{position:absolute;left:0;right:0;top:10px;height:6px;border-radius:3px;overflow:hidden;background:rgba(255,255,255,.08)}
+.sim-bands i{position:absolute;top:0;bottom:0;opacity:.85}
+.sim-bands u{position:absolute;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:#0B0C0E}
+.sim-head{position:absolute;top:4px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.6),0 0 0 4px rgba(255,255,255,.15);pointer-events:none}
+.sim .sim-tl{-webkit-appearance:none;appearance:none;position:absolute;inset:0;width:100%;height:26px;margin:0;padding:0;opacity:0;cursor:pointer}
+.sim-time{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:2px 2px 8px;font:500 10.5px/1 ui-monospace,"SF Mono","Geist Mono",monospace;color:rgba(255,255,255,.55)}
+.sim-time #sMid{display:flex;gap:8px;font-family:var(--sf)}
+.sim-time em{display:flex;align-items:center;gap:4px;font-style:normal;font-size:9.5px}
+.sim-time em::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
 .sim-ctl{display:flex;align-items:center;gap:6px}
-.sim-ctl > button,.sim-sp button,.sim-cam button{height:42px;padding:0;border-radius:8px;border:1px solid #2C3036;cursor:pointer;color:#F2F3F5;background:linear-gradient(180deg,#1E2125,#15171A);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);font:700 11px/1 var(--font);font-stretch:118%;letter-spacing:.05em}
-.sim-ctl > button{display:grid;place-items:center;width:46px;flex:none}
-.sim-ctl svg{width:20px;height:20px;fill:currentColor}
-.sim-ctl svg.i{fill:none}
-.sim-ctl > .sim-pp{width:60px;color:#0A0B0D;border-color:transparent;background:linear-gradient(180deg,#F6F7F9,#B9BEC6);box-shadow:inset 0 1px 0 #fff,0 8px 20px -10px rgba(225,230,240,.5)}
-.sim-sp{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.sim-cam{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}
-.sim-cam button{height:34px;font-size:10px;text-transform:uppercase}
-:is(.sim-sp,.sim-cam) button.on{color:#0A0B0D;border-color:transparent;background:#E9EBEE}
+.sim-ctl > button{display:grid;place-items:center;width:42px;height:42px;flex:none;padding:0;border-radius:50%;cursor:pointer;color:#fff;border:0;background:rgba(255,255,255,.08)}
+.sim-ctl > button:disabled{opacity:.3}
+.sim-ctl svg{width:20px;height:20px}
+.sim-ctl > .sim-pp{width:52px;height:52px;color:#0B0C0E;background:#F5F6F8;box-shadow:0 8px 20px -6px rgba(0,0,0,.7)}
+.sim-ctl > .sim-pp svg{width:24px;height:24px}
+.sim-sp{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:3px;border-radius:14px;background:rgba(255,255,255,.06)}
+.sim-sp button{height:34px;padding:0;border:0;border-radius:11px;cursor:pointer;color:rgba(255,255,255,.75);background:none;font:650 12px/1 var(--sf)}
+.sim-sp button.on{color:#0B0C0E;background:#F5F6F8}
+.sim-gcd{left:12px;right:12px;top:calc(150px + env(safe-area-inset-top));bottom:calc(300px + env(safe-area-inset-bottom));display:flex;flex-direction:column;border-radius:18px;background:rgba(10,11,13,.82);border:1px solid var(--gb);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);overflow:hidden}
+.sim-gcd[hidden]{display:none}
+.sim-gch{display:flex;align-items:center;justify-content:space-between;padding:8px 8px 8px 14px;border-bottom:1px solid var(--gb)}
+.sim-gch b{font:700 13px/1 var(--sf)}
+.sim-gch button{display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.08);color:#fff}
+.sim-gch svg{width:15px;height:15px}
+.sim-gcl{flex:1;overflow-y:auto;padding:6px 0;font:500 11.5px/1.65 ui-monospace,"SF Mono","Geist Mono",monospace;color:rgba(255,255,255,.5)}
+.sim-gcl div{padding:0 14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-gcl i{margin-right:8px;font-style:normal;color:rgba(255,255,255,.25)}
+.sim-gcl .on{color:#fff;background:rgba(61,220,132,.14);box-shadow:inset 3px 0 0 #3DDC84}
+.sim-end{position:absolute;inset:0;display:grid;place-items:center;padding:20px;background:rgba(5,6,8,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:seIn .35s ease both}
+.sim-end[hidden]{display:none}
+@keyframes seIn{from{opacity:0}}
+.se-card{width:min(420px,100%);padding:20px 18px 16px;border-radius:26px;background:rgba(20,22,26,.92);border:1px solid var(--gb);box-shadow:0 30px 80px rgba(0,0,0,.6);animation:seUp .45s cubic-bezier(.2,.9,.25,1) both}
+@keyframes seUp{from{opacity:0;transform:translateY(24px) scale(.97)}}
+.se-card > small{display:block;font:600 10.5px/1 var(--sf);letter-spacing:.12em;text-transform:uppercase;color:#3DDC84}
+.se-card > b{display:block;margin-top:7px;font:700 20px/1.2 var(--sf)}
+.se-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:14px 0 12px}
+.se-g div{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05)}
+.se-g span{display:block;font:500 10.5px/1.2 var(--sf);color:rgba(255,255,255,.5)}
+.se-g b{display:block;margin-top:4px;font:700 20px/1 var(--sf);font-variant-numeric:tabular-nums}
+.se-g b small{font-size:12px;font-weight:600;color:rgba(255,255,255,.55)}
+.se-card p{margin:0 0 14px;font:500 13px/1.45 var(--sf);color:rgba(255,255,255,.75)}
+.se-b{display:flex;gap:8px}
+.se-b button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:46px;border:0;border-radius:14px;cursor:pointer;color:#fff;background:rgba(255,255,255,.1);font:650 14px/1 var(--sf)}
+.se-b button svg{width:18px;height:18px}
+.se-b .pri{color:#0B0C0E;background:#F5F6F8}
 /* ---- вибір оформлення в налаштуваннях ---- */
 .skins{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 .skin{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;cursor:pointer;color:var(--text);border-radius:var(--r);background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
@@ -1468,7 +1505,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '9.0';
+const APP_VER = '9.1';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
@@ -3939,207 +3976,344 @@ const R3 = (() => {
     if (/мід|copper/.test(s)) return [0x8f5236, 0xd08a62];
     return iso === 'N' ? [0xa8afb8, 0xe3e7ec] : iso === 'K' ? [0x4f5358, 0x8d939a] : iso === 'M' ? [0x8f959c, 0xd2d6db] : iso === 'S' ? [0x75787d, 0xb8bcc1] : iso === 'H' ? [0x5d636a, 0xa6acb3] : [0x5d6168, 0xb7bdc4];
   }
+  // Сцена симуляції: стіл верстата з Т-пазами, лещата з губками, заготовка на паралелях; патрон BT40 з цанговою гайкою ER
+  // і шпиндель; фреза крутиться (стробоскопічно, щоб було видно зуби). Метал: сира поверхня — з окалиною/пилкою,
+  // оброблена — світла з дугами від зубів (крок — подача на оберт). Стружка — завитки, що летять по дотичній від зони різання
+  // і падають на деталь, лещата й стіл. ЗОР — два шланги Loc-Line і струмінь крапель. Помаранчева дуга — де зараз ріже фреза.
   function simScene(canvas, ctx, hooks = {}) {
-    const { r, tool, mat, mach } = ctx, D = r.D || num(tool.d) || 10, R = D / 2, n = num(ctx.v.n) || r.n;
-    const plan = simPath(ctx), { segs, B } = plan, prof = simProf(tool, R);
-    // час кожного відрізка (хв → с) і накопичений час
-    let T0 = 0; for (const s of segs) { s.len = Math.hypot(s.b[0] - s.a[0], s.b[1] - s.a[1], s.b[2] - s.a[2]); s.t0 = T0; s.dt = s.len / Math.max(1, s.F) * 60; T0 += s.dt; }
-    const Ttot = T0;
-    // ---- сцена ----
-    let ren; try { ren = mkRen(canvas, Math.min(2, window.devicePixelRatio || 1)); } catch (e) { return null; }
-    ren.shadowMap.enabled = true; ren.shadowMap.type = T.PCFSoftShadowMap;
-    const env = studio(ren), sc = new T.Scene(); sc.environment = env; sc.background = null;
-    const key = new T.DirectionalLight(0xffffff, 1.6), S0 = Math.max(B.x, B.y);
-    key.position.set(-S0 * 0.6, S0 * 1.4, S0 * 0.9); key.castShadow = true; key.shadow.mapSize.set(1024, 1024);
-    Object.assign(key.shadow.camera, { left: -S0, right: S0, top: S0, bottom: -S0, near: 1, far: S0 * 5 }); key.shadow.bias = -0.0004; sc.add(key);
-    const fill = new T.DirectionalLight(0xdfe8ff, 0.45); fill.position.set(S0, S0 * 0.5, -S0); sc.add(fill);
-    sc.add(new T.HemisphereLight(0xffffff, 0x2a2c30, 0.7));
-    const ox = B.x / 2, oy = B.y / 2, W = (X, Y, Z) => new T.Vector3(X - ox, Z, -(Y - oy));
-    // стіл верстата з Т-пазами
-    const tbl = new T.Mesh(new T.BoxGeometry(S0 * 3, 6, S0 * 2.4), new T.MeshStandardMaterial({ color: 0x2a2d32, metalness: 0.6, roughness: 0.55 }));
-    tbl.position.y = -B.z - 3; tbl.receiveShadow = true; sc.add(tbl);
-    for (let i = -3; i <= 3; i++) { const sl = new T.Mesh(new T.BoxGeometry(S0 * 3, 0.4, Math.max(4, S0 * 0.06)), new T.MeshStandardMaterial({ color: 0x0c0d0f, roughness: 0.9 })); sl.position.set(0, -B.z + 0.01, i * S0 * 0.32); sc.add(sl); }
-    // заготовка: сітка висот + боки
-    const cell = clamp3(Math.max(Math.sqrt(B.x * B.y / 42000), D / 40), 0.2, 1.5), nx = Math.ceil(B.x / cell) + 1, ny = Math.ceil(B.y / cell) + 1;
-    const H = new Float32Array(nx * ny), CUT = new Uint8Array(nx * ny);
-    const [cRaw, cCut] = simMatCol(mat).map(c => new T.Color(c));
-    for (const p of plan.pre) for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
-      const X = i * cell, Y = j * cell, k = i + j * nx;
-      if (p.kind === 'pocket' && X >= p.x0 && X <= p.x1 && Y >= p.y0 && Y <= p.y1) { H[k] = Math.min(H[k], p.z + p.wave * (0.5 + 0.5 * Math.sin(Y * 2.1))); CUT[k] = 1; }
-      if (p.kind === 'hole' && Math.hypot(X - p.x, Y - p.y) <= p.r) { H[k] = p.z; CUT[k] = 1; }
-      if (p.kind === 'dome') { const t = p.dz(X, Y) + p.stock; H[k] = Math.min(0, Math.ceil(t / p.terr) * p.terr); CUT[k] = H[k] < 0 ? 1 : 0; }
+    const { r, tool, mat, mach } = ctx, D = r.D || num(tool.d) || 10, R = D / 2, n = num(ctx.v.n) || r.n, F0 = num(ctx.v.F) || r.F;
+    const zT = Math.max(1, num(tool.z) || num(r.z) || 2), fz = F0 / Math.max(1, n * zT);
+    const plan = simPath(ctx), { segs, B } = plan, prof = simProf(tool, R), metal = mat.g === 'metal', iso = matIso(mat);
+    const insT = INS3(tool), cool = !!(r.cool || (r.mCool && r.mCool !== 'dry'));
+    // час, довжини, категорії (холостий, врізання, різання, чистове) — для шкали часу й підсумку
+    let T0 = 0, Lc = 0, Lr = 0, zMin = 0;
+    for (const s of segs) {
+      s.len = Math.hypot(s.b[0] - s.a[0], s.b[1] - s.a[1], s.b[2] - s.a[2]); s.t0 = T0; s.dt = s.len / Math.max(1, s.F) * 60; T0 += s.dt;
+      s.cat = s.kind === 'G0' ? 'r' : /Врізання|рампою|спірал|Підхід|G83|Опускання/i.test(s.ph) ? 'e' : /стінк|Чист|дно|чистова|Фаска|Гравію|Різьба|Розверт|Мітчик/i.test(s.ph) ? 'f' : 'c';
+      if (s.kind === 'G0') Lr += s.len; else Lc += s.len; zMin = Math.min(zMin, s.b[2]);
     }
-    const pos = new Float32Array(nx * ny * 3), nor = new Float32Array(nx * ny * 3), col = new Float32Array(nx * ny * 3), idx = [];
-    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const k = i + j * nx; pos[k * 3] = i * cell - ox; pos[k * 3 + 1] = H[k]; pos[k * 3 + 2] = -(j * cell - oy); }
-    for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) { const a = i + j * nx, b = a + 1, c = a + nx, d = c + 1; idx.push(a, b, c, b, d, c); }
-    const hg = new T.BufferGeometry(); hg.setAttribute('position', new T.BufferAttribute(pos, 3)); hg.setAttribute('normal', new T.BufferAttribute(nor, 3)); hg.setAttribute('color', new T.BufferAttribute(col, 3));
-    hg.setIndex(nx * ny > 65535 ? new T.Uint32BufferAttribute(idx, 1) : new T.Uint16BufferAttribute(idx, 1));
-    const metal = mat.g === 'metal';
-    const wm = new T.MeshStandardMaterial({ vertexColors: true, metalness: metal ? 0.62 : 0.05, roughness: metal ? 0.36 : 0.75, envMapIntensity: 1.1, side: T.DoubleSide });
-    const hm = new T.Mesh(hg, wm); hm.castShadow = hm.receiveShadow = true; sc.add(hm);
-    // боки заготовки — смуги, верх яких іде по краю сітки висот
+    const Ttot = Math.max(0.01, T0), passes = segs.reduce((m, s) => Math.max(m, s.pass || 0), 0);
+    const phone = Math.min(innerWidth, innerHeight) < 700;
+    let ren; try { ren = mkRen(canvas, Math.min(phone ? 1.75 : 2, window.devicePixelRatio || 1)); } catch (e) { return null; }
+    ren.shadowMap.enabled = true; ren.shadowMap.type = T.PCFSoftShadowMap; ren.toneMappingExposure = 1.02;
+    const env = studio(ren), sc = new T.Scene(); sc.environment = env;
+    const S0 = Math.max(B.x, B.y, 40), Mt = (color, metalness, roughness, x = {}) => new T.MeshStandardMaterial({ color, metalness, roughness, envMapIntensity: 1, ...x });
+    // фон — нутро верстата: згори світліше, донизу — темрява; далеке тоне в тумані
+    { const cv = document.createElement('canvas'); cv.width = 4; cv.height = 256; const g = cv.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 256);
+      gr.addColorStop(0, '#3a3f47'); gr.addColorStop(0.45, '#1c1f24'); gr.addColorStop(1, '#0b0c0e'); g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+      const t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace; sc.background = t; }
+    sc.fog = new T.Fog(0x15171b, S0 * 2.6, S0 * 7);
+    const key = new T.DirectionalLight(0xfff3e4, 2.3); key.position.set(-S0 * 0.7, S0 * 1.7, S0 * 1.0); key.castShadow = true;
+    key.shadow.mapSize.set(phone ? 1024 : 2048, phone ? 1024 : 2048);
+    Object.assign(key.shadow.camera, { left: -S0 * 0.95, right: S0 * 0.95, top: S0 * 0.95, bottom: -S0 * 0.95, near: 1, far: S0 * 6 }); key.shadow.bias = -0.0002; key.shadow.normalBias = 0.6; sc.add(key);
+    const rimL = new T.DirectionalLight(0xbcd0ff, 1.0); rimL.position.set(S0, S0 * 0.7, -S0 * 1.3); sc.add(rimL);
+    sc.add(new T.HemisphereLight(0xe2e8f0, 0x1a1c20, 0.6));
+    const ox = B.x / 2, oy = B.y / 2, W = (X, Y, Z) => new T.Vector3(X - ox, Z, -(Y - oy));
+    const add = (g, m, x, y, z, o = {}) => { const ms = new T.Mesh(g, m); ms.position.set(x, y, z); ms.castShadow = o.cast !== false; ms.receiveShadow = true; sc.add(ms); return ms; };
+    // ---- лещата і стіл: губки тримають нижню частину заготовки, нижче найглибшого проходу ----
+    const pH = 6, vbH = Math.max(28, S0 * 0.14), yBase = -B.z - pH, yTab = yBase - vbH, yJ = Math.max(-B.z + 3, Math.min(-4, zMin - 2.5));
+    const paint = Mt(0x2a3446, 0.35, 0.48), ground = Mt(0xc3c8cf, 1, 0.22), cast = Mt(0x474c54, 0.55, 0.58), slotM = Mt(0x0c0d0f, 0.2, 0.9);
+    const Lj = Math.max(B.x + 24, 90), jT = Math.max(16, S0 * 0.09);
+    add(new T.BoxGeometry(S0 * 4.2, 24, S0 * 2.8), cast, 0, yTab - 12, 0, { cast: false });
+    for (let i = -4; i <= 4; i++) add(new T.BoxGeometry(S0 * 4.2, 1, Math.max(5, S0 * 0.05)), slotM, 0, yTab + 0.01, i * S0 * 0.3, { cast: false });
+    add(new T.BoxGeometry(Lj + 20, vbH, B.y + jT * 2 + S0 * 0.55), paint, 0, yBase - vbH / 2, S0 * 0.06);
+    const jawH = yJ - yBase;
+    if (jawH > 1) {
+      add(new T.BoxGeometry(Lj, jawH, jT), paint, 0, yBase + jawH / 2, -oy - jT / 2 - 2);                        // нерухома губка
+      add(new T.BoxGeometry(Lj, jawH, jT), paint, 0, yBase + jawH / 2, oy + jT / 2 + 2);                         // рухома губка
+      add(new T.BoxGeometry(Lj * 0.98, jawH * 0.9, 2), ground, 0, yBase + jawH * 0.55, -oy - 1);                 // шліфовані накладки
+      add(new T.BoxGeometry(Lj * 0.98, jawH * 0.9, 2), ground, 0, yBase + jawH * 0.55, oy + 1);
+      const scr = add(new T.CylinderGeometry(5, 5, S0 * 0.4, 20), ground, 0, yBase - vbH * 0.35, oy + jT + S0 * 0.2); scr.rotation.x = PI / 2;
+      const hdl = add(new T.CylinderGeometry(3, 3, Math.max(60, S0 * 0.35), 16), ground, 0, yBase - vbH * 0.35, oy + jT + S0 * 0.4); hdl.rotation.z = PI / 2;
+    }
+    add(new T.BoxGeometry(B.x * 0.96, pH, 6), ground, 0, yBase + pH / 2, -oy + 8); add(new T.BoxGeometry(B.x * 0.96, pH, 6), ground, 0, yBase + pH / 2, oy - 8);
+    // ---- заготовка: сітка висот ----
+    const cell = clamp3(Math.max(Math.sqrt(B.x * B.y / (phone ? 52000 : 80000)), D / 48), 0.15, 1.5), nx = Math.ceil(B.x / cell) + 1, ny = Math.ceil(B.y / cell) + 1, NN = nx * ny;
+    const H = new Float32Array(NN), CUT = new Uint8Array(NN), MK = new Float32Array(NN), RN = new Float32Array(NN);
+    const [cRaw, cCut] = simMatCol(mat).map(c => new T.Color(c));
+    // сира поверхня: окалина плямами (сталь), риски пилки (алюміній), волокна (дерево)
+    const hsh = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
+    const vn = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+      return (hsh(xi, yi) * (1 - u) + hsh(xi + 1, yi) * u) * (1 - v) + (hsh(xi, yi + 1) * (1 - u) + hsh(xi + 1, yi + 1) * u) * v; };
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+      const X = i * cell, Y = j * cell, k = i + j * nx;
+      RN[k] = mat.g === 'wood' ? 0.86 + 0.14 * Math.sin(Y * 1.7 + vn(X * 0.05, Y * 0.3) * 6)
+        : iso === 'N' ? 0.9 + 0.06 * Math.sin(X * 2.4 + Y * 0.3) + 0.04 * vn(X * 0.2, Y * 0.2)
+        : 0.78 + 0.22 * (0.6 * vn(X * 0.08, Y * 0.08) + 0.4 * vn(X * 0.4, Y * 0.4));
+    }
+    const reinit = () => {
+      H.fill(0); CUT.fill(0); MK.fill(0);
+      for (const p of plan.pre) for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+        const X = i * cell, Y = j * cell, k = i + j * nx;
+        if (p.kind === 'pocket' && X >= p.x0 && X <= p.x1 && Y >= p.y0 && Y <= p.y1) { H[k] = Math.min(H[k], p.z + p.wave * (0.5 + 0.5 * Math.sin(Y * 2.1))); CUT[k] = 1; MK[k] = (X * 0.4) % 1; }
+        if (p.kind === 'hole' && Math.hypot(X - p.x, Y - p.y) <= p.r) { H[k] = p.z; CUT[k] = 1; }
+        if (p.kind === 'dome') { const t = p.dz(X, Y) + p.stock; H[k] = Math.min(0, Math.ceil(t / p.terr) * p.terr); CUT[k] = H[k] < 0 ? 1 : 0; MK[k] = (Y * 0.5) % 1; }
+      }
+    };
+    reinit();
+    const pos = new Float32Array(NN * 3), nor = new Float32Array(NN * 3), col = new Float32Array(NN * 3), idx = new (NN > 65535 ? Uint32Array : Uint16Array)((nx - 1) * (ny - 1) * 6);
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const k = i + j * nx; pos[k * 3] = i * cell - ox; pos[k * 3 + 2] = -(j * cell - oy); }
+    { let q = 0; for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) { const a = i + j * nx, b = a + 1, c = a + nx, d = c + 1; idx[q++] = a; idx[q++] = b; idx[q++] = c; idx[q++] = b; idx[q++] = d; idx[q++] = c; } }
+    const hg = new T.BufferGeometry(); hg.setAttribute('position', new T.BufferAttribute(pos, 3)); hg.setAttribute('normal', new T.BufferAttribute(nor, 3)); hg.setAttribute('color', new T.BufferAttribute(col, 3)); hg.setIndex(new T.BufferAttribute(idx, 1));
+    const wm = new T.MeshStandardMaterial({ vertexColors: true, metalness: metal ? 0.7 : 0.04, roughness: metal ? 0.3 : 0.78, envMapIntensity: 1.15 });
+    const hm = add(hg, wm, 0, 0, 0); hm.frustumCulled = false;
+    const sideM = new T.MeshStandardMaterial({ color: cRaw.clone().multiplyScalar(0.9), metalness: metal ? 0.6 : 0.04, roughness: metal ? 0.5 : 0.8, side: T.DoubleSide });
     const sides = [[0, 0, 1, 0, nx], [0, ny - 1, 1, 0, nx], [0, 0, 0, 1, ny], [nx - 1, 0, 0, 1, ny]].map(([i0, j0, di, dj, cnt]) => {
-      const p = new Float32Array(cnt * 2 * 3), id = [];
+      const p = new Float32Array(cnt * 6), id = [];
       for (let q = 0; q < cnt - 1; q++) { const a = q * 2, b = a + 2; id.push(a, b, a + 1, b, b + 1, a + 1); }
       const g = new T.BufferGeometry(); g.setAttribute('position', new T.BufferAttribute(p, 3)); g.setIndex(id);
-      const ms = new T.Mesh(g, new T.MeshStandardMaterial({ color: cRaw.clone().multiplyScalar(0.92), metalness: metal ? 0.7 : 0.05, roughness: metal ? 0.5 : 0.8, side: T.DoubleSide }));
-      ms.castShadow = ms.receiveShadow = true; sc.add(ms);
-      return { i0, j0, di, dj, cnt, p, g };
+      add(g, sideM, 0, 0, 0).frustumCulled = false; return { i0, j0, di, dj, cnt, p, g };
     });
     const upSides = () => { for (const s of sides) { for (let q = 0; q < s.cnt; q++) { const i = s.i0 + s.di * q, j = s.j0 + s.dj * q, k = i + j * nx, X = i * cell - ox, Z = -(j * cell - oy);
-      s.p.set([X, H[k], Z, X, -B.z, Z], q * 6); } s.g.attributes.position.needsUpdate = true; s.g.computeVertexNormals(); } };
+      s.p[q * 6] = X; s.p[q * 6 + 1] = H[k]; s.p[q * 6 + 2] = Z; s.p[q * 6 + 3] = X; s.p[q * 6 + 4] = -B.z; s.p[q * 6 + 5] = Z; }
+      s.g.attributes.position.needsUpdate = true; s.g.computeVertexNormals(); } };
+    const tri = x => { const f = x - Math.floor(x); return 1 - Math.abs(2 * f - 1); };
     const shade = (i0, j0, i1, j1) => {
       i0 = Math.max(0, i0); j0 = Math.max(0, j0); i1 = Math.min(nx - 1, i1); j1 = Math.min(ny - 1, j1);
       for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
         const k = i + j * nx, hl = H[i > 0 ? k - 1 : k], hr = H[i < nx - 1 ? k + 1 : k], hd = H[j > 0 ? k - nx : k], hu = H[j < ny - 1 ? k + nx : k];
         let x = hl - hr, y = 2 * cell, z = hu - hd; const l = Math.hypot(x, y, z); x /= l; y /= l; z /= l;
         pos[k * 3 + 1] = H[k]; nor[k * 3] = x; nor[k * 3 + 1] = y; nor[k * 3 + 2] = z;
-        // свіжооброблене — світліше; стінки (крутий нахил) трохи темніші, ніж дно
-        const c = CUT[k] ? cCut : cRaw, w = CUT[k] ? 0.78 + 0.22 * y : 1;
+        let c, w;
+        if (CUT[k]) { c = cCut; w = (0.8 + 0.2 * y) * (0.89 + 0.11 * Math.pow(tri(MK[k]), 0.7)); }   // дуги від зубів на обробленому
+        else { c = cRaw; w = RN[k]; }
         col[k * 3] = c.r * w; col[k * 3 + 1] = c.g * w; col[k * 3 + 2] = c.b * w;
       }
     };
     shade(0, 0, nx - 1, ny - 1); upSides();
-    // ---- фреза в патроні ----
-    const rig = new T.Group(), spin = new T.Group(), tm = toolObj(tool, true);
-    tm.traverse(o => { if (o.isMesh) o.castShadow = true; });
-    { const b0 = new T.Box3().setFromObject(tm); if (Number.isFinite(b0.min.y)) tm.position.y = -b0.min.y; }   // найнижча точка (пластина, вершина) — у точці траєкторії
-    spin.add(tm); rig.add(spin);
-    const Lo = Math.max(num(r.L) || D * 3, (num(tool.lc) || 0) + 2), tb = new T.Box3().setFromObject(tm), topY = tb.max.y;
-    const hold = new T.MeshStandardMaterial({ color: 0x2b2e33, metalness: 0.9, roughness: 0.3 }), nut = new T.MeshStandardMaterial({ color: 0xb8bdc4, metalness: 1, roughness: 0.22 });
-    const insT = INS3(tool), yH = insT ? topY : Lo, Rn = clamp3((num(tool.shank) || D) * 0.75 + 9, 12, 26), Rsp = clamp3(D * 0.25 + 30, 32, 48);   // цанга ER, шпиндель BT40 ≈ Ø70–95
+    // ---- фреза, патрон, шпиндель ----
+    const rig = new T.Group(), rot = new T.Group(), tm = toolObj(tool, true);
+    tm.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    { const b0 = new T.Box3().setFromObject(tm); if (Number.isFinite(b0.min.y)) tm.position.y = -b0.min.y; }
+    rot.add(tm); rig.add(rot); sc.add(rig);
+    const tb = new T.Box3().setFromObject(tm), topY = tb.max.y, Lo = Math.max(num(r.L) || D * 3, (num(tool.lc) || 0) + 2);
+    const steel = Mt(0xc9cdd3, 1, 0.2), steel2 = Mt(0xdadde1, 1, 0.15), dark = Mt(0x1b1d21, 0.5, 0.45), darkS = Mt(0x0a0b0c, 0.3, 0.8), bronze = Mt(0xa98c5a, 1, 0.35);
+    const lath = (P, m, seg = 64, parent = rot) => { const o = new T.Mesh(turn(P, seg), m); o.castShadow = true; parent.add(o); return o; };
+    let yF;
     if (!insT) {
-      const nt = new T.Mesh(new T.CylinderGeometry(Rn, Rn * 0.92, Rn * 0.9, 6), nut); nt.position.y = yH + Rn * 0.45; rig.add(nt);
-      const cb = new T.Mesh(new T.CylinderGeometry(Rn * 1.25, Rn, Rn * 1.6, 48), hold); cb.position.y = yH + Rn * 0.9 + Rn * 0.8; rig.add(cb);
-    }
-    const sp0 = insT ? yH + 30 : yH + Rn * 2.5, Hs = Math.max(120, S0 * 0.6);
-    if (insT) { const ab = new T.Mesh(new T.CylinderGeometry(Math.min(Rsp * 0.8, Math.max(24, (num(tool.shank) || 32) * 0.7)), Math.min(Rsp * 0.8, Math.max(24, (num(tool.shank) || 32) * 0.7)), 30, 48), hold); ab.position.y = yH + 15; rig.add(ab); }
-    const sn = new T.Mesh(new T.CylinderGeometry(Rsp, Rsp, Hs, 64), hold); sn.position.y = sp0 + Hs / 2; rig.add(sn);
-    const flange = new T.Mesh(new T.CylinderGeometry(Rsp * 1.12, Rsp * 1.12, 4, 48), new T.MeshStandardMaterial({ color: 0x15171a, metalness: 0.5, roughness: 0.5 })); flange.position.y = sp0 + 2; rig.add(flange);
-    rig.traverse(o => { if (o.isMesh) o.castShadow = true; });
-    sc.add(rig);
-    // ---- траєкторія: тонкі лінії (G0 — пунктир червоним), пройдене — яскраво ----
-    const lp = [], lc = [];
-    for (const s of segs) { const a = W(...s.a), b = W(...s.b), c = s.kind === 'G0' ? [0.9, 0.25, 0.27] : [0.55, 0.62, 0.72]; lp.push(a.x, a.y + 0.02, a.z, b.x, b.y + 0.02, b.z); lc.push(...c, ...c); }
-    const lg = new T.BufferGeometry(); lg.setAttribute('position', new T.Float32BufferAttribute(lp, 3)); lg.setAttribute('color', new T.Float32BufferAttribute(lc, 3));
-    const lines = new T.LineSegments(lg, new T.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.45, depthWrite: false })); sc.add(lines);
-    const dg = lg.clone(), done = new T.LineSegments(dg, new T.LineBasicMaterial({ color: 0x46d38a, transparent: true, opacity: 0.85, depthWrite: false })); dg.setDrawRange(0, 0); sc.add(done);
-    // ---- стружка ----
-    const NC = 360, chipG = new T.TorusGeometry(Math.max(0.25, D * 0.035), Math.max(0.05, D * 0.008), 4, 10, PI * 1.3);
-    const chips = new T.InstancedMesh(chipG, new T.MeshStandardMaterial({ metalness: metal ? 0.9 : 0.1, roughness: 0.35 }), NC);
-    chips.instanceMatrix.setUsage(T.DynamicDrawUsage); chips.castShadow = true; sc.add(chips);
-    const CH = Array.from({ length: NC }, () => ({ life: 0, p: new T.Vector3(), v: new T.Vector3(), q: new T.Euler(), w: new T.Vector3(), rest: false }));
-    const hot = metal && ['P', 'M', 'S', 'H'].includes(matIso(mat)) && (num(r.Vreal) || 0) > 60;
-    const chipCol = () => { const c = new T.Color(); if (hot) { const u = Math.random(); c.setHex(u < 0.35 ? 0x5b6fb0 : u < 0.7 ? 0xc79b52 : 0x9a8f86); } else c.copy(cCut).multiplyScalar(0.85 + Math.random() * 0.25); return c; };
-    for (let i = 0; i < NC; i++) chips.setColorAt(i, chipCol());
-    const dummy = new T.Object3D(); let chipI = 0;
-    const emit = (pt, dir, k) => {
-      for (let e = 0; e < k; e++) {
-        const c = CH[chipI]; chipI = (chipI + 1) % NC; c.life = 2.5 + Math.random() * 2; c.rest = false;
-        const a = Math.random() * 2 * PI, tx = -Math.sin(a), tz = Math.cos(a);
-        c.p.set(pt.x + Math.cos(a) * R, pt.y + 0.3, pt.z + Math.sin(a) * R);
-        const kk = clamp3(D / 10, 0.6, 4), sp = (60 + Math.random() * 140) * kk; c.v.set(tx * sp + dir.x * 40 * kk, (40 + Math.random() * 120) * kk, tz * sp + dir.z * 40 * kk);
-        c.q.set(Math.random() * 6, Math.random() * 6, Math.random() * 6); c.w.set((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30);
-        chips.setColorAt((chipI + NC - 1) % NC, chipCol());
+      const Rs = (num(tool.shank) || D) / 2, Rn = Rs <= 2.6 ? 16 : Rs <= 6.6 ? 21 : Rs <= 10.1 ? 25 : 31.5, hN = Rn * 0.92, y0 = Lo;
+      lath([[Rs + 0.2, y0 + 0.4], [Rs + 2.4, y0 + 0.4], [Rs + 2.4, y0 + 2], [Rs + 0.2, y0 + 2]], bronze, 48);   // торець цанги
+      lath([[Rs + 2.4, y0], [Rn - 2, y0], [Rn, y0 + 2], [Rn, y0 + hN - 2], [Rn - 1.6, y0 + hN], [Rs + 2.4, y0 + hN]], steel2, 72);   // гайка ER
+      for (let i = 0; i < 6; i++) { const a = i / 6 * 2 * PI + 0.3, s = new T.Mesh(new T.BoxGeometry(2.2, hN * 0.55, Rn * 0.26), darkS); s.position.set(Math.cos(a) * (Rn - 0.9), y0 + hN * 0.5, Math.sin(a) * (Rn - 0.9)); s.rotation.y = -a + PI / 2; rot.add(s); }
+      yF = y0 + hN + Math.max(18, 46 - hN);
+      lath([[Rs + 2, y0 + hN], [Rn * 0.96, y0 + hN], [Rn * 0.96, y0 + hN + 6], [Math.max(Rn * 1.02, 22), yF - 4], [24, yF], [Rs + 2, yF]], steel, 72);   // корпус патрона
+    } else yF = topY;
+    // фланець BT40 з V-канавкою і пазами під шпонку
+    lath([[10, yF], [31.75, yF + 1.5], [31.75, yF + 5], [28.6, yF + 8], [31.75, yF + 11], [31.75, yF + 15], [24, yF + 16], [10, yF + 16]], steel, 72);
+    for (const s of [-1, 1]) { const k = new T.Mesh(new T.BoxGeometry(16.4, 9, 8), darkS); k.position.set(0, yF + 11.5, s * 29); rot.add(k); }
+    // шпиндель: фарбований корпус з шліфованим торцем
+    const spH = Math.max(160, S0 * 0.7);
+    const sp = new T.Mesh(turn([[30, yF + 16], [52, yF + 16], [52, yF + 19], [56, yF + 22], [56, yF + 16 + spH], [30, yF + 16 + spH]], 64), dark); sp.castShadow = true; rig.add(sp);
+    const face = new T.Mesh(turn([[31, yF + 16], [52, yF + 16], [52, yF + 17], [31, yF + 17]], 64), steel); rig.add(face);
+    // ---- ЗОР: два шланги Loc-Line від шпинделя до кінчика фрези ----
+    const coolG = new T.Group(); rig.add(coolG); const nozzles = [];
+    if (cool) {
+      // гладкий шланг з ребрами-ланками, позаду фрези відносно камери; сопло дивиться на кінчик
+      const hm2 = [Mt(0x2b67d1, 0.05, 0.4), Mt(0xee8526, 0.05, 0.4)];
+      for (const [a0, ci] of [[3.36, 0], [4.46, 1]]) {
+        const base = new T.Vector3(Math.cos(a0) * 50, yF + 26, Math.sin(a0) * 50), tip = new T.Vector3(Math.cos(a0) * (R + 16), Math.max(16, Lo * 0.32), Math.sin(a0) * (R + 16));
+        const mid = base.clone().lerp(tip, 0.45).add(new T.Vector3(Math.cos(a0) * 30, 4, Math.sin(a0) * 30)), crv = new T.QuadraticBezierCurve3(base, mid, tip);
+        const hose = new T.Mesh(new T.TubeGeometry(crv, 48, 3.1, 12, false), hm2[ci]); hose.castShadow = true; coolG.add(hose);
+        const Lh = crv.getLength(), nR = Math.floor(Lh / 7);
+        for (let i = 1; i < nR; i++) { const u = i / nR, p = crv.getPointAt(u), tg = crv.getTangentAt(u), rg = new T.Mesh(new T.TorusGeometry(3.15, 0.55, 6, 16), hm2[ci]); rg.position.copy(p); rg.lookAt(p.clone().add(tg)); coolG.add(rg); }
+        const nz = new T.Mesh(new T.CylinderGeometry(1.2, 2.8, 9, 12), hm2[ci]); nz.position.copy(tip); nz.lookAt(new T.Vector3(0, 3, 0)); nz.rotateX(PI / 2); coolG.add(nz);
+        nozzles.push({ p: tip.clone() });
       }
-      if (chips.instanceColor) chips.instanceColor.needsUpdate = true;
-    };
-    // ---- камера: тягни — обертай, двома пальцями / колесом — наближай ----
-    const cam = new T.PerspectiveCamera(34, 1, 0.5, S0 * 40);
-    let az = 0.75, el = 0.55, dist = S0 * 1.9, follow = 0.55, tgt = new T.Vector3(0, -total0(), 0);
-    function total0() { return Math.min(B.z * 0.4, 8); }
-    const views = { iso: [0.75, 0.55, 1.9], top: [0.001, 1.45, 1.6], side: [0, 0.12, 1.7], near: [0.9, 0.38, Math.max(0.22, D * 5 / S0)] };
-    let viewTo = null;
-    const ptr = new Map(); let pinch0 = 0, dist0 = dist;
-    canvas.addEventListener('pointerdown', e => { ptr.set(e.pointerId, [e.clientX, e.clientY]); try { canvas.setPointerCapture(e.pointerId); } catch (_) {} if (ptr.size === 2) { const [a, b] = [...ptr.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); dist0 = dist; } viewTo = null; });
-    canvas.addEventListener('pointermove', e => {
-      if (!ptr.has(e.pointerId)) return; const p0 = ptr.get(e.pointerId); ptr.set(e.pointerId, [e.clientX, e.clientY]);
-      if (ptr.size === 1) { az -= (e.clientX - p0[0]) * 0.008; el = clamp3(el + (e.clientY - p0[1]) * 0.006, 0.03, 1.5); }
-      else if (ptr.size === 2) { const [a, b] = [...ptr.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch0 > 0) dist = clamp3(dist0 * pinch0 / d, S0 * 0.25, S0 * 5); }
-    });
-    const pup = e => { ptr.delete(e.pointerId); pinch0 = 0; }; canvas.addEventListener('pointerup', pup); canvas.addEventListener('pointercancel', pup);
-    canvas.addEventListener('wheel', e => { e.preventDefault(); dist = clamp3(dist * (1 + Math.sign(e.deltaY) * 0.1), S0 * 0.25, S0 * 5); }, { passive: false });
+    }
+    const NP = cool ? 520 : 0, cp = new Float32Array(Math.max(1, NP) * 3), cv3 = Array.from({ length: NP }, () => ({ v: new T.Vector3(), life: 0, src: 0 }));
+    const cg = new T.BufferGeometry(); cg.setAttribute('position', new T.BufferAttribute(cp, 3));
+    const cPts = new T.Points(cg, new T.PointsMaterial({ color: 0xbfe0ff, size: Math.max(1.4, D * 0.1), sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false }));
+    cPts.frustumCulled = false; if (NP) sc.add(cPts);
+    for (let i = 0; i < NP; i++) cp[i * 3 + 1] = -1e5;
+    // ---- зона різання: помаранчева дуга по краю фрези там, де вона зараз у металі ----
+    const engM = new T.MeshBasicMaterial({ color: 0xff7a2a, transparent: true, opacity: 0.85, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide });
+    let engMesh = null, engKey = '';
+    // ---- траєкторія: тьмяні лінії (холості — червоні) ----
+    const lp = [], lc = [];
+    for (const s of segs) { const a = W(...s.a), b = W(...s.b), c = s.kind === 'G0' ? [0.85, 0.3, 0.3] : s.cat === 'f' ? [0.45, 0.7, 1] : [0.6, 0.85, 0.7]; lp.push(a.x, a.y + 0.03, a.z, b.x, b.y + 0.03, b.z); lc.push(...c, ...c); }
+    const lg = new T.BufferGeometry(); lg.setAttribute('position', new T.Float32BufferAttribute(lp, 3)); lg.setAttribute('color', new T.Float32BufferAttribute(lc, 3));
+    const lines = new T.LineSegments(lg, new T.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.32, depthWrite: false })); lines.frustumCulled = false; sc.add(lines);
+    // ---- стружка: гвинтові стрічки-завитки ----
+    const cl0 = clamp3(D * 0.45, 1.4, 9) * (metal ? 1 : 1.4), cw0 = clamp3(D * 0.06, 0.25, 1.6);
+    const chipG = (() => { const p = [], id = [], N = 16, turns = mat.g === 'wood' ? 0.25 : iso === 'K' ? 0.15 : 1.1, rr = cl0 / (2 * PI * Math.max(0.3, turns));
+      for (let i = 0; i <= N; i++) { const u = i / N, a = u * 2 * PI * turns, rad = rr * (1 - 0.3 * u), y = u * cl0 * 0.35, c = Math.cos(a), s = Math.sin(a); p.push(c * rad, y - cw0 / 2, s * rad, c * rad, y + cw0 / 2, s * rad); }
+      for (let i = 0; i < N; i++) { const a = i * 2; id.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+      const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(p, 3)); g.setIndex(id); g.computeVertexNormals(); return g; })();
+    const NC = phone ? 420 : 640, chips = new T.InstancedMesh(chipG, new T.MeshStandardMaterial({ metalness: metal ? 0.85 : 0.05, roughness: metal ? 0.32 : 0.7, side: T.DoubleSide }), NC);
+    chips.instanceMatrix.setUsage(T.DynamicDrawUsage); chips.castShadow = true; chips.frustumCulled = false; sc.add(chips);
+    const CH = Array.from({ length: NC }, () => ({ life: 0, p: new T.Vector3(), v: new T.Vector3(), q: new T.Euler(), w: new T.Vector3(), rest: false, s: 1 }));
+    const hot = metal && ['P', 'M', 'S', 'H'].includes(iso) && (num(r.Vreal) || 0) > 60 && !cool;
+    const chipCol = () => { const c = new T.Color(), u = Math.random();
+      if (hot) c.setHex(u < 0.4 ? 0x4c62a8 : u < 0.75 ? 0xc49a52 : 0x8a7d70);
+      else if (metal && ['P', 'M', 'S', 'H'].includes(iso)) c.setHex(u < 0.15 ? 0xb89a62 : 0x9aa1aa).multiplyScalar(0.85 + Math.random() * 0.25);
+      else c.copy(cCut).multiplyScalar(0.8 + Math.random() * 0.3);
+      return c; };
+    const dummy = new T.Object3D(); let chipI = 0;
+    for (let i = 0; i < NC; i++) { chips.setColorAt(i, chipCol()); dummy.position.set(0, -1e5, 0); dummy.updateMatrix(); chips.setMatrixAt(i, dummy.matrix); }
     // ---- стан симуляції ----
-    let t = 0, si = 0, speed = hooks.speed || Math.max(1, Math.round(Ttot / 45)), playing = true, last = 0, stop = false, spinA = 0;
-    let removed = 0, mrrE = 0, vol0 = 0, loadE = 0;
-    const tp = new T.Vector3(), cutAt = (X, Y, Z) => {   // фреза в точці (X, Y, Z кінчика) знімає все, що вище її профілю
+    let t = 0, si = 0, speed = hooks.speed || clamp3(Math.round(Ttot / 40), 1, 60), playing = true, last = 0, stop = false, spinA = 0;
+    let removed = 0, mrrE = 0, loadE = 0, Sdist = 0, pre = 0, spinK = 0, engDeg = 0, engMid = 0, loadPk = 0, loadSum = 0, loadT = 0, engPk = 0;
+    const fv = clamp3(fz * zT * 6, cell * 1.6, Math.max(cell * 2, D / 5));   // крок дуг на обробленому (подача на оберт, у масштабі)
+    const dirty = [1e9, 1e9, -1, -1];
+    const EB = new Float32Array(36);   // де по колу фреза щойно знімала метал (36 секторів по 10°) — це і є захоплення
+    const cutAt = (X, Y, Z) => {
       const i0 = Math.max(0, Math.floor((X - R) / cell)), i1 = Math.min(nx - 1, Math.ceil((X + R) / cell)), j0 = Math.max(0, Math.floor((Y - R) / cell)), j1 = Math.min(ny - 1, Math.ceil((Y + R) / cell));
-      if (i0 > i1 || j0 > j1 || Z > 0.001 + 0) return 0;
-      let v = 0;
-      for (let j = j0; j <= j1; j++) { const dy = j * cell - Y; for (let i = i0; i <= i1; i++) { const dx = i * cell - X, rr = Math.hypot(dx, dy); if (rr > R) continue; const k = i + j * nx, z = Z + prof(rr); if (z < H[k]) { v += H[k] - z; H[k] = z; CUT[k] = 1; } } }
+      if (i0 > i1 || j0 > j1 || Z > 0.001) return 0;
+      let v = 0; const mk = (Sdist / fv) % 1;
+      for (let j = j0; j <= j1; j++) { const dy = j * cell - Y; for (let i = i0; i <= i1; i++) { const dx = i * cell - X, rr = Math.hypot(dx, dy); if (rr > R) continue; const k = i + j * nx, z = Z + prof(rr);
+        if (z < H[k] - 1e-4) { const dh = H[k] - z; v += dh; H[k] = z; CUT[k] = 1; MK[k] = mk; if (rr > R * 0.55) EB[((Math.floor(Math.atan2(dy, dx) / (2 * PI) * 36) % 36) + 36) % 36] += dh; } } }
       if (v > 0) { dirty[0] = Math.min(dirty[0], i0 - 1); dirty[1] = Math.min(dirty[1], j0 - 1); dirty[2] = Math.max(dirty[2], i1 + 1); dirty[3] = Math.max(dirty[3], j1 + 1); }
       return v * cell * cell;
     };
-    const dirty = [1e9, 1e9, -1, -1];
-    const posAt = tt => { while (si < segs.length - 1 && segs[si].t0 + segs[si].dt < tt) si++; while (si > 0 && segs[si].t0 > tt) si--; const s = segs[si], u = s.dt > 0 ? clamp3((tt - s.t0) / s.dt, 0, 1) : 1; return [s.a[0] + (s.b[0] - s.a[0]) * u, s.a[1] + (s.b[1] - s.a[1]) * u, s.a[2] + (s.b[2] - s.a[2]) * u, s]; };
+    const hAt = (X, Y) => { const i = Math.round(X / cell), j = Math.round(Y / cell); return i < 0 || j < 0 || i >= nx || j >= ny ? null : H[i + j * nx]; };
+    const posAt = tt => { while (si < segs.length - 1 && segs[si].t0 + segs[si].dt < tt) si++; while (si > 0 && segs[si].t0 > tt) si--; const s = segs[si], u = s.dt > 0 ? clamp3((tt - s.t0) / s.dt, 0, 1) : 1;
+      return [s.a[0] + (s.b[0] - s.a[0]) * u, s.a[1] + (s.b[1] - s.a[1]) * u, s.a[2] + (s.b[2] - s.a[2]) * u, s]; };
     let P = posAt(0);
-    const advance = dtS => {   // dtS — секунди часу верстата
-      const t1 = Math.min(Ttot, t + dtS), stepMM = Math.max(cell * 0.45, 0.05); let vol = 0;
+    const advance = dtS => {
+      const t1 = Math.min(Ttot, t + dtS), stepMM = Math.max(cell * 0.45, 0.04); let vol = 0;
       while (t < t1 - 1e-9) {
-        const s = segs[si]; const vS = s.F / 60, dtc = Math.min(t1 - t, stepMM / Math.max(0.001, vS));
-        t += dtc; P = posAt(t); if (s.kind !== 'G0' || P[2] < 0.5) vol += cutAt(P[0], P[1], P[2]);
+        const s = segs[si], vS = s.F / 60, dtc = Math.min(t1 - t, stepMM / Math.max(0.001, vS)), p0 = P;
+        t += dtc; P = posAt(t); Sdist += Math.hypot(P[0] - p0[0], P[1] - p0[1]);
+        if (s.kind !== 'G0' || P[2] < 0.5) vol += cutAt(P[0], P[1], P[2]);
         if (si >= segs.length - 1 && t >= Ttot) break;
       }
       return vol;
     };
-    const seek = tt => {   // перемотування назад — з нуля (заготовка відновлюється)
-      if (tt < t) { H.fill(0); CUT.fill(0); t = 0; si = 0; removed = 0; reinit(); }
+    const seek = tt => {
+      if (tt < t) { reinit(); t = 0; si = 0; removed = 0; Sdist = 0; loadPk = loadSum = loadT = engPk = 0; P = posAt(0); }
       removed += advance(tt - t); shade(0, 0, nx - 1, ny - 1); upSides(); hg.attributes.position.needsUpdate = hg.attributes.normal.needsUpdate = hg.attributes.color.needsUpdate = true;
     };
-    const reinit = () => {
-      for (const p of plan.pre) for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
-        const X = i * cell, Y = j * cell, k = i + j * nx;
-        if (p.kind === 'pocket' && X >= p.x0 && X <= p.x1 && Y >= p.y0 && Y <= p.y1) { H[k] = Math.min(H[k], p.z + p.wave * (0.5 + 0.5 * Math.sin(Y * 2.1))); CUT[k] = 1; }
-        if (p.kind === 'hole' && Math.hypot(X - p.x, Y - p.y) <= p.r) { H[k] = p.z; CUT[k] = 1; }
-        if (p.kind === 'dome') { const tt = p.dz(X, Y) + p.stock; H[k] = Math.min(0, Math.ceil(tt / p.terr) * p.terr); CUT[k] = H[k] < 0 ? 1 : 0; }
-      }
+    // захоплення: у яких напрямках на радіусі фрези ще стоїть метал вище її торця
+    const engage = () => {
+      const N = 36, flags = []; let on = 0, sx = 0, sy = 0, mx = 0; for (let i = 0; i < N; i++) mx = Math.max(mx, EB[i]);
+      for (let i = 0; i < N; i++) { const e = mx > 0 && EB[i] > mx * 0.04; flags.push(e); if (e) { on++; const a = (i + 0.5) / N * 2 * PI; sx += Math.cos(a) * EB[i]; sy += Math.sin(a) * EB[i]; } }
+      EB.fill(0); return { deg: on / N * 360, mid: Math.atan2(sy, sx), flags };
     };
     const vNom = num(r.mrr) > 0 ? num(r.mrr) : NaN, pPct = num(r.powerPct) || 0;
-    let cw = 0, ch = 0, frameN = 0;
+    // ---- камера ----
+    const cam = new T.PerspectiveCamera(32, 1, 0.5, S0 * 30);
+    const VIEWS = { cine: [0.8, 0.5, 1], iso: [0.75, 0.55, 1], near: [0.95, 0.32, 0], top: [0.0001, 1.48, 0.95], side: [0, 0.07, 0.95] };
+    let mode = 'cine', az = 0.8, el = 0.5, dist = 0, manualT = 0, cw = 0, ch = 0;
+    const tgt = new T.Vector3(0, -B.z * 0.3, 0), want = { az, el };
+    const fitD = () => { const rad = 0.5 * Math.hypot(B.x, B.y, B.z + 40), f = 32 * PI / 360, k = cam.aspect < 1 ? 1 / cam.aspect : 1; return rad / Math.sin(f) * Math.min(1.9, 0.62 * k + 0.45); };
+    const ptr = new Map(); let pinch0 = 0, dist0 = 1, zoomK = 1;
+    canvas.addEventListener('pointerdown', e => { ptr.set(e.pointerId, [e.clientX, e.clientY]); try { canvas.setPointerCapture(e.pointerId); } catch (_) {} if (ptr.size === 2) { const [a, b] = [...ptr.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); dist0 = zoomK; } manualT = 6; });
+    canvas.addEventListener('pointermove', e => {
+      if (!ptr.has(e.pointerId)) return; const p0 = ptr.get(e.pointerId); ptr.set(e.pointerId, [e.clientX, e.clientY]);
+      if (ptr.size === 1) { want.az -= (e.clientX - p0[0]) * 0.008; want.el = clamp3(want.el + (e.clientY - p0[1]) * 0.006, 0.03, 1.5); }
+      else if (ptr.size === 2) { const [a, b] = [...ptr.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch0 > 0) zoomK = clamp3(dist0 * pinch0 / d, 0.15, 3); }
+      manualT = 6;
+    });
+    const pup = e => { ptr.delete(e.pointerId); pinch0 = 0; }; canvas.addEventListener('pointerup', pup); canvas.addEventListener('pointercancel', pup);
+    canvas.addEventListener('wheel', e => { e.preventDefault(); zoomK = clamp3(zoomK * (1 + Math.sign(e.deltaY) * 0.1), 0.15, 3); manualT = 6; }, { passive: false });
+    const setView = k => { if (!VIEWS[k]) return; mode = k; want.az = VIEWS[k][0] + (k === 'cine' ? az - (az % (2 * PI)) : 0); want.el = VIEWS[k][1]; zoomK = 1; manualT = 0; };
+    // ---- кадр ----
+    let frameN = 0;
     const frame = (ts, manual) => {
       if (stop || !canvas.isConnected) { cleanup(); return; }
-      const dtR = last ? Math.min(0.05, (ts - last) / 1000) : 0.016; last = ts;
+      const dtR = last ? Math.max(0, Math.min(0.05, (ts - last) / 1000)) : 0.016; last = Math.max(last, ts);
+      // розкрутка шпинделя й пуск ЗОР перед першим рухом, зупинка після останнього
+      if (playing && t < Ttot) { if (pre < 1.1) pre += dtR; spinK = Math.min(1, spinK + dtR * 1.3); } else if (t >= Ttot) spinK = Math.max(0, spinK - dtR * 0.7);
       let vol = 0;
-      if (playing && t < Ttot) { vol = advance(dtR * speed); removed += vol; }
-      const mrr = dtR > 0 && playing ? vol / 1000 / (dtR * speed / 60) : 0;   // см³/хв
-      mrrE += (mrr - mrrE) * 0.15;
+      if (playing && t < Ttot && pre >= 1.1) { vol = advance(dtR * speed); removed += vol; }
+      const simDt = playing && pre >= 1.1 && t < Ttot ? dtR * speed : 0;
+      const mrr = simDt > 0 ? vol / 1000 / (simDt / 60) : 0; mrrE += (mrr - mrrE) * 0.18;
       const ld = Number.isFinite(vNom) && vNom > 0 ? clamp3(mrrE / vNom, 0, 1.6) * pPct : mrrE > 0.01 ? pPct : 0; loadE += (ld - loadE) * 0.2;
-      if (dirty[2] >= 0) { shade(dirty[0], dirty[1], dirty[2], dirty[3]); hg.attributes.position.needsUpdate = hg.attributes.normal.needsUpdate = hg.attributes.color.needsUpdate = true;
-        if (dirty[0] <= 1 || dirty[1] <= 1 || dirty[2] >= nx - 2 || dirty[3] >= ny - 2) upSides(); dirty[0] = dirty[1] = 1e9; dirty[2] = dirty[3] = -1; }
-      tp.copy(W(P[0], P[1], P[2])); rig.position.copy(tp);
-      spinA += dtR * Math.min(n, 900) / 60 * 2 * PI * (P[3].ph && /Реверс/.test(P[3].ph) ? -1 : 1); spin.rotation.y = -spinA;
-      // стружка: кількість — від фактичного знімання
-      if (playing && vol > 0) { const s = P[3], dir = new T.Vector3(s.b[0] - s.a[0], 0, -(s.b[1] - s.a[1])).normalize(); emit(tp, dir, Math.min(6, 1 + Math.round(vol / Math.max(0.5, D * D * 0.02)))); }
-      const fl = -B.z;
+      if (simDt > 0) { loadPk = Math.max(loadPk, loadE); if (mrrE > 0.01) { loadSum += loadE * simDt; loadT += simDt; } }
+      if (dirty[2] >= 0) {
+        shade(dirty[0], dirty[1], dirty[2], dirty[3]); hg.attributes.position.needsUpdate = hg.attributes.normal.needsUpdate = hg.attributes.color.needsUpdate = true;
+        if (dirty[0] <= 1 || dirty[1] <= 1 || dirty[2] >= nx - 2 || dirty[3] >= ny - 2) upSides(); dirty[0] = dirty[1] = 1e9; dirty[2] = dirty[3] = -1;
+      }
+      const tp = W(P[0], P[1], P[2]); rig.position.copy(tp);
+      const rev = P[3].ph && /Реверс/.test(P[3].ph) ? -1 : 1;
+      spinA += dtR * Math.min(n / 60, 3.2) * 2 * PI * spinK * rev; rot.rotation.y = -spinA;
+      // захоплення і дуга зони різання
+      if (frameN % 2 === 0) {
+        const e = playing && t < Ttot && pre >= 1.1 ? engage() : (EB.fill(0), { deg: 0, mid: 0, flags: [] }); engDeg += (e.deg - engDeg) * 0.4; engMid = e.mid; if (simDt > 0) engPk = Math.max(engPk, e.deg);
+        let s0 = -1, best = [0, 0]; const f = e.flags, N = f.length;
+        if (N && f.some(Boolean) && !f.every(Boolean)) { for (let i = 0; i < N * 2; i++) { const on = f[i % N]; if (on && s0 < 0) s0 = i; if ((!on || i === N * 2 - 1) && s0 >= 0) { if (i - s0 > best[1] - best[0]) best = [s0, i]; s0 = -1; } } }
+        else if (N && f.every(Boolean)) best = [0, N];
+        const kk = `${best[0] % (N || 1)}|${best[1] - best[0]}`;
+        if (kk !== engKey) { engKey = kk; if (engMesh) { sc.remove(engMesh); engMesh.geometry.dispose(); engMesh = null; }
+          if (best[1] > best[0]) { const a0 = best[0] / N * 2 * PI, al = Math.min(2 * PI, (best[1] - best[0]) / N * 2 * PI); engMesh = new T.Mesh(new T.RingGeometry(R * 0.96, R + Math.max(0.5, D * 0.08), 40, 1, a0, al), engM); engMesh.rotation.x = -PI / 2; sc.add(engMesh); } }
+        if (engMesh) engMesh.position.set(tp.x, tp.y + 0.06, tp.z);
+      }
+      engM.opacity = 0.55 + 0.35 * Math.sin(ts / 90);
+      // стружка
+      if (vol > 0 && simDt > 0) {
+        const k = Math.min(10, 1 + Math.round(vol / Math.max(0.3, D * D * 0.02)));
+        for (let e = 0; e < k; e++) {
+          const c = CH[chipI], ii = chipI; chipI = (chipI + 1) % NC; c.life = 6 + Math.random() * 6; c.rest = false; c.s = 0.6 + Math.random() * 0.7;
+          const a = engMid + (Math.random() - 0.5) * Math.max(0.3, engDeg * PI / 180), ca = Math.cos(a), sa = Math.sin(a);
+          // машинні (X, Y) → світ (x, -z): напрямок a у площині XY стає (cos a, 0, -sin a)
+          c.p.set(tp.x + ca * R, tp.y + Math.random() * Math.min(D, Math.max(0.5, -P[2])), tp.z - sa * R);
+          const kv = clamp3(D / 10, 0.7, 4), sp = (140 + Math.random() * 260) * kv, tx = sa, tz = ca;   // дотична обертання за годинниковою (M3): у верстаті (sin a, -cos a), у світі z = -Y
+          c.v.set(tx * sp + ca * 60 * kv, (60 + Math.random() * 180) * kv, tz * sp - sa * 60 * kv);
+          c.q.set(Math.random() * 6, Math.random() * 6, Math.random() * 6); c.w.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40);
+          chips.setColorAt(ii, chipCol());
+        }
+        if (chips.instanceColor) chips.instanceColor.needsUpdate = true;
+      }
       for (let i = 0; i < NC; i++) {
-        const c = CH[i]; if (c.life <= 0) { dummy.position.set(0, -1e5, 0); dummy.updateMatrix(); chips.setMatrixAt(i, dummy.matrix); continue; }
-        if (!c.rest) { c.v.y -= 2400 * dtR; c.v.multiplyScalar(1 - 1.2 * dtR); c.p.addScaledVector(c.v, dtR); c.q.x += c.w.x * dtR; c.q.y += c.w.y * dtR; c.q.z += c.w.z * dtR;
-          const inB = Math.abs(c.p.x) < B.x / 2 && Math.abs(c.p.z) < B.y / 2, floor = inB ? 0.2 : fl + 0.2;
-          if (c.p.y < floor) { c.p.y = floor; if (Math.abs(c.v.y) < 60) { c.rest = true; } else { c.v.y *= -0.3; c.v.x *= 0.5; c.v.z *= 0.5; } } }
-        c.life -= dtR * (c.rest ? 0.12 : 0.25);
-        dummy.position.copy(c.p); dummy.rotation.copy(c.q); dummy.scale.setScalar(Math.min(1, c.life * 2)); dummy.updateMatrix(); chips.setMatrixAt(i, dummy.matrix);
+        const c = CH[i]; if (c.life <= 0) continue;
+        if (!c.rest) {
+          c.v.y -= 4200 * dtR; c.v.multiplyScalar(1 - 0.9 * dtR); c.p.addScaledVector(c.v, dtR); c.q.x += c.w.x * dtR; c.q.y += c.w.y * dtR; c.q.z += c.w.z * dtR;
+          const X = c.p.x + ox, Y = oy - c.p.z, h = hAt(X, Y);
+          const floor = h != null ? h : (Math.abs(c.p.x) < Lj / 2 && Math.abs(c.p.z) < oy + jT + 2 && jawH > 1 ? yJ : Math.abs(c.p.x) < (Lj + 20) / 2 && Math.abs(c.p.z) < B.y / 2 + jT + S0 * 0.3 ? yBase : yTab);
+          if (c.p.y < floor + 0.3) { c.p.y = floor + 0.3; if (Math.abs(c.v.y) < 120) { c.rest = true; c.q.x = (Math.random() - 0.5) * 0.6; c.q.z = (Math.random() - 0.5) * 0.6; } else { c.v.y *= -0.28; c.v.x *= 0.45; c.v.z *= 0.45; c.w.multiplyScalar(0.5); } }
+        }
+        c.life -= dtR * (c.rest ? 0.05 : 0.2);
+        dummy.position.copy(c.p); dummy.rotation.copy(c.q); dummy.scale.setScalar(c.s * Math.min(1, c.life * 1.5)); dummy.updateMatrix(); chips.setMatrixAt(i, dummy.matrix);
+        if (c.life <= 0) { dummy.position.set(0, -1e5, 0); dummy.updateMatrix(); chips.setMatrixAt(i, dummy.matrix); }
       }
       chips.instanceMatrix.needsUpdate = true;
-      // пройдена траєкторія
-      dg.setDrawRange(0, Math.min(segs.length, si + 1) * 2);
-      // камера
-      if (viewTo) { const [a2, e2, d2] = viewTo; az += (a2 - az) * 0.08; el += (e2 - el) * 0.08; dist += (d2 * S0 - dist) * 0.08; if (Math.abs(a2 - az) + Math.abs(e2 - el) < 0.002) viewTo = null; }
-      const goal = follow >= 1 ? new T.Vector3(tp.x, tp.y + R * 0.6, tp.z) : new T.Vector3(tp.x * follow, Math.min(0, tp.y) * follow - B.z * 0.25, tp.z * follow); tgt.lerp(goal, follow >= 1 ? 0.12 : 0.06);
+      // ЗОР: краплі летять із сопел у зону різання й розбризкуються
+      if (NP) {
+        const flow = spinK > 0.5 && t < Ttot ? 1 : 0, tipW = new T.Vector3(tp.x, tp.y + Math.min(D * 0.5, 4), tp.z);
+        for (let i = 0; i < NP; i++) {
+          const c = cv3[i];
+          if (c.life <= 0) { if (flow && Math.random() < 0.25) { const nz = nozzles[i % nozzles.length].p, s = new T.Vector3().copy(nz).add(tp); cp[i * 3] = s.x; cp[i * 3 + 1] = s.y; cp[i * 3 + 2] = s.z;
+            c.v.copy(tipW).sub(s).normalize().multiplyScalar(320 + Math.random() * 140); c.v.x += (Math.random() - 0.5) * 30; c.v.z += (Math.random() - 0.5) * 30; c.life = 0.9; } else { cp[i * 3 + 1] = -1e5; continue; } }
+          c.life -= dtR; c.v.y -= 900 * dtR;
+          cp[i * 3] += c.v.x * dtR; cp[i * 3 + 1] += c.v.y * dtR; cp[i * 3 + 2] += c.v.z * dtR;
+          const X = cp[i * 3] + ox, Y = oy - cp[i * 3 + 2], h = hAt(X, Y);
+          if (h != null && cp[i * 3 + 1] < h) { cp[i * 3 + 1] = h + 0.2; const sp = c.v.length() * 0.35, a = Math.random() * 2 * PI; c.v.set(Math.cos(a) * sp, sp * 0.5, Math.sin(a) * sp); c.life = Math.min(c.life, 0.25); }
+          if (c.life <= 0) cp[i * 3 + 1] = -1e5;
+        }
+        cg.attributes.position.needsUpdate = true;
+      }
+      // камера: м'яка пружина; «Кіно» — повільний облет, у ручному режимі — як потягнув
+      if (manualT > 0) manualT -= dtR; else if (mode === 'cine') want.az += dtR * 0.09;
+      az += (want.az - az) * Math.min(1, dtR * 4); el += (want.el - el) * Math.min(1, dtR * 4);
       const b = canvas.getBoundingClientRect(), w = Math.round(Math.max(10, b.width)), h = Math.round(Math.max(10, b.height));
       if (w !== cw || h !== ch) { cw = w; ch = h; ren.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
-      const dk = dist * (cam.aspect < 1 ? 0.8 / cam.aspect : 1);   // вузький екран телефона — камера далі, щоб уся заготовка влізла
-      cam.position.set(tgt.x + dk * Math.cos(el) * Math.sin(az), tgt.y + dk * Math.sin(el), tgt.z + dk * Math.cos(el) * Math.cos(az)); cam.lookAt(tgt);
+      const near = mode === 'near', base = near ? Math.max(D * 7, 70) * (cam.aspect < 1 ? 1.25 / cam.aspect : 1) : fitD() * (VIEWS[mode] ? VIEWS[mode][2] || 1 : 1);
+      dist += ((base * zoomK) - dist) * Math.min(1, dtR * 3.5);
+      sc.fog.near = dist * 1.1; sc.fog.far = dist * 3.2;
+      const goal = near ? new T.Vector3(tp.x, tp.y + D * 0.6, tp.z) : new T.Vector3(tp.x * 0.35, Math.min(0, tp.y) * 0.35 - B.z * 0.32, tp.z * 0.35);
+      tgt.lerp(goal, Math.min(1, dtR * (near ? 5 : 2.2)));
+      cam.position.set(tgt.x + dist * Math.cos(el) * Math.sin(az), tgt.y + dist * Math.sin(el), tgt.z + dist * Math.cos(el) * Math.cos(az)); cam.lookAt(tgt);
       ren.render(sc, cam);
-      if (hooks.onFrame && (frameN++ % 2 === 0 || manual)) hooks.onFrame({ t, T: Ttot, P, seg: P[3], mrr: mrrE, load: loadE, removed, playing, speed, gl: plan.gl, done: t >= Ttot });
+      if (hooks.onFrame && (frameN % 2 === 0 || manual)) {
+        const s = P[3], hx = engDeg > 1 ? fz * Math.sin(Math.min(PI / 2, engDeg * PI / 180)) : 0;
+        hooks.onFrame({ t, T: Ttot, P, seg: s, mrr: mrrE, load: loadE, eng: engDeg, h: hx, removed, playing, speed, gl: plan.gl, done: t >= Ttot, pre: pre < 1.1 && t < Ttot, spin: spinK,
+          pass: s.pass || 0, passes, cool: cool && spinK > 0.5 && t < Ttot, rapid: s.kind === 'G0' && pre >= 1.1 && playing && t < Ttot,
+          stats: { Lc, Lr, loadAvg: loadT > 0 ? loadSum / loadT : 0, loadPk, engPk } });
+      }
+      frameN++;
       if (!manual) requestAnimationFrame(frame);
     };
-    const cleanup = () => { try { sc.traverse(o => { if (o.isMesh || o.isLine || o.isLineSegments) { o.geometry && o.geometry.dispose(); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m && m.dispose()); } }); env.dispose(); ren.dispose(); } catch (e) {} };
+    const cleanup = () => { try { sc.traverse(o => { if (o.isMesh || o.isLine || o.isLineSegments || o.isPoints) { o.geometry && o.geometry.dispose(); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m && m.dispose()); } }); env.dispose(); ren.dispose(); } catch (e) {} };
     requestAnimationFrame(frame);
+    // сегменти для шкали часу: сусідні однакової категорії зливаються
+    const bands = []; for (const s of segs) { const lb = bands[bands.length - 1]; if (lb && lb.c === s.cat) lb.d += s.dt; else bands.push({ c: s.cat, t: s.t0, d: s.dt }); }
+    const passAt = []; let lp0 = 0; for (const s of segs) if ((s.pass || 0) !== lp0 && s.kind !== 'G0') { lp0 = s.pass || 0; passAt.push({ p: lp0, t: s.t0 }); }
     return {
-      plan, Ttot,
-      play: () => { playing = true; if (t >= Ttot) seek(0); }, pause: () => { playing = false; }, toggle() { if (playing) this.pause(); else this.play(); return playing; },
-      speed: s => { speed = s; }, get speedV() { return speed; }, seek: tt => seek(clamp3(tt, 0, Ttot)), restart: () => { seek(0); seek(0.0001); playing = true; },
-      view: k => { if (views[k]) viewTo = views[k]; follow = k === 'near' ? 1 : 0.55; }, stop: () => { stop = true; },
+      plan, Ttot, bands, passAt, passes, cool,
+      play: () => { playing = true; if (t >= Ttot) { seek(0); pre = 0; } }, pause: () => { playing = false; }, toggle() { if (playing && t < Ttot) this.pause(); else this.play(); return playing; },
+      speed: s => { speed = s; }, seek: tt => seek(clamp3(tt, 0, Ttot)), restart: () => { seek(0); pre = 0; playing = true; },
+      pass: d => { const cur = posAt(t)[3].pass || 0, tgtP = passAt.find(x => (d > 0 ? x.p > cur : x.p === Math.max(1, cur - 1))); seek(tgtP ? tgtP.t + 1e-4 : d > 0 ? Ttot : 0); },
+      view: setView, path: on => { lines.visible = !!on; }, stop: () => { stop = true; },
       step: (ms = 16) => frame((last || 0) + ms, true),
     };
   }
@@ -8136,59 +8310,134 @@ function closeSheet() {
 sheet.addEventListener('click', e => { if (e.target === sheet) closeSheet(); });
 
 // ======================= Симуляція різу: екран =======================
-// 3D на весь екран: заготовка з матеріалу, фреза в патроні, траєкторія CAM. Табло як на стійці (X Y Z, S, F),
-// поточний рядок G-коду, етап (рампа, прохід 2/4, стінки), навантаження шпинделя за фактичним зніманням, час циклу.
+// 3D на весь екран; зверху — назва, табло X Y Z / S F і етап («Прохід 2/4 · стінки»), знизу — скляна панель:
+// навантаження шпинделя (кільце + графік), кут захоплення і товщина стружки, знімання; шкала часу, розфарбована за етапами
+// (холості, врізання, різання, чистове) з рисками проходів; керування, швидкість, ракурси, G-код у шторці, звук.
 let simCtx = null, simCtl = null;
 const simOpen = () => !!document.getElementById('sim');
 function simCardHTML(g, tool, mat) {
   const op = OPS[g.op] ? OPS[g.op].s : '';
   return `<button class="simcard" data-act="openSim"><span class="sim-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span>
-    <span class="sim-tx"><b>Симуляція різу</b><small>${esc(op)} · траєкторія, стружка, G-код, навантаження — як піде на верстаті</small></span><i class="sim-go">3D</i></button>`;
+    <span class="sim-tx"><b>Симуляція різу</b><small>${esc(op)} у 3D: лещата, патрон, траєкторія, стружка, ЗОР, звук і навантаження</small></span><i class="sim-go">3D</i></button>`;
 }
 function mmss(s) { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${String(m).padStart(2, '0')}:${String(x).padStart(2, '0')}` : `${m}:${String(x).padStart(2, '0')}`; }
+// звук: гул шпинделя, свист зубів (частота проходу зубів n·z/60), шум різання за навантаженням, ЗОР, сервоприводи на холостих
+const SimAudio = (() => {
+  let ac = null, out = null, N = null, on = true;
+  try { on = localStorage.getItem('cnccalc:simsnd') !== '0'; } catch (e) {}
+  function init() {
+    if (ac) { try { ac.resume(); } catch (e) {} return; }
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    try {
+      ac = new AC(); out = ac.createGain(); out.gain.value = 0; out.connect(ac.destination);
+      const osc = (type, f) => { const o = ac.createOscillator(); o.type = type; o.frequency.value = f; o.start(); return o; }, gain = () => { const x = ac.createGain(); x.gain.value = 0; return x; };
+      const nb = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate), d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const noise = () => { const s = ac.createBufferSource(); s.buffer = nb; s.loop = true; s.start(); return s; };
+      const o1 = osc('sawtooth', 60), f1 = ac.createBiquadFilter(); f1.type = 'lowpass'; f1.frequency.value = 520; const g1 = gain(); o1.connect(f1); f1.connect(g1); g1.connect(out);
+      const o2 = osc('triangle', 150), g2 = gain(); o2.connect(g2); g2.connect(out);
+      const n3 = noise(), bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 0.8; const g3 = gain(); n3.connect(bp); bp.connect(g3); g3.connect(out);
+      const n4 = noise(), lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 650; const g4 = gain(); n4.connect(lp); lp.connect(g4); g4.connect(out);
+      const o5 = osc('sine', 820), g5 = gain(); o5.connect(g5); g5.connect(out);
+      N = { o1, g1, o2, g2, g3, bp, g4, g5 }; ac.resume && ac.resume();
+    } catch (e) { ac = null; N = null; }
+  }
+  function update(s) {
+    if (!ac || !N) return; const now = ac.currentTime, k = 0.07, sp = Math.max(0.03, s.spin), L = Math.min(1.3, s.load || 0);
+    out.gain.setTargetAtTime(on && s.active ? 0.32 : 0, now, 0.12);
+    N.o1.frequency.setTargetAtTime(Math.max(18, s.n / 60 * 2) * sp, now, k); N.g1.gain.setTargetAtTime(0.11 * s.spin, now, k);
+    N.o2.frequency.setTargetAtTime(Math.max(30, s.n * s.z / 60) * sp, now, k); N.g2.gain.setTargetAtTime(0.025 * s.spin + 0.09 * L, now, k);
+    N.g3.gain.setTargetAtTime(s.cut ? 0.06 + 0.22 * L : 0, now, k); N.bp.frequency.setTargetAtTime(1600 + 2600 * Math.min(1, L), now, k);
+    N.g4.gain.setTargetAtTime(s.cool ? 0.1 : 0, now, 0.25); N.g5.gain.setTargetAtTime(s.rapid ? 0.022 : 0, now, 0.05);
+  }
+  return { init, update, get on() { return on; }, set(v) { on = !!v; try { localStorage.setItem('cnccalc:simsnd', on ? '1' : '0'); } catch (e) {} },
+    close() { try { ac && ac.close(); } catch (e) {} ac = null; N = null; } };
+})();
+const SIM_CAT = { r: ['Холості', '#6B7280'], e: ['Врізання', '#F2B33D'], c: ['Різання', '#3DDC84'], f: ['Чистове', '#5AA9FF'] };
 function openSim() {
   if (!simCtx || simOpen()) return;
-  const { r, v, tool, mat, mach } = simCtx, ms = msOf(mach), n = num(v.n) || r.n;
+  const { r, v, tool, mat, mach } = simCtx, ms = msOf(mach), n = num(v.n) || r.n, zT = Math.max(1, num(tool.z) || num(r.z) || 2);
   const fU = f => (ms ? fmt(f / 60, f < 600 ? 1 : 0) : fmt(f)), uF = ms ? 'мм/с' : 'мм/хв';
+  const I = { x: ic('x'), snd: '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    mute: '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    play: '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>', pause: '<svg viewBox="0 0 24 24"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z" fill="currentColor"/></svg>',
+    prev: '<svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM19 5.5v13L9.5 12z" fill="currentColor"/></svg>', next: '<svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM5 5.5v13L14.5 12z" fill="currentColor"/></svg>',
+    again: '<svg viewBox="0 0 24 24"><path d="M5.5 12a6.5 6.5 0 1 0 2-4.7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M4.5 4.5v4h4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    code: '<svg viewBox="0 0 24 24"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>' };
   const el = document.createElement('div'); el.id = 'sim'; el.className = 'sim';
-  el.innerHTML = `<canvas class="sim-c"></canvas>
-    <div class="sim-top"><button class="sim-x" data-sim="close" aria-label="Закрити">${ic('x')}</button>
-      <div class="sim-ttl"><b>Симуляція різу</b><span id="sLab">…</span><small>${esc(tool.name || '')} · ${esc(String(mat.name || '').replace(/\s*\(.*\)/, ''))}</small></div></div>
-    <div class="sim-dro"><div><i>X</i><b id="sX">0.000</b></div><div><i>Y</i><b id="sY">0.000</b></div><div><i>Z</i><b id="sZ">0.000</b></div>
-      <div class="sd2"><i>S</i><b>${fmt(n)}</b></div><div class="sd2"><i>F</i><b id="sF">—</b><small>${uF}</small></div></div>
-    <div class="sim-ph" id="sPh"></div>
-    <div class="sim-gc" id="sGc"></div>
-    <div class="sim-bot">
-      <div class="sim-met"><div class="sm-ld"><span>Навантаження шпинделя</span><b id="sLd">0%</b><i><u id="sLdB"></u></i></div>
-        <div><span>Знімання</span><b id="sQ">0</b><small>см³/хв</small></div><div><span>Знято</span><b id="sV">0</b><small>см³</small></div></div>
-      <input class="sim-tl" id="sTl" type="range" min="0" max="1000" value="0" aria-label="Час">
-      <div class="sim-time"><span id="sT0">0:00</span><span id="sDone"></span><span id="sT1">0:00</span></div>
-      <div class="sim-ctl"><button data-sim="restart" aria-label="З початку">${ic('rot')}</button><button class="sim-pp" data-sim="pp" aria-label="Пауза"><svg viewBox="0 0 24 24"><path id="sPP" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>
-        <div class="sim-sp">${[1, 5, 20, 60].map(k => `<button data-sim="sp" data-v="${k}">×${k}</button>`).join('')}</div></div>
-      <div class="sim-cam">${[['iso', '3D'], ['near', 'Близько'], ['top', 'Зверху'], ['side', 'Збоку']].map(([k, t]) => `<button data-sim="view" data-v="${k}">${t}</button>`).join('')}</div>
-    </div>`;
+  el.innerHTML = `<canvas class="sim-c"></canvas><div class="sim-shade"></div>
+    <div class="sim-top"><button class="sim-ib" data-sim="close" aria-label="Закрити">${I.x}</button>
+      <div class="sim-ttl"><small>Симуляція різу</small><b id="sLab">Готую траєкторію…</b><span>${esc(tool.name || '')} · ${esc(String(mat.name || '').replace(/\s*\(.*\)/, ''))}</span></div>
+      <button class="sim-ib" data-sim="snd" id="sSnd" aria-label="Звук">${SimAudio.on ? I.snd : I.mute}</button></div>
+    <div class="sim-hud">
+      <div class="sim-st" id="sSt"><i></i><b id="sPh">Розкрутка шпинделя</b><span id="sPs"></span></div>
+      <div class="sim-dro"><div><i>X</i><b id="sX">0.000</b></div><div><i>Y</i><b id="sY">0.000</b></div><div><i>Z</i><b id="sZ">0.000</b></div>
+        <div class="sd2"><i>S</i><b id="sS">0</b></div><div class="sd2"><i>F</i><b id="sF">—</b><small>${uF}</small></div></div></div>
+    <div class="sim-views">${[['cine', 'Кіно'], ['iso', 'Огляд'], ['near', 'Ближче'], ['top', 'Зверху'], ['side', 'Збоку']].map(([k, t]) => `<button data-sim="view" data-v="${k}"${k === 'cine' ? ' class="on"' : ''}>${t}</button>`).join('')}<button data-sim="path" class="on">Траєкторія</button></div>
+    <div class="sim-gcd" id="sGd" hidden><div class="sim-gch"><b>Програма</b><button data-sim="code">${I.x}</button></div><div class="sim-gcl" id="sGc"></div></div>
+    <div class="sim-panel">
+      <div class="sim-ins">
+        <div class="si si-ld"><svg viewBox="0 0 44 44" class="ring"><circle cx="22" cy="22" r="18"/><circle id="sLdR" cx="22" cy="22" r="18" pathLength="100" style="stroke-dasharray:0 100"/></svg>
+          <div><b id="sLd">0%</b><span>Навантаження</span><canvas id="sSp" width="180" height="40"></canvas></div></div>
+        <div class="si"><svg viewBox="0 0 44 44" class="eng"><circle cx="22" cy="22" r="11"/><path id="sEgA" d=""/></svg><div><b id="sEg">0°</b><span>Захоплення</span><small id="sH">h —</small></div></div>
+        <div class="si"><div><b id="sQ">0</b><span>см³/хв</span><small id="sV">знято 0 см³</small></div></div>
+      </div>
+      <div class="sim-tlw"><div class="sim-bands" id="sBd"></div><div class="sim-head" id="sHd"></div><input class="sim-tl" id="sTl" type="range" min="0" max="1000" value="0" aria-label="Час"></div>
+      <div class="sim-time"><span id="sT0">0:00</span><span id="sMid">${Object.values(SIM_CAT).map(([t, c]) => `<em style="--c:${c}">${t}</em>`).join('')}</span><span id="sT1">0:00</span></div>
+      <div class="sim-ctl"><button data-sim="prev" aria-label="Попередній прохід">${I.prev}</button><button class="sim-pp" data-sim="pp" id="sPP" aria-label="Пауза">${I.pause}</button><button data-sim="next" aria-label="Наступний прохід">${I.next}</button>
+        <div class="sim-sp">${[1, 5, 20, 60].map(k => `<button data-sim="sp" data-v="${k}">×${k}</button>`).join('')}</div><button data-sim="code" aria-label="G-код">${I.code}</button></div>
+    </div>
+    <div class="sim-end" id="sEnd" hidden></div>`;
   document.body.appendChild(el); document.body.classList.add('noscroll');
   void el.offsetWidth; el.classList.add('on');
   if (tgv('6.1')) tg.BackButton.show();
+  SimAudio.init();
   const $s = id => el.querySelector('#' + id), head = ['%', 'O0001 (РЕЖИМИ ЧПУ)', 'G21 G90 G17 G54', `T1 M6 (${String(tool.name || '').slice(0, 24)})`, `S${Math.round(n)} M3`, ...(r.cool ? ['M8'] : []), 'G43 H1 Z50'];
-  let lastGl = -1, dragging = false;
+  let lastGl = -1, dragging = false, spark = [], endShown = false, lastSt = null;
+  const sp = $s('sSp').getContext('2d');
+  const drawSpark = () => {
+    const c = sp, W = 180, H = 40; c.clearRect(0, 0, W, H); if (spark.length < 2) return;
+    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(61,220,132,.45)'); g.addColorStop(1, 'rgba(61,220,132,0)');
+    c.beginPath(); spark.forEach((v, i) => { const x = i / 59 * W, y = H - 2 - Math.min(1.2, v) / 1.2 * (H - 4); i ? c.lineTo(x, y) : c.moveTo(x, y); });
+    c.lineWidth = 2; c.strokeStyle = '#3DDC84'; c.stroke(); c.lineTo((spark.length - 1) / 59 * W, H); c.lineTo(0, H); c.fillStyle = g; c.fill();
+  };
+  const gcList = () => {
+    const all = head.length, L = []; const gl = simCtl ? simCtl.plan.gl : [];
+    for (let i = 0; i < all + gl.length; i++) L.push(`<div data-i="${i}"><i>N${String((i + 1) * 10).padStart(4, '0')}</i>${esc(i < all ? head[i] : gl[i - all])}</div>`);
+    $s('sGc').innerHTML = L.join('');
+  };
   const hud = st => {
-    const [X, Y, Z, s] = st.P;
+    lastSt = st; const [X, Y, Z, s] = st.P;
     $s('sX').textContent = X.toFixed(3); $s('sY').textContent = Y.toFixed(3); $s('sZ').textContent = Z.toFixed(3);
-    $s('sF').textContent = s.kind === 'G0' ? 'G0' : fU(s.F);
-    $s('sPh').textContent = st.done ? 'Цикл завершено' : s.ph || '';
-    if (s.gl !== lastGl) {
-      lastGl = s.gl; const all = head.length, i0 = Math.max(0, all + s.gl - 2), L = [];
-      for (let i = i0; i < i0 + 5; i++) { const t = i < all ? head[i] : st.gl[i - all]; if (t == null) break; L.push(`<div${i === all + s.gl ? ' class="on"' : ''}><i>N${String((i + 1) * 10).padStart(4, '0')}</i>${esc(t)}</div>`); }
-      $s('sGc').innerHTML = L.join('');
-    }
-    const ld = Math.round(st.load * 100); $s('sLd').textContent = `${ld}%`; const bar = $s('sLdB'); bar.style.width = `${Math.min(100, ld)}%`; bar.className = ld > 90 ? 'b' : ld > 70 ? 'w' : '';
-    $s('sQ').textContent = fmt(st.mrr, st.mrr < 10 ? 1 : 0); $s('sV').textContent = fmt(st.removed / 1000, st.removed < 10000 ? 2 : 1);
+    $s('sS').textContent = fmt(Math.round(n * st.spin / 10) * 10); $s('sF').textContent = st.pre ? '—' : s.kind === 'G0' ? 'G0' : fU(s.F);
+    const ph = st.done ? 'Цикл завершено · M5 M9' : st.pre ? `Розкрутка шпинделя · M3 S${fmt(n)}${r.cool ? ' · M8 ЗОР' : ''}` : s.ph || '';
+    if ($s('sPh').textContent !== ph) $s('sPh').textContent = ph;
+    $s('sSt').dataset.c = st.done ? 'f' : st.pre ? 'e' : s.cat || 'c';
+    $s('sPs').innerHTML = st.passes > 1 ? Array.from({ length: Math.min(st.passes, 14) }, (_, i) => `<u class="${i + 1 < st.pass ? 'd' : i + 1 === st.pass ? 'c' : ''}"></u>`).join('') : '';
+    const ld = Math.round(st.load * 100); $s('sLd').textContent = `${ld}%`;
+    const rg = $s('sLdR'); rg.style.strokeDasharray = `${Math.min(100, ld)} 100`; rg.style.stroke = ld > 90 ? '#FF4A50' : ld > 70 ? '#F2B33D' : '#3DDC84';
+    const eg = Math.round(st.eng); $s('sEg').textContent = `${eg}°`; $s('sH').textContent = st.h > 0 ? `h ${fmt(st.h, 3)} мм` : 'не ріже';
+    const a = Math.min(359.9, st.eng) * Math.PI / 180, x0 = 22 + 11 * Math.sin(-a / 2), y0 = 22 - 11 * Math.cos(-a / 2), x1 = 22 + 11 * Math.sin(a / 2), y1 = 22 - 11 * Math.cos(a / 2);
+    $s('sEgA').setAttribute('d', eg > 1 ? `M${x0.toFixed(2)} ${y0.toFixed(2)}A11 11 0 ${a > Math.PI ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}` : '');
+    $s('sQ').textContent = fmt(st.mrr, st.mrr < 10 ? 1 : 0); $s('sV').textContent = `знято ${fmt(st.removed / 1000, st.removed < 10000 ? 2 : 1)} см³`;
     $s('sT0').textContent = mmss(st.t); $s('sT1').textContent = mmss(st.T);
-    if (!dragging) { const tl = $s('sTl'), p = st.t / Math.max(1e-6, st.T); tl.value = String(Math.round(p * 1000)); tl.style.setProperty('--p', `${(p * 100).toFixed(1)}%`); }
-    $s('sDone').textContent = st.done ? `знято ${fmt(st.removed / 1000, 1)} см³ за ${mmss(st.T)}` : st.speed > 1 ? `прискорено ×${st.speed}` : 'реальний час';
-    $s('sPP').setAttribute('d', st.playing && !st.done ? 'M7 5h3.5v14H7zM13.5 5H17v14h-3.5z' : 'M8 5.5v13l11-6.5z');
+    const p = st.t / Math.max(1e-6, st.T); $s('sHd').style.left = `${(p * 100).toFixed(2)}%`; if (!dragging) $s('sTl').value = String(Math.round(p * 1000));
+    $s('sPP').innerHTML = st.playing && !st.done ? I.pause : st.done ? I.again : I.play;
     el.querySelectorAll('[data-sim="sp"]').forEach(b => b.classList.toggle('on', +b.dataset.v === st.speed));
+    if (st.playing && !st.done && !st.pre) { spark.push(st.load); if (spark.length > 60) spark.shift(); drawSpark(); }
+    if (s.gl !== lastGl && !$s('sGd').hidden) { lastGl = s.gl; const on = el.querySelector('.sim-gcl .on'); on && on.classList.remove('on'); const nx = el.querySelector(`.sim-gcl [data-i="${head.length + s.gl}"]`); if (nx) { nx.classList.add('on'); nx.scrollIntoView({ block: 'center' }); } }
+    SimAudio.update({ active: !st.done || st.spin > 0.02, spin: st.spin, n, z: zT, load: st.load, cut: st.mrr > 0.01, cool: st.cool, rapid: st.rapid });
+    if (st.done && !endShown) { endShown = true; showEnd(st); } else if (!st.done && endShown) { endShown = false; $s('sEnd').hidden = true; }
+  };
+  const showEnd = st => {
+    const S = st.stats, e = $s('sEnd'), ldA = Math.round(S.loadAvg * 100), ldP = Math.round(S.loadPk * 100);
+    const tip = ldP > 95 ? 'Піки навантаження понад 95% — шпиндель на межі. Зменш крок убік або глибину на найважчому проході.' : ldA < 25 && ldP < 50 ? 'Шпиндель недовантажений — є запас: можна підняти подачу або крок, якщо фреза й кріплення дозволяють.' : 'Навантаження в нормі — режим збалансований.';
+    e.innerHTML = `<div class="se-card"><small>Цикл завершено</small><b>${esc(simCtl ? simCtl.plan.label : '')}</b>
+      <div class="se-g"><div><span>Час циклу</span><b>${mmss(st.T)}</b></div><div><span>Знято</span><b>${fmt(st.removed / 1000, 1)}<small> см³</small></b></div>
+        <div><span>Різання</span><b>${fmt(S.Lc / 1000, 2)}<small> м</small></b></div><div><span>Холості</span><b>${fmt(S.Lr / 1000, 2)}<small> м</small></b></div>
+        <div><span>Навантаж. середнє</span><b>${ldA}<small>%</small></b></div><div><span>Пік</span><b>${ldP}<small>%</small></b></div>
+        <div><span>Найбільше захоплення</span><b>${Math.round(S.engPk)}<small>°</small></b></div><div><span>Проходів</span><b>${Math.max(1, st.passes)}</b></div></div>
+      <p>${tip}</p><div class="se-b"><button data-sim="again">${I.again}Ще раз</button><button data-sim="close" class="pri">Готово</button></div></div>`;
+    e.hidden = false;
   };
   const cv = el.querySelector('.sim-c');
   R3.load().then(ok => (ok ? R3.need(tool).then(() => true) : false)).then(ok => {
@@ -8196,15 +8445,21 @@ function openSim() {
     simCtl = R3.sim(cv, simCtx, { onFrame: hud });
     if (!simCtl) { $s('sPh').textContent = '3D недоступне на цьому пристрої'; return; }
     $s('sLab').textContent = simCtl.plan.label;
-    el.querySelector('[data-sim="view"][data-v="iso"]').classList.add('on');
+    $s('sBd').innerHTML = simCtl.bands.map(b => `<i style="left:${(b.t / simCtl.Ttot * 100).toFixed(3)}%;width:${Math.max(0.15, b.d / simCtl.Ttot * 100).toFixed(3)}%;background:${SIM_CAT[b.c][1]}"></i>`).join('')
+      + simCtl.passAt.slice(1).map(p => `<u style="left:${(p.t / simCtl.Ttot * 100).toFixed(3)}%"></u>`).join('');
+    if (!simCtl.passes || simCtl.passes < 2) el.querySelectorAll('[data-sim="prev"],[data-sim="next"]').forEach(b => { b.disabled = true; });
   });
   el.addEventListener('click', e => {
     const b = e.target.closest('[data-sim]'); if (!b) return; const k = b.dataset.sim; haptic('sel');
     if (k === 'close') return closeSim();
+    if (k === 'snd') { SimAudio.set(!SimAudio.on); SimAudio.init(); b.innerHTML = SimAudio.on ? I.snd : I.mute; return; }
+    if (k === 'code') { const d = $s('sGd'); d.hidden = !d.hidden; if (!d.hidden) { gcList(); lastGl = -1; } return; }
     if (!simCtl) return;
     if (k === 'pp') simCtl.toggle();
-    else if (k === 'restart') simCtl.restart();
+    else if (k === 'again') { $s('sEnd').hidden = true; simCtl.restart(); }
+    else if (k === 'prev' || k === 'next') simCtl.pass(k === 'next' ? 1 : -1);
     else if (k === 'sp') simCtl.speed(+b.dataset.v);
+    else if (k === 'path') { b.classList.toggle('on'); simCtl.path(b.classList.contains('on')); }
     else if (k === 'view') { simCtl.view(b.dataset.v); el.querySelectorAll('[data-sim="view"]').forEach(x => x.classList.toggle('on', x === b)); }
   });
   const tl = $s('sTl');
@@ -8214,7 +8469,8 @@ function openSim() {
 }
 function closeSim() {
   const el = document.getElementById('sim'); if (!el) return;
-  if (simCtl) simCtl.stop(); simCtl = null;
+  if (simCtl) simCtl.stop(); simCtl = null; SimAudio.update({ active: false, spin: 0, n: 0, z: 1, load: 0 });
+  setTimeout(() => SimAudio.close(), 400);
   el.classList.remove('on'); setTimeout(() => el.remove(), 260);
   if (!sheet.classList.contains('open')) { document.body.classList.remove('noscroll'); if (tgv('6.1')) tg.BackButton.hide(); }
 }

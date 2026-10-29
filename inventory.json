@@ -1,22 +1,13 @@
 {
-  "ver": 4,
+  "ver": 5,
   "retire": ["inv_h_03"],
   "patch": [
-    { "id": "inv_t_agir10", "if": { "lo": 40 }, "set": { "loGuess": true } },
-    { "id": "inv_t_agir8", "if": { "lo": 35 }, "set": { "loGuess": true } },
-    { "id": "inv_t_spap10", "if": { "lo": 55 }, "set": { "loGuess": true } },
-    { "id": "inv_t_spap14", "if": { "lo": 55 }, "set": { "loGuess": true } },
-    { "id": "inv_t_spap16", "if": { "lo": 70 }, "set": { "loGuess": true } },
-    { "id": "inv_t_spap20", "if": { "lo": 70 }, "set": { "loGuess": true } },
-    { "id": "inv_t_teknik40", "if": { "lo": 45 }, "set": { "loGuess": true } },
-    { "id": "inv_t_vrf125", "if": { "lo": 50 }, "set": { "loGuess": true } },
-    { "id": "inv_t_mslong12", "if": { "lo": 30 }, "set": { "loGuess": true } },
-    { "id": "inv_t_corn3", "if": { "lo": 18 }, "set": { "loGuess": true } },
-    { "id": "inv_t_corn2", "if": { "lo": 14 }, "set": { "loGuess": true } }
+    { "id": "inv_t_em6", "ifNo": ["coat"], "set": { "coat": "TiSiN" } },
+    { "id": "inv_m_sgsk", "if": { "cam": "fusion" }, "set": { "cam": "artcam" } }
   ],
   "about": "Інвентар цеху: верстати, пластини, фрези і перевірені режими. Апка додає звідси лише те, чого ще немає в базі.",
   "machines": [
-    { "id": "inv_m_sgsk", "ord": 1, "cam": "fusion", "name": "SGSK VMC1160", "kind": "metal", "rpmMin": 60, "rpmMax": 8000, "rpmRated": 1500, "powerKw": 7.5,
+    { "id": "inv_m_sgsk", "ord": 1, "cam": "artcam", "name": "SGSK VMC1160", "kind": "metal", "rpmMin": 60, "rpmMax": 8000, "rpmRated": 1500, "powerKw": 7.5,
       "feedMax": 10000, "feedMaxZ": 8000, "rigid": "heavy", "units": "mmmin", "configured": true, "approx": true,
       "note": "VMC, ходи ~1100×600×600. ЧПК SINUMERIK 808D Extended M (Fusion: пост «Siemens SINUMERIK 808D»). Шпиндель Kenturn KCA1410Z, BT40, до 8000 об/хв. Магазин OKADA 24, патрони BT40-ER32. ЗОР M8/M9. Потужність 7,5 кВт — типова, звір з табличкою." },
     { "id": "inv_m_dom", "ord": 2, "cam": "artcam", "name": "Dominant ADF1208", "kind": "router", "rpmMin": 9000, "rpmMax": 24000, "rpmRated": 24000, "powerKw": 1.5,
@@ -65,7 +56,7 @@
     { "id": "inv_t_mslong12", "name": "MSLONG Ø12×120×150 4F", "type": "rough", "d": 12, "z": 4, "lc": 120, "ol": 150, "shank": 12, "lo": 30, "loGuess": true,
       "tm": "carbide", "mach": "inv_m_sgsk",
       "note": "Монолітна чорнова зі стружколомом, HRC55. Довга — виліт не більше 30 мм, інакше вібрація викришить сплав. Розміри з чату — перевір маркування." },
-    { "id": "inv_t_em6", "name": "Фреза ТС Ø6 4F", "type": "flat", "d": 6, "z": 4, "shank": 6, "tm": "carbide", "helix": "up", "mach": "inv_m_sgsk",
+    { "id": "inv_t_em6", "name": "Фреза ТС Ø6 4F", "type": "flat", "d": 6, "z": 4, "shank": 6, "tm": "carbide", "helix": "up", "coat": "TiSiN", "mach": "inv_m_sgsk",
       "note": "Монолітна, для контуру й розточування отворів. Довжину різальної частини і виліт впиши з тубуса." },
     { "id": "inv_t_dr6", "name": "Свердло ТС Ø6", "type": "drill", "d": 6, "z": 2, "tm": "carbide", "mach": "inv_m_sgsk",
       "note": "Монолітне твердосплавне. Довжину робочої частини впиши — апка попередить, якщо отвір глибший." },

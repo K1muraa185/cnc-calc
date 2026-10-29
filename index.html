@@ -8,8 +8,22 @@
 <title>Режими ЧПУ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Geist+Mono:wght@400..800&family=Handjet:wght@500..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Geist:wght@400..800&family=Geist+Mono:wght@400..800&family=Handjet:wght@500..700&display=swap" rel="stylesheet">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js"}}</script>
+<script>
+// заставка: модель верстата і модулі 3D починають вантажитись ще до програми, паралельно з усім іншим
+(function () {
+  try { if (localStorage.getItem('cnccalc:intro') === '0' || /[?&]test/.test(location.search) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return; } catch (e) {}
+  var J = 'https://cdn.jsdelivr.net/npm/three@0.160.0/', h = document.head, l = document.createElement('link');
+  l.rel = 'preload'; l.as = 'fetch'; l.href = 'sgsk.glb'; l.crossOrigin = 'anonymous'; h.appendChild(l);
+  ['build/three.module.min.js', 'examples/jsm/loaders/GLTFLoader.js', 'examples/jsm/utils/BufferGeometryUtils.js', 'examples/jsm/environments/RoomEnvironment.js',
+   'examples/jsm/postprocessing/EffectComposer.js', 'examples/jsm/postprocessing/Pass.js', 'examples/jsm/postprocessing/ShaderPass.js', 'examples/jsm/postprocessing/MaskPass.js',
+   'examples/jsm/postprocessing/RenderPass.js', 'examples/jsm/postprocessing/UnrealBloomPass.js', 'examples/jsm/postprocessing/OutputPass.js',
+   'examples/jsm/shaders/CopyShader.js', 'examples/jsm/shaders/LuminosityHighPassShader.js', 'examples/jsm/shaders/OutputShader.js'].forEach(function (p) {
+    var m = document.createElement('link'); m.rel = 'modulepreload'; m.href = J + p; m.crossOrigin = 'anonymous'; h.appendChild(m);
+  });
+})();
+</script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
 (function () {
@@ -355,6 +369,78 @@ svg.sgd g.tick .s.on{animation:segin .22s steps(2,end)}
 .cam-r .v{text-align:right;font:700 19px/1 var(--mono);white-space:nowrap;color:var(--text);font-variant-numeric:tabular-nums slashed-zero}
 .cam-r .v small{display:block;margin-top:4px;font:500 10.5px/1.2 var(--mono);color:var(--muted)}
 
+/* ---- проходи плитками під S і F ---- */
+.pass{display:grid;margin:0 10px 10px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--field)}
+.pass.c1{grid-template-columns:1fr} .pass.c2{grid-template-columns:1fr 1fr} .pass.c3{grid-template-columns:repeat(3,1fr)}
+.pass > div{display:flex;flex-direction:column;gap:6px;padding:10px 10px 11px;min-width:0}
+.pass > div + div{border-left:1px solid var(--line)}
+.pass span{font:600 9.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.pass b{display:flex;align-items:baseline;gap:4px;font:700 22px/1 var(--mono);color:var(--text);font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
+.pass b small{font:600 10.5px/1 var(--mono);color:var(--muted)}
+.pass em{font:500 10.5px/1.3 var(--font);font-style:normal;color:var(--muted)}
+/* ---- паз: припуск, підсумок, план ---- */
+.slh{display:flex;gap:8px;align-items:flex-start;margin:0 0 12px;padding:10px 12px;border-radius:12px;border:1px dashed var(--line-2)}
+.slh svg.i{width:16px;height:16px;flex:none;color:var(--accent-t);margin-top:1px}
+.slh b{color:var(--text);font-weight:650}
+.qk.sla{margin:0 0 10px}
+.qk.sla button{height:auto;min-height:42px;padding:6px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.qk.sla button small{margin:0;font-size:9.5px}
+.slsum{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:var(--field);border:1px solid var(--line)}
+.slsum > div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.slsum > div:last-child{margin-left:auto;text-align:right}
+.slsum span{font:600 9px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.slsum b{font:700 16px/1 var(--mono);white-space:nowrap;font-variant-numeric:lining-nums}
+.slsum > i{font-style:normal;color:var(--accent-t)}
+.slsum .bad b{color:var(--bad)}
+.slotp .label{margin-bottom:4px}
+.slotsvg{display:block;width:100%;height:auto;margin:2px 0}
+.sp-stock{fill:var(--paper-2);stroke:var(--edge);stroke-width:1}
+.sp-hat{stroke:var(--accent);stroke-width:1.1;opacity:.8}
+.sp-side{fill:color-mix(in srgb,var(--accent) 7%,transparent)}
+.sp-tool{fill:color-mix(in srgb,var(--accent) 22%,transparent);stroke:var(--accent);stroke-width:1.2}
+.sp-lv{fill:none;stroke:var(--accent-t);stroke-width:.8;stroke-dasharray:3 3;opacity:.75}
+.sp-fin{fill:none;stroke:var(--text);stroke-width:1.2;stroke-dasharray:4 3}
+.sp-top{stroke:var(--edge);stroke-width:1}
+.sp-dim{fill:none;stroke:var(--muted);stroke-width:.8}
+.sp-t{font:600 10.5px var(--mono);fill:var(--muted)}
+.sp-tt{fill:var(--accent-t);font-size:11px}
+.sp-key{display:flex;flex-wrap:wrap;gap:6px 14px;margin:2px 0 12px;font:500 11px/1.2 var(--font);color:var(--muted)}
+.sp-key i{display:inline-block;width:12px;height:9px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+.k-t{background:color-mix(in srgb,var(--accent) 35%,transparent);border:1px solid var(--accent)}
+.k-s{background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid var(--line-2)}
+.k-a{background:repeating-linear-gradient(45deg,var(--accent) 0 1.5px,transparent 1.5px 4px)}
+.sp-rows{display:grid;grid-template-columns:1fr 1fr;gap:1px;border-radius:12px;overflow:hidden;background:var(--line);border:1px solid var(--line)}
+.sp-rows > div{display:flex;flex-direction:column;gap:5px;padding:10px 12px;background:var(--paper)}
+.sp-rows span{font:600 9px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sp-rows b{font:650 14px/1.25 var(--font);font-variant-numeric:lining-nums}
+.sp-rows em{font:500 11px/1.3 var(--font);font-style:normal;color:var(--muted)}
+.sp-next{margin-top:14px}
+.sp-next > span{display:block;font:600 9.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sp-next .btns{margin-top:8px}
+/* ---- ArtCAM: що куди вписати ---- */
+.cg-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.cg-h .label{flex:1;min-width:170px}
+.cg-sw,.cg-u .seg2{display:flex;gap:3px;padding:3px;border-radius:10px;background:var(--field);border:1px solid var(--line)}
+.cg-sw button,.cg-u .seg2 button{padding:7px 10px;border:0;border-radius:7px;background:none;color:var(--muted);font:600 11.5px/1 var(--font);cursor:pointer;white-space:nowrap}
+.cg-sw button.on,.cg-u .seg2 button.on{color:var(--on-accent);background:var(--accent-fill,var(--accent))}
+.cg-hint{margin:0}
+.cg-g{margin:0 0 12px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cg-gh{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--field);border-bottom:1px solid var(--line)}
+.cg-gh > i{width:24px;height:24px;flex:none;display:grid;place-items:center;border-radius:50%;font:700 11px/1 var(--mono);font-style:normal;color:var(--accent-t);border:1px solid var(--accent-line)}
+.cg-gh b{display:block;font:650 14px/1.2 var(--font)}
+.cg-gh span{display:block;margin-top:3px;font:500 11px/1.3 var(--mono);color:var(--muted)}
+.cg-r{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.cg-r + .cg-r{border-top:1px solid var(--line)}
+.cg-k{flex:1;min-width:0}
+.cg-k b{display:block;font:600 13.5px/1.2 var(--mono);color:var(--accent-t)}
+.cg-k span{display:block;margin-top:3px;font:500 11.5px/1.25 var(--font);color:var(--muted)}
+.cg-v{flex:none;max-width:54%;text-align:right}
+.cg-v b{display:block;font:700 16px/1.1 var(--mono);color:var(--text);white-space:nowrap;font-variant-numeric:lining-nums}
+.cg-v small{display:block;margin-top:3px;font:500 10.5px/1.25 var(--font);color:var(--muted)}
+.cg-u{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;font:500 12px/1.3 var(--font);color:var(--muted)}
+.cg-copy{width:100%}
+.cguide .req{margin:0 0 12px}
+
 /* ---- G-код: стрічка друкованої етикетки ---- */
 .gline{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:6px 6px 6px 14px;border-radius:var(--rk);border:1px dashed var(--line-2);background:var(--field)}
 .gline code{flex:1;min-width:0;font:600 14px/1.3 var(--mono);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -535,44 +621,48 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:12;padding:8px 10px ca
 
 /* ---- заставка: цех вмикає світло, SGSK відчиняє двері, камера заходить до фрези ----
    анімується лише прозорість і зсув (їх веде компоновщик) — без розмиття поверх WebGL, щоб кадри йшли рівно */
-#intro{position:fixed;inset:0;z-index:9999;overflow:hidden;background:#080b12;transition:opacity .75s cubic-bezier(.4,0,.2,1),transform .75s cubic-bezier(.4,0,.2,1)}
+#intro{position:fixed;inset:0;z-index:9999;overflow:hidden;background:#09090A;transition:opacity .75s cubic-bezier(.4,0,.2,1),transform .75s cubic-bezier(.4,0,.2,1)}
 #intro.fast{transition-duration:.28s}
 #intro.hold,#intro.hold *{transition:none!important;animation-duration:0s!important;animation-delay:0s!important}
 #intro.out{opacity:0;transform:scale(1.05);pointer-events:none}
 #intro canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .7s}
 #intro.play canvas{opacity:1}
 #intro .in-vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 95% at 50% 45%,transparent 52%,rgba(0,0,0,.6))}
-#intro .in-fr i{position:absolute;width:16px;height:16px;border:0 solid rgba(255,255,255,.3);opacity:0;transition:opacity .9s .4s;pointer-events:none}
+#intro .in-fr i{position:absolute;width:16px;height:16px;border:0 solid rgba(216,187,128,.5);opacity:0;transition:opacity .9s .4s;pointer-events:none}
 #intro.play .in-fr i{opacity:1}
 #intro .in-fr i:nth-child(1){left:14px;top:calc(58px + env(safe-area-inset-top,0px));border-width:1.5px 0 0 1.5px}
 #intro .in-fr i:nth-child(2){right:14px;top:calc(58px + env(safe-area-inset-top,0px));border-width:1.5px 1.5px 0 0}
 #intro .in-fr i:nth-child(3){left:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));border-width:0 0 1.5px 1.5px}
 #intro .in-fr i:nth-child(4){right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));border-width:0 1.5px 1.5px 0}
-#intro .in-st{position:absolute;left:16px;top:calc(24px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.85);font:600 10.5px/1 var(--mono);letter-spacing:.09em;opacity:0;transition:opacity .6s .25s;pointer-events:none}
+#intro .in-st{position:absolute;left:16px;top:calc(24px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:8px;color:rgba(239,234,224,.88);font:600 10px/1 var(--font);letter-spacing:.16em;opacity:0;transition:opacity .6s .25s;pointer-events:none}
 #intro.play .in-st{opacity:1}
 #intro .in-st i{width:7px;height:7px;border-radius:50%;background:#f5b400;box-shadow:0 0 9px #f5b400}
 #intro .in-st.run i{background:#2ee672;box-shadow:0 0 9px #2ee672}
 #intro .in-st b{font-weight:600;color:rgba(255,255,255,.5)}
-#intro .in-t{position:absolute;left:16px;right:16px;bottom:calc(15% + env(safe-area-inset-bottom,0px));text-align:center;color:#fff;pointer-events:none;transition:opacity .5s,transform .5s}
+/* назва з'являється одразу (поки вантажиться 3D) посередині, а коли цех ожив — опускається вниз */
+#intro .in-t{position:absolute;left:16px;right:16px;bottom:calc(15% + env(safe-area-inset-bottom,0px));text-align:center;color:#F3EEE4;pointer-events:none;
+  transform:translateY(-28vh);transition:opacity .5s,transform 1.1s cubic-bezier(.4,0,.2,1)}
+#intro.play .in-t{transform:none}
 #intro .in-t.off{opacity:0;transform:translateY(-10px)}
-#intro .in-t b{display:block;font:750 34px/1.05 var(--font);letter-spacing:-.015em;text-shadow:0 2px 24px rgba(0,0,0,.55)}
-#intro .in-t b span{display:inline-block;opacity:0;transform:translateY(.5em)}
-#intro.play .in-t b span{animation:inUp .75s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(.3s + var(--i) * 45ms)}
-#intro .in-t > span{display:block;margin-top:10px;font:600 11.5px/1.35 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65);opacity:0}
-#intro.play .in-t > span{animation:inFade .8s .95s forwards}
+#intro .in-t b{display:block;font:600 46px/1 "Cormorant Garamond",Georgia,serif;letter-spacing:.01em;text-shadow:0 2px 24px rgba(0,0,0,.6)}
+#intro .in-t b span{display:inline-block;opacity:0;transform:translateY(.4em);animation:inUp .9s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(.12s + var(--i) * 45ms)}
+#intro .in-t > i{display:block;width:0;height:1px;margin:14px auto 0;background:linear-gradient(90deg,transparent,#E8CF96,transparent);animation:inLine 1.1s .5s cubic-bezier(.2,.8,.2,1) forwards}
+#intro .in-t > span{display:block;margin-top:12px;font:600 10px/1.45 var(--font);letter-spacing:.24em;text-transform:uppercase;color:#D9BC81;opacity:0;animation:inFade .9s .75s forwards}
 @keyframes inUp{to{opacity:1;transform:none}}
 @keyframes inFade{to{opacity:1}}
+@keyframes inLine{to{width:min(220px,60vw)}}
 #intro .in-rd{position:absolute;left:12px;right:12px;bottom:calc(10% + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:clamp(14px,6vw,34px);opacity:0;transform:translateY(12px);transition:opacity .45s,transform .45s;pointer-events:none}
 #intro .in-rd.on{opacity:1;transform:none}
+#intro .in-rd::before{content:"";position:absolute;left:-12px;right:-12px;top:-34px;bottom:-26px;z-index:-1;background:radial-gradient(62% 72% at 50% 58%,rgba(0,0,0,.6),transparent 76%)}
 #intro .in-rd div{display:flex;flex-direction:column;align-items:center;min-width:64px}
-#intro .in-rd span{font:600 9.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55)}
-#intro .in-rd b{margin-top:7px;font:700 27px/1 var(--mono);color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(79,140,255,.6)}
-#intro .in-rd em{margin-top:5px;font:500 10px/1 var(--mono);font-style:normal;color:rgba(255,255,255,.45)}
-#intro .in-bar{position:absolute;left:32%;right:32%;bottom:calc(10% + env(safe-area-inset-bottom,0px));height:2px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,.12);transition:opacity .4s}
-#intro .in-bar i{display:block;height:100%;background:#4f8cff;transform-origin:0 50%;transform:scaleX(.06);transition:transform .25s}
+#intro .in-rd span{font:600 9px/1 var(--font);letter-spacing:.22em;text-transform:uppercase;color:rgba(217,188,129,.85)}
+#intro .in-rd b{margin-top:8px;font:600 36px/1 "Cormorant Garamond",Georgia,serif;color:#F5F0E6;font-variant-numeric:lining-nums tabular-nums;text-shadow:0 0 18px rgba(200,163,91,.45)}
+#intro .in-rd em{margin-top:5px;font:500 9.5px/1 var(--font);letter-spacing:.14em;font-style:normal;color:rgba(239,234,224,.5)}
+#intro .in-bar{position:absolute;left:38%;right:38%;bottom:calc(10% + env(safe-area-inset-bottom,0px));height:1px;overflow:hidden;background:rgba(216,187,128,.16);transition:opacity .4s}
+#intro .in-bar i{display:block;height:100%;background:linear-gradient(90deg,#A9853F,#EFD9A5);transform-origin:0 50%;transform:scaleX(.06);transition:transform .25s}
 #intro.play .in-bar{opacity:0}
-#intro .in-skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;padding:8px 15px;border-radius:20px;cursor:pointer;
-  border:1px solid rgba(255,255,255,.22);background:rgba(10,14,21,.55);color:#fff;font:600 13px/1 var(--font)}
+#intro .in-skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;padding:9px 14px;border-radius:20px;cursor:pointer;
+  border:1px solid rgba(216,187,128,.35);background:rgba(9,9,10,.55);color:#EFEAE0;font:650 10px/1 var(--font);letter-spacing:.16em;text-transform:uppercase}
 
 /* ---- просто / детально ---- */
 .lvlsw{display:flex;align-items:center;gap:10px;margin:2px 0 14px}
@@ -900,6 +990,167 @@ html[data-skin="paper"] .card{border-color:var(--line)}
 html[data-skin="paper"] .tnum{font-weight:750;letter-spacing:-.04em}
 html[data-skin="paper"] .sec > i{border-radius:999px}
 html[data-skin="paper"] .opc.on svg.i{stroke:var(--on-accent)}
+/* ---- «Обсидіан»: важкий люкс — чорний камінь, золото «шампань» тонкими лініями, класичні цифри з засічками.
+   Без кольорових заливок і «скла»: глибина — від світла по краях, статус — від стриманості. ---- */
+html[data-skin="lux"]{--r:16px;--rk:12px;--num:"Cormorant Garamond",Georgia,serif;--serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --bg:#09090A; --bg-2:#0D0D0E; --sheet:#101011; --paper:#131314; --paper-2:#1B1B1D; --field:#0B0B0C;
+  --line:#202022; --line-2:#2C2C2F; --edge:#3B3B3F; --ink:#D9D3C7; --text:#EFEAE0; --muted:#9D978C; --dim:#66625B;
+  --accent:#C8A35B; --accent-t:#D9BC81; --accent-2:#E8CF96; --on-accent:#17120A; --accent-deep:#7B5F2C;
+  --accent-soft:rgba(200,163,91,.10); --accent-line:rgba(200,163,91,.42);
+  --accent-fill:linear-gradient(180deg,#EFD9A5 0%,#CFAB62 48%,#A9853F 100%);
+  --gold-line:linear-gradient(90deg,transparent,rgba(216,187,128,.5) 22%,rgba(242,224,178,.95) 50%,rgba(216,187,128,.5) 78%,transparent);
+  --ok:#8AC59E; --warn:#E4B65C; --bad:#E6715F; --info:#ABC0DD;
+  --key:linear-gradient(180deg,#19191B,#141415); --key-edge:transparent; --key-hi:rgba(255,255,255,.05);
+  --kshadow:inset 0 1px 0 rgba(255,255,255,.045),0 1px 2px rgba(0,0,0,.6);
+  --pshadow:inset 0 1px 0 rgba(255,250,235,.55),inset 0 -1px 0 rgba(90,60,20,.35),0 10px 24px -8px rgba(200,163,91,.38);
+  --shadow:inset 0 1px 0 rgba(255,255,255,.04),0 24px 48px -28px rgba(0,0,0,.9);
+  --dro-bg:linear-gradient(180deg,#0C0C0D,#0A0A0B); --dro-ink:#F5F0E6;
+  --art-bg:radial-gradient(circle at 50% 30%,#34312B 0%,#1A191B 60%,#0F0F10 100%);
+  --lcd:#0B0B0C; --lcd-sub:#8F897E; --lcd-ink:#F5F0E6; --scrim:rgba(0,0,0,.72);
+  --bg-art:radial-gradient(110% 46% at 50% -8%,rgba(200,163,91,.14),transparent 62%),radial-gradient(90% 60% at 50% 125%,rgba(200,163,91,.06),transparent 70%);
+}
+:root:root[data-skin=lux][data-theme] body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root:root[data-skin=lux][data-theme] body{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+/* цифри з засічками — завжди «прямі» (у Cormorant за замовчуванням старовинні, 1 схожа на I) */
+:root:root[data-skin=lux][data-theme] :is(*,*::before,*::after){font-variant-numeric:lining-nums tabular-nums!important}
+/* шапка: медальйон, назва з засічками */
+:root:root[data-skin=lux][data-theme] header.top{background:linear-gradient(var(--bg) 62%,transparent)}
+:root:root[data-skin=lux][data-theme] .logo{width:42px;height:42px;border-radius:50%;color:#E9D4A2;background:radial-gradient(circle at 50% 36%,#22201C,#0C0C0D 72%);
+  box-shadow:inset 0 0 0 1px rgba(236,212,160,.6),inset 0 0 0 3px #0B0B0C,inset 0 0 0 4px rgba(200,163,91,.32),0 8px 18px rgba(0,0,0,.65)}
+:root:root[data-skin=lux][data-theme] .logo svg{width:24px;height:24px;stroke-width:1.4}
+:root:root[data-skin=lux][data-theme] .brand b{font:600 22px/1 var(--serif);letter-spacing:.01em}
+:root:root[data-skin=lux][data-theme] .brand small{margin-top:5px;font:600 9px/1 var(--font);letter-spacing:.24em;color:var(--accent-t)}
+:root:root[data-skin=lux][data-theme] .mchip{border-radius:999px;background:transparent;border:1px solid var(--line-2);box-shadow:none;font:600 12px/1 var(--font);letter-spacing:.02em}
+:root:root[data-skin=lux][data-theme] .mchip i{background:var(--accent);box-shadow:0 0 8px rgba(200,163,91,.7)}
+:root:root[data-skin=lux][data-theme] .hset{border-radius:50%;background:transparent;box-shadow:none;border-color:var(--line-2)}
+:root:root[data-skin=lux][data-theme] .ph h2{font:600 31px/1.05 var(--serif);letter-spacing:.005em}
+/* заголовки розділів: золотий номер курсивом і лінія, що згасає */
+:root:root[data-skin=lux][data-theme] .sec{margin:28px 2px 12px;font:600 10px/1 var(--font);letter-spacing:.26em;color:var(--muted)}
+:root:root[data-skin=lux][data-theme] .sec > i{min-width:0;padding:0;border-radius:0;background:none;color:var(--accent-t);font:italic 600 20px/1 var(--serif);letter-spacing:0}
+:root:root[data-skin=lux][data-theme] .sec::after{background:linear-gradient(90deg,rgba(200,163,91,.45),transparent)}
+:root:root[data-skin=lux][data-theme] .label{font:600 9.5px/1 var(--font);letter-spacing:.22em;color:var(--muted)}
+:root:root[data-skin=lux][data-theme] .label svg.i{color:var(--accent);stroke-width:1.5}
+/* картки: темний камінь, волосяна рамка, світло по верхньому краю */
+:root:root[data-skin=lux][data-theme] :is(.card,.tcard,.row,.opt,.skin,details.mgrp){background:linear-gradient(180deg,#151516 0%,#111112 100%);border:1px solid var(--line);box-shadow:var(--shadow)}
+:root:root[data-skin=lux][data-theme] .cam{border-color:rgba(200,163,91,.24)}
+:root:root[data-skin=lux][data-theme] .cam::before,:root:root[data-skin=lux][data-theme] .cguide::before{content:"";position:absolute;left:18px;right:18px;top:-1px;height:1px;background:var(--gold-line)}
+:root:root[data-skin=lux][data-theme] .balloon{min-width:26px;height:26px;padding:0;border-radius:50%;background:transparent;border:1px solid rgba(200,163,91,.45);color:var(--accent-t);font:600 15px/1 var(--serif)}
+:root:root[data-skin=lux][data-theme] .spec-l{font:600 9.5px/1 var(--font);letter-spacing:.22em}
+:root:root[data-skin=lux][data-theme] .spec-v{font:650 17px/1.2 var(--font)}
+:root:root[data-skin=lux][data-theme] .spec-s{color:var(--dim)}
+:root:root[data-skin=lux][data-theme] :is(.spec-art,.tc-art){background:var(--art-bg);border:0;box-shadow:inset 0 0 0 1px rgba(200,163,91,.2),inset 0 10px 20px rgba(0,0,0,.45)}
+:root:root[data-skin=lux][data-theme] .opsel-h em{font:600 9.5px/1 var(--font);letter-spacing:.22em;color:var(--accent-t)}
+/* задачі: вкладки з золотою рискою */
+:root:root[data-skin=lux][data-theme] .tasks{gap:0;padding:0;margin:2px 0 14px;border-radius:0;background:none;border-bottom:1px solid var(--line)}
+:root:root[data-skin=lux][data-theme] .tasks button{position:relative;padding:12px 2px 13px;border-radius:0;font:600 12px/1 var(--font);letter-spacing:.05em;color:var(--dim)}
+:root:root[data-skin=lux][data-theme] .tasks button.on{background:none;box-shadow:none;color:var(--text)}
+:root:root[data-skin=lux][data-theme] .tasks button.on::after{content:"";position:absolute;left:16%;right:16%;bottom:-1px;height:2px;border-radius:2px;background:var(--accent-fill)}
+/* операції: темні плитки; вибрана — золота рамка й золота іконка, без заливки */
+:root:root[data-skin=lux][data-theme] .opc{padding:13px 2px 11px;border-radius:13px;background:linear-gradient(180deg,#161617,#111112);border:1px solid var(--line-2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);color:var(--muted);font:600 11px/1.1 var(--font);letter-spacing:.02em}
+:root:root[data-skin=lux][data-theme] .opc svg.i{color:var(--ink);stroke-width:1.4}
+:root:root[data-skin=lux][data-theme] .opc.on{color:var(--accent-2);background:linear-gradient(180deg,rgba(200,163,91,.17),rgba(200,163,91,.03));border-color:rgba(220,192,134,.62);
+  box-shadow:inset 0 1px 0 rgba(255,236,190,.12),0 12px 26px -14px rgba(200,163,91,.6)}
+:root:root[data-skin=lux][data-theme] .opc.on svg.i{color:var(--accent-2);stroke:currentColor}
+:root:root[data-skin=lux][data-theme] .opc.alt::after{background:var(--accent);opacity:.8}
+:root:root[data-skin=lux][data-theme] .opc.alt.on::after{background:var(--accent-2)}
+/* кнопки-мітки і перемикачі */
+:root:root[data-skin=lux][data-theme] :is(.qk button,.chip,.symsel button){border-radius:999px;background:transparent;border:1px solid var(--line-2);box-shadow:none;font-family:var(--font)}
+:root:root[data-skin=lux][data-theme] :is(.qk button.on,.chip.on){color:var(--accent-2);background:rgba(200,163,91,.11);border-color:rgba(220,192,134,.6);box-shadow:none}
+:root:root[data-skin=lux][data-theme] .qk button.on small{color:var(--accent-t);opacity:.85}
+:root:root[data-skin=lux][data-theme] .qk > span{font:600 9px/1 var(--font);letter-spacing:.2em;color:var(--dim)}
+:root:root[data-skin=lux][data-theme] :is(.lvlsw .seg2,.cg-sw,.cg-u .seg2){padding:3px;border-radius:999px;background:#0B0B0C;border:1px solid var(--line)}
+:root:root[data-skin=lux][data-theme] :is(.lvlsw .seg2 button,.cg-sw button,.cg-u .seg2 button){border-radius:999px;font:650 10.5px/1 var(--font);letter-spacing:.12em;text-transform:uppercase}
+:root:root[data-skin=lux][data-theme] :is(.lvlsw .seg2 button.on,.cg-sw button.on,.cg-u .seg2 button.on){color:#1A140A;background:var(--accent-fill);box-shadow:inset 0 1px 0 rgba(255,250,235,.5)}
+:root:root[data-skin=lux][data-theme] .mseg{border-radius:14px;background:#0B0B0C}
+:root:root[data-skin=lux][data-theme] .mseg button.on{color:var(--accent-2);background:rgba(200,163,91,.12);box-shadow:inset 0 0 0 1px rgba(220,192,134,.5)}
+/* поля: глибокі вікна, цифри з засічками */
+:root:root[data-skin=lux][data-theme] :is(input,select,textarea){background:#0B0B0C;border-color:var(--line-2);box-shadow:inset 0 1px 3px rgba(0,0,0,.55)}
+:root:root[data-skin=lux][data-theme] :is(input,select,textarea):focus{border-color:rgba(220,192,134,.7);box-shadow:0 0 0 3px rgba(200,163,91,.13)}
+:root:root[data-skin=lux][data-theme] .f > span{font:600 9.5px/1.2 var(--font);letter-spacing:.18em;color:var(--muted)}
+:root:root[data-skin=lux][data-theme] .st{border-radius:13px;background:#0B0B0C;border-color:var(--line-2)}
+:root:root[data-skin=lux][data-theme] .st button{border-radius:10px;background:linear-gradient(180deg,#1B1B1D,#141415);border-color:var(--line-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);font:300 24px/1 var(--font);color:var(--accent-t)}
+:root:root[data-skin=lux][data-theme] .st input{font:600 28px/1 var(--serif);font-variant-numeric:lining-nums}
+:root:root[data-skin=lux][data-theme] .aebox input,:root:root[data-skin=lux][data-theme] .lorow .cornerf input{font:600 24px/1 var(--serif);font-variant-numeric:lining-nums}
+:root:root[data-skin=lux][data-theme] .fit{border-radius:12px;background:transparent;border:1px solid var(--line)}
+:root:root[data-skin=lux][data-theme] .fit.alt{border-color:rgba(200,163,91,.38);background:linear-gradient(90deg,rgba(200,163,91,.09),transparent)}
+:root:root[data-skin=lux][data-theme] .slh{border-color:rgba(200,163,91,.3)}
+:root:root[data-skin=lux][data-theme] .slsum{background:#0B0B0C}
+:root:root[data-skin=lux][data-theme] .slsum b{font:600 22px/1 var(--serif);font-variant-numeric:lining-nums}
+:root:root[data-skin=lux][data-theme] .slsum span,:root:root[data-skin=lux][data-theme] .sp-rows span,:root:root[data-skin=lux][data-theme] .pass span,:root:root[data-skin=lux][data-theme] .sp-next > span{font-family:var(--font);letter-spacing:.2em;font-size:8.5px}
+/* кнопки: золото — лише головна дія */
+:root:root[data-skin=lux][data-theme] :is(.btn,.icon-btn,.x){border-radius:12px;background:linear-gradient(180deg,#19191B,#141415);border:1px solid var(--line-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+:root:root[data-skin=lux][data-theme] .btn{font:600 13px/1.1 var(--font);letter-spacing:.03em}
+:root:root[data-skin=lux][data-theme] .btn.primary{color:#1A140A;background:var(--accent-fill);border-color:rgba(255,236,190,.35);box-shadow:var(--pshadow);font:700 12px/1.1 var(--font);letter-spacing:.16em;text-transform:uppercase}
+:root:root[data-skin=lux][data-theme] .btn.primary svg.i{stroke:#1A140A}
+:root:root[data-skin=lux][data-theme] :is(.btn,.icon-btn,.x,.opc,.qk button,.chip,.msw):active{transform:scale(.975)}
+:root:root[data-skin=lux][data-theme] .x{border-radius:50%}
+/* статус: слово з засічками, стримана підсвітка кольором */
+:root:root[data-skin=lux][data-theme] .status{border-radius:14px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 11%,#121213),#121213 75%);border:1px solid color-mix(in srgb,var(--c) 30%,var(--line))}
+:root:root[data-skin=lux][data-theme] .status b{font:600 24px/1 var(--serif);letter-spacing:.08em;text-transform:uppercase}
+:root:root[data-skin=lux][data-theme] .status b small{font:600 10px var(--font);letter-spacing:.12em;text-transform:uppercase}
+:root:root[data-skin=lux][data-theme] .status .st-led{width:8px;height:8px}
+/* табло S/F: великі класичні цифри на чорному */
+:root:root[data-skin=lux][data-theme] .cam-h .label{color:var(--accent-t)}
+:root:root[data-skin=lux][data-theme] .dro{margin:0 10px 10px;padding:4px 16px 12px;border-radius:13px;background:var(--dro-bg);border:1px solid var(--line);box-shadow:inset 0 2px 12px rgba(0,0,0,.65)}
+:root:root[data-skin=lux][data-theme] .tnum{font:600 62px/.92 var(--serif);letter-spacing:0;color:var(--dro-ink);font-variant-numeric:lining-nums tabular-nums}
+:root:root[data-skin=lux][data-theme] .dro-k b{font:italic 600 32px/1 var(--serif);color:var(--accent-t)}
+:root:root[data-skin=lux][data-theme] .dro-k span{font:600 9px/1.3 var(--font);letter-spacing:.18em}
+:root:root[data-skin=lux][data-theme] .dro-v small{font:600 9.5px/1 var(--font);letter-spacing:.18em;text-transform:uppercase}
+:root:root[data-skin=lux][data-theme] .dro-r + .dro-r{border-top:1px solid var(--line)}
+:root:root[data-skin=lux][data-theme] .pass{margin:0 10px 10px;background:#0B0B0C;border-radius:13px}
+:root:root[data-skin=lux][data-theme] .pass span{color:var(--accent-t)}
+:root:root[data-skin=lux][data-theme] .pass b{font:600 31px/1 var(--serif);font-variant-numeric:lining-nums}
+:root:root[data-skin=lux][data-theme] .pass b small{font:600 9.5px/1 var(--font);letter-spacing:.12em;text-transform:uppercase}
+:root:root[data-skin=lux][data-theme] .cam-r .v{font:600 23px/1 var(--serif);font-variant-numeric:lining-nums}
+:root:root[data-skin=lux][data-theme] .cam-r b{font:600 14px/1.25 var(--font)}
+:root:root[data-skin=lux][data-theme] .gline{border:1px solid var(--line);background:#0B0B0C;border-radius:12px}
+:root:root[data-skin=lux][data-theme] .gline code{font:600 13px/1.3 var(--mono);letter-spacing:.03em;color:var(--ink)}
+:root:root[data-skin=lux][data-theme] .gline code em{color:var(--accent)}
+:root:root[data-skin=lux][data-theme] .sp-rows > div{background:#121213}
+:root:root[data-skin=lux][data-theme] .sp-rows b{font:600 19px/1.12 var(--serif);font-variant-numeric:lining-nums}
+:root:root[data-skin=lux][data-theme] .cg-g{border-radius:13px}
+:root:root[data-skin=lux][data-theme] .cg-gh{background:#0B0B0C}
+:root:root[data-skin=lux][data-theme] .cg-gh > i{font:600 14px/1 var(--serif)}
+:root:root[data-skin=lux][data-theme] .cg-gh b{font:600 18px/1.1 var(--serif)}
+:root:root[data-skin=lux][data-theme] .cg-v b{font:600 21px/1.05 var(--serif);font-variant-numeric:lining-nums}
+/* зауваження: тонка кольорова риска замість товстої смуги */
+:root:root[data-skin=lux][data-theme] .note{border-radius:12px;background:#121213;border:1px solid var(--line);border-left:2px solid var(--c)}
+:root:root[data-skin=lux][data-theme] .note.b{background:linear-gradient(90deg,color-mix(in srgb,var(--bad) 10%,#121213),#121213)}
+:root:root[data-skin=lux][data-theme] .msw{border-radius:13px;background:linear-gradient(180deg,#161617,#111112);border-color:var(--line-2);box-shadow:none}
+:root:root[data-skin=lux][data-theme] .msw.on{color:var(--text);border-color:rgba(220,192,134,.55);background:linear-gradient(180deg,rgba(200,163,91,.12),rgba(200,163,91,.02))}
+/* списки фрез: скринька під кожну фрезу */
+:root:root[data-skin=lux][data-theme] .tcard{border-radius:18px}
+:root:root[data-skin=lux][data-theme] .tcard::after{font:italic 600 13px/1 var(--serif);color:var(--accent-t);opacity:.85}
+:root:root[data-skin=lux][data-theme] .tags span{padding:5px 8px;border-radius:999px;border-color:var(--line-2);font:600 10.5px/1 var(--font);letter-spacing:.03em}
+:root:root[data-skin=lux][data-theme] .tags span.a{color:#1A140A;background:var(--accent-fill);border-color:transparent}
+:root:root[data-skin=lux][data-theme] .search{border-radius:999px;background:#0B0B0C;border-color:var(--line-2)}
+:root:root[data-skin=lux][data-theme] .grp-h{font:600 9.5px/1 var(--font);letter-spacing:.22em}
+:root:root[data-skin=lux][data-theme] .seg{border-radius:999px;background:#0B0B0C}
+:root:root[data-skin=lux][data-theme] .seg button{border-radius:999px;font-family:var(--font);letter-spacing:.06em}
+:root:root[data-skin=lux][data-theme] .seg button.on{color:#1A140A;background:var(--accent-fill);box-shadow:inset 0 1px 0 rgba(255,250,235,.5)}
+:root:root[data-skin=lux][data-theme] details.how summary{font:650 14.5px/1.2 var(--font)}
+:root:root[data-skin=lux][data-theme] details.tips summary em{color:#1A140A;background:var(--accent-fill)}
+/* нижня панель: чорна, золота риска над вибраним */
+:root:root[data-skin=lux][data-theme] nav.tabbar{left:0;right:0;bottom:0;padding:8px 12px calc(8px + env(safe-area-inset-bottom));border-radius:0;border:0;border-top:1px solid var(--line);
+  background:rgba(9,9,10,.94);box-shadow:0 -18px 40px rgba(0,0,0,.6)}
+:root:root[data-skin=lux][data-theme] nav.tabbar::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--gold-line);opacity:.45}
+:root:root[data-skin=lux][data-theme] .tabs-in button{gap:6px;background:none;border:0;box-shadow:none;color:var(--dim);font:650 9px/1 var(--font);letter-spacing:.12em;text-transform:uppercase}
+:root:root[data-skin=lux][data-theme] .tabs-in button.on{background:none;color:var(--accent-2);box-shadow:none}
+:root:root[data-skin=lux][data-theme] .tabs-in button.on svg.i{color:var(--accent-2)}
+:root:root[data-skin=lux][data-theme] .tabs-in svg.i{stroke-width:1.4}
+:root:root[data-skin=lux][data-theme] .tabs-in button::before{top:-8px;left:50%;right:auto;width:22px;height:2px;margin-left:-11px;border-radius:2px}
+:root:root[data-skin=lux][data-theme] .tabs-in button.on::before{background:var(--accent-fill);box-shadow:0 0 12px rgba(200,163,91,.7)}
+/* шторки, тости */
+:root:root[data-skin=lux][data-theme] .panel{background:#0F0F10;border-top:1px solid rgba(200,163,91,.3)}
+:root:root[data-skin=lux][data-theme] .panel-head b{font:600 22px/1.1 var(--serif)}
+:root:root[data-skin=lux][data-theme] .opt.on{border-color:rgba(220,192,134,.6);background:linear-gradient(180deg,rgba(200,163,91,.12),rgba(200,163,91,.03))}
+:root:root[data-skin=lux][data-theme] .opt-ic{background:var(--art-bg)}
+:root:root[data-skin=lux][data-theme] .toast{background:#141415;border-color:var(--line-2);border-left:2px solid var(--accent);color:var(--text)}
+:root:root[data-skin=lux][data-theme] .r3btn{color:#1A140A;background:var(--accent-fill)}
+:root:root[data-skin=lux][data-theme] .v3c{background:radial-gradient(120% 80% at 50% 35%,#2A2824,#0D0D0E)}
+:root:root[data-skin=lux][data-theme] .banner{border:1px solid rgba(228,182,92,.45);background:linear-gradient(90deg,rgba(228,182,92,.1),#121213)}
 /* ---- вибір оформлення в налаштуваннях ---- */
 .skins{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 .skin{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;cursor:pointer;color:var(--text);border-radius:var(--r);background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
@@ -937,7 +1188,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '8.2';
+const APP_VER = '8.3';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
@@ -1517,12 +1768,13 @@ async function copyText(text, okMsg) {
 // ======================= Тема =======================
 // Оформлення: «Студія» йде за темою Telegram, «Неон» завжди темний, «Сталь» завжди світла; «Пульт» — попередній дизайн
 const SKINS = {
+  lux: { n: 'Обсидіан', s: 'Нове: чорний камінь, золото «шампань» тонкими лініями, класичні цифри з засічками — серйозно й дорого.', mode: 'dark', sw: ['#09090A', '#161617', '#C8A35B'], fresh: true },
   studio: { n: 'Студія', s: 'Світла й повітряна, синій акцент — як продукти Apple. У темній темі Telegram — нічна синя.', mode: 'auto', sw: ['#EEF2F7', '#FFFFFF', '#2563FF'] },
   neon: { n: 'Неон', s: 'Глибока ніч, бірюзово-фіолетове світіння, скляні картки.', mode: 'dark', sw: ['#07061A', '#1C1945', '#22D3EE', '#A78BFA'] },
-  graphite: { n: 'Графіт', s: 'Нове: нейтральний темний, яскравий лаймовий акцент, великі цифри — спортивний стиль.', mode: 'dark', sw: ['#0F1011', '#202125', '#C6F432'], fresh: true },
-  paper: { n: 'Папір', s: 'Нове: теплий світлий фон, чорний текст, один червоний акцент — найкраще читається на сонці.', mode: 'light', sw: ['#F3EFE7', '#FFFDF9', '#D63B22'], fresh: true },
+  graphite: { n: 'Графіт', s: 'Нейтральний темний, яскравий лаймовий акцент, великі цифри — спортивний стиль.', mode: 'dark', sw: ['#0F1011', '#202125', '#C6F432'] },
+  paper: { n: 'Папір', s: 'Теплий світлий фон, чорний текст, один червоний акцент — найкраще читається на сонці.', mode: 'light', sw: ['#F3EFE7', '#FFFDF9', '#D63B22'] },
 };
-const DEFAULT_SKIN = 'studio';
+const DEFAULT_SKIN = 'lux';
 const skinOf = () => (SKINS[DB.cfg && DB.cfg.skin] ? DB.cfg.skin : DEFAULT_SKIN);
 function applyTheme() {
   const skin = skinOf();
@@ -2070,8 +2322,8 @@ const R3 = (() => {
       envMapIntensity: 1.2, vertexColors: true, side: T.DoubleSide });
     return { body: body3, shank: M(hss ? 0xd0d4d9 : 0xa9aeb5, 1, 0.16),
       // корпуси Vorgen/TEKNIK — сатиновий нікель; пластини AGIR AU2035BZ — золоті; гвинти Torx — чорне оксидування
-      steel: M(0xc4bfb6, 0.9, 0.36, { side: T.DoubleSide }), steelV: M(0xc4bfb6, 0.9, 0.36, { side: T.DoubleSide, vertexColors: true }), steelS: M(0xc9cccf, 0.95, 0.26),
-      ins: M(0xc9a04a, 1, 0.3, { side: T.DoubleSide }), insDark: M(0x3a3b42, 0.95, 0.22, { side: T.DoubleSide }), gold: M(0xc9a04a, 1, 0.3, { side: T.DoubleSide }),
+      steel: M(0xbdb9b2, 1, 0.34, { side: T.DoubleSide }), steelV: M(0xc2beb6, 1, 0.33, { side: T.DoubleSide, vertexColors: true }), steelS: M(0xb8bcc1, 1, 0.36), cap: M(0xa29e97, 0.55, 0.5, { side: T.DoubleSide, vertexColors: true }),
+      ins: M(0xd4b062, 1, 0.24, { side: T.DoubleSide }), insDark: M(0x3a3b42, 0.95, 0.22, { side: T.DoubleSide }), gold: M(0xc9a04a, 1, 0.3, { side: T.DoubleSide }),
       dark: M(0x121316, 0.6, 0.5), screw: M(0x2a292c, 0.8, 0.35), thread: M(0xc2c6cb, 1, 0.3) };
   }
 
@@ -2248,116 +2500,209 @@ const R3 = (() => {
     if (full && ol - o.len > Rs * 4) g.add(etch(`${String(t.name || '').slice(0, 26) || `Ø${fmt(D, 2)}`}  ·  Ø${fmt(D, 2)}  ${z}F`, Rs, o.len + (ol - o.len) * 0.55, Math.min(Rs * 1.1, 5)));
     return g;
   }
-  // фреза з пластинами: сталевий корпус з канавками під стружку, пластини з гвинтами по периметру
-  // Пластина позитивна: низ менший за верх (задній кут ~11°), зверху — стружколомна канавка вздовж кромок і зенкований отвір під гвинт
-  function plateOutline(L, W, shp) {
-    const s = new T.Shape();
-    if (shp === 'R') s.absarc(W / 2, L / 2, W / 2, 0, 2 * PI);
-    else if (shp === 'S') { s.moveTo(0.6, 0); s.lineTo(W - L * 0.42, 0); s.lineTo(W, L * 0.42); s.lineTo(W, L - 0.6); s.lineTo(W - 0.6, L); s.lineTo(0, L); s.lineTo(0, 0.6); }
-    else if (shp === 'T') { s.moveTo(0, 0); s.lineTo(W, L / 2); s.lineTo(0, L); }
-    else { s.moveTo(0, 1.1); s.lineTo(W - 0.5, 0); s.quadraticCurveTo(W, 0, W, 0.5); s.lineTo(W, L - 0.4); s.lineTo(W * 0.15, L); s.lineTo(0, L - 0.6); }
+  // фреза з пластинами: сталевий корпус, перед кожною пластиною — глибока канавка під стружку, що гвинтом виходить на корпус;
+  // пластина сидить у гнізді з плоскими стінками і тримається гвинтом Torx.
+  // Пластина позитивна: низ менший за верх (задній кут 11°), зверху — стружколомна канавка вздовж кромок і зенкований отвір.
+  // Обрис — багатокутник із заокругленими кутами (радіус при вершині — як на справжній пластині)
+  function rounded(P, rr) {
+    const n = P.length, s = new T.Shape();
+    for (let i = 0; i < n; i++) {
+      const p = P[i], a = P[(i + n - 1) % n], b = P[(i + 1) % n];
+      let ax = a[0] - p[0], ay = a[1] - p[1], bx = b[0] - p[0], by = b[1] - p[1];
+      const la = Math.hypot(ax, ay), lb = Math.hypot(bx, by); ax /= la; ay /= la; bx /= lb; by /= lb;
+      const ang = Math.acos(clamp3(ax * bx + ay * by, -1, 1)), t = Math.min(rr[i] / Math.tan(ang / 2), la * 0.45, lb * 0.45);
+      const x1 = p[0] + ax * t, y1 = p[1] + ay * t, x2 = p[0] + bx * t, y2 = p[1] + by * t;
+      if (i) s.lineTo(x1, y1); else s.moveTo(x1, y1);
+      s.quadraticCurveTo(p[0], p[1], x2, y2);
+    }
     s.closePath(); return s;
   }
+  // x — поперек пластини (x = W — головна кромка, назовні), y — уздовж осі фрези (y = 0 — нижній кут, що ріже дно)
+  function plateOutline(L, W, shp) {
+    if (shp === 'R') { const s = new T.Shape(); s.absarc(W / 2, L / 2, W / 2, 0, 2 * PI); return s; }
+    // SEET/SEKT: квадрат з фаскою-зачисткою на робочому куті
+    if (shp === 'S') return rounded([[0, 0], [W - L * 0.36, 0], [W, L * 0.36], [W, L], [0, L]], [0.8, 0.4, 0.4, 0.8, 0.8]);
+    if (shp === 'T') return rounded([[0, 0], [W, L / 2], [0, L]], [0.4, 0.8, 0.4]);
+    // APKT / APMT: паралелограм 85°, торцева кромка піднімається всередину на 5°, радіус при вершині 0,8
+    const d = W * Math.tan(5 * PI / 180);
+    return rounded([[W, 0], [W, L], [0, L + d], [0, d]], [0.8, 0.3, 0.8, 0.3]);
+  }
   const insTex = new Map();
-  function insTop(W, L, shp) {
-    const key = `${shp}|${W.toFixed(1)}|${L.toFixed(1)}`; if (insTex.has(key)) return insTex.get(key);
-    const cw = 256, chh = Math.round(256 * L / W), cv = document.createElement('canvas'); cv.width = cw; cv.height = chh;
-    const x = cv.getContext('2d'), sx = cw / W, sy = chh / L, path = new Path2D();
-    plateOutline(L, W, shp).getPoints(24).forEach((p, i) => (i ? path.lineTo : path.moveTo).call(path, p.x * sx, chh - p.y * sy));
+  function insTop(W, L, shp, gold) {
+    const key = `${shp}|${W.toFixed(1)}|${L.toFixed(1)}|${gold}`; if (insTex.has(key)) return insTex.get(key);
+    const pts = plateOutline(L, W, shp).getPoints(24), Lt = Math.max(...pts.map(p => p.y)), Wt = Math.max(...pts.map(p => p.x));
+    const cw = 384, chh = Math.round(cw * Lt / Wt), cv = document.createElement('canvas'); cv.width = cw; cv.height = chh;
+    const x = cv.getContext('2d'), sx = cw / Wt, sy = chh / Lt, path = new Path2D();
+    pts.forEach((p, i) => (i ? path.lineTo : path.moveTo).call(path, p.x * sx, chh - p.y * sy));
     path.closePath();
-    x.fillStyle = '#e9ebee'; x.fillRect(0, 0, cw, chh);
+    const c = gold ? ['#d9b866', '#9c7a33', '#f6e3a6', '#b8954a', '#e2c47a'] : ['#7d828b', '#3e424a', '#c9ced6', '#5d626b', '#8e939b'];
+    // плато в центрі, стружколомна канавка по периметру, вузька ленточка на самій кромці
+    x.fillStyle = c[0]; x.fillRect(0, 0, cw, chh);
     x.save(); x.clip(path);
-    x.strokeStyle = '#8d939c'; x.lineWidth = cw * 0.36; x.stroke(path);       // стружколомна канавка вздовж кромок
-    x.strokeStyle = '#f4f5f7'; x.lineWidth = cw * 0.07; x.stroke(path);       // вузька фаска-ленточка на самій кромці
+    x.strokeStyle = c[1]; x.lineWidth = cw * 0.3; x.stroke(path);
+    x.strokeStyle = c[3]; x.lineWidth = cw * 0.18; x.stroke(path);
+    x.strokeStyle = c[2]; x.lineWidth = cw * 0.05; x.stroke(path);
+    // ребра стружколома — короткі риски вздовж головної кромки
+    x.strokeStyle = c[1]; x.lineWidth = cw * 0.012;
+    for (let i = 1; i < 9; i++) { const yy = chh * (0.12 + i * 0.085); x.beginPath(); x.moveTo(cw * 0.86, yy); x.lineTo(cw * 0.95, yy - chh * 0.02); x.stroke(); }
     x.restore();
-    const hx = cw / 2, hy = chh / 2, hr = Math.min(cw, chh) * 0.17;
-    x.fillStyle = '#b9bec6'; x.beginPath(); x.arc(hx, hy, hr * 1.45, 0, 2 * PI); x.fill();   // зенковка
-    x.fillStyle = '#1c1d21'; x.beginPath(); x.arc(hx, hy, hr, 0, 2 * PI); x.fill();
-    const t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace; insTex.set(key, t); return t;
+    let cx = 0, cy = 0; pts.forEach(p => { cx += p.x; cy += p.y; }); cx = cx / pts.length * sx; cy = chh - cy / pts.length * sy;
+    const hr = Math.min(cw, chh) * 0.2;
+    const gr = x.createRadialGradient(cx, cy, hr * 0.6, cx, cy, hr * 1.5); gr.addColorStop(0, c[1]); gr.addColorStop(1, c[4]);
+    x.fillStyle = gr; x.beginPath(); x.arc(cx, cy, hr * 1.5, 0, 2 * PI); x.fill();   // зенковка
+    x.fillStyle = '#16171a'; x.beginPath(); x.arc(cx, cy, hr, 0, 2 * PI); x.fill();
+    const t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 4; insTex.set(key, { t, Wt, Lt, cx: cx / sx, cy: (chh - cy) / sy }); return insTex.get(key);
+  }
+  // гвинт Torx: голівка врівень з передньою гранню, шліц-зірочка на 6 пелюсток
+  function torx(r, mat) {
+    const g = new T.Group();
+    const head = new T.Mesh(new T.CylinderGeometry(r, r * 0.86, 0.5, 32), mat); head.rotation.x = PI / 2; head.position.z = -0.2; g.add(head);
+    const s = new T.Shape(), n = 6, ro = r * 0.5, ri = r * 0.3;
+    for (let i = 0; i <= n * 8; i++) { const a = i / (n * 8) * 2 * PI, k = 0.5 + 0.5 * Math.cos(a * n), rr = ri + (ro - ri) * k; if (i) s.lineTo(rr * Math.cos(a), rr * Math.sin(a)); else s.moveTo(rr * Math.cos(a), rr * Math.sin(a)); }
+    const st = new T.Mesh(new T.ShapeGeometry(s, 4), new T.MeshStandardMaterial({ color: 0x050506, roughness: 0.8 })); st.position.z = 0.062; g.add(st);
+    return g;
   }
   function plate(L, W, th, shp, mat, screwM) {
     const g = new T.Group(), sh = plateOutline(L, W, shp), d = th * Math.tan(11 * PI / 180);
     const top = sh.getPoints(24); if (top.length > 2 && top[0].distanceTo(top[top.length - 1]) < 1e-6) top.pop();
     let cx = 0, cy = 0; top.forEach(p => { cx += p.x; cy += p.y; }); cx /= top.length; cy /= top.length;
-    const kx = Math.max(0.5, (W - 2 * d) / W), ky = Math.max(0.5, (L - 2 * d) / L);
-    const bot = top.map(p => new T.Vector2(cx + (p.x - cx) * kx, cy + (p.y - cy) * ky));
+    const ext = top.reduce((m, p) => Math.max(m, Math.abs(p.x - cx), Math.abs(p.y - cy)), 0.1), k = Math.max(0.5, (ext - d) / ext);
+    const bot = top.map(p => new T.Vector2(cx + (p.x - cx) * k, cy + (p.y - cy) * k));
     const pos = [], idx = [], n = top.length;
-    top.forEach(p => pos.push(p.x, p.y, 0)); bot.forEach(p => pos.push(p.x, p.y, -th));
-    for (let i = 0; i < n; i++) { const j = (i + 1) % n; idx.push(i, j, n + i, j, n + j, n + i); }
-    T.ShapeUtils.triangulateShape(bot, []).forEach(f => idx.push(n + f[0], n + f[2], n + f[1]));
+    // боки окремими вершинами по кожній грані — кромки гострі
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n, b = pos.length / 3;
+      pos.push(top[i].x, top[i].y, 0, top[j].x, top[j].y, 0, bot[i].x, bot[i].y, -th, bot[j].x, bot[j].y, -th);
+      idx.push(b, b + 2, b + 1, b + 1, b + 2, b + 3);
+    }
+    const b0 = pos.length / 3; bot.forEach(p => pos.push(p.x, p.y, -th));
+    T.ShapeUtils.triangulateShape(bot, []).forEach(f => idx.push(b0 + f[0], b0 + f[2], b0 + f[1]));
     const gb = new T.BufferGeometry(); gb.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); gb.setIndex(idx); gb.computeVertexNormals();
     g.add(new T.Mesh(gb, mat));
+    const gold = mat.color.r > mat.color.b * 1.3, tx = insTop(W, L, shp, gold);
     const gt = new T.ShapeGeometry(sh, 24), uv = gt.attributes.uv, ps = gt.attributes.position;
-    for (let i = 0; i < uv.count; i++) uv.setXY(i, ps.getX(i) / W, ps.getY(i) / L);
-    const topM = mat.clone(); topM.map = insTop(W, L, shp); topM.side = T.FrontSide;
-    const tm = new T.Mesh(gt, topM); tm.position.z = 0.01; g.add(tm);
-    // гвинт Torx: голівка у зенковці, зірочка-шліц
-    const r = Math.min(W, L) * 0.16;
-    const head = new T.Mesh(new T.CylinderGeometry(r, r * 0.8, 0.6, 24), screwM); head.rotation.x = PI / 2; head.position.set(W / 2, L / 2, 0.05); g.add(head);
-    const torx = new T.Mesh(new T.CylinderGeometry(r * 0.42, r * 0.42, 0.62, 6), new T.MeshStandardMaterial({ color: 0x15161a, roughness: 0.6 })); torx.rotation.x = PI / 2; torx.position.set(W / 2, L / 2, 0.1); g.add(torx);
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, ps.getX(i) / tx.Wt, ps.getY(i) / tx.Lt);
+    const topM = mat.clone(); topM.map = tx.t; topM.color = new T.Color(0xffffff); topM.side = T.FrontSide;
+    const tm = new T.Mesh(gt, topM); tm.position.z = 0.012; g.add(tm);
+    const sc = torx(Math.min(W, L) * 0.22, screwM); sc.position.set(tx.cx, tx.cy, 0); g.add(sc);
+    return g;
+  }
+  // Корпус з канавками й гніздами — поверхня обертання, де радіус залежить від кута і висоти.
+  // Один крок (від передньої грані пластини k до наступної): канавка (біля грані найглибша, далі плавно виходить на корпус),
+  // спинка корпусу, гніздо наступної пластини (уступ до seatR). Стінки — окремими вершинами, тому ребра гострі.
+  function insHead(o) {
+    const { Rb, z, y0, len, core, gA, sA, seatR, fade, hel = 0, yHel = Infinity, hi, R } = o;
+    const step = 2 * PI / z, ng = hi ? 30 : 18, nl = hi ? 16 : 9, ns = hi ? 6 : 4, sm = x => x * x * (3 - 2 * x);
+    const uS = step - sA, pat = [];
+    pat.push([0, 'sL'], [0, 'sL'], [0, 'g'], [0, 'g']);                     // передня грань: гніздо → дно канавки
+    for (let i = 1; i <= ng; i++) pat.push([gA * Math.pow(i / ng, 1.15), 'g']);
+    for (let i = 1; i < nl; i++) pat.push([gA + (uS - gA) * i / nl, 'l']);
+    pat.push([uS, 'l'], [uS, 'l'], [uS, 's'], [uS, 's']);                  // задня стінка гнізда
+    for (let i = 1; i < ns; i++) pat.push([uS + sA * i / ns, 's']);
+    const NP = pat.length, NA = NP * z;
+    // гострі ребра: у кожній парі однакових точок — перша належить одній грані, друга — стінці
+    const ys = [];
+    const NYb = hi ? 110 : 56;
+    for (let j = 0; j <= NYb; j++) ys.push(y0 + (len - y0) * Math.pow(j / NYb, 1.25));
+    for (const m of o.marks || []) if (m > y0 && m < len) ys.push(m - 0.02, m + 0.02);
+    ys.sort((a, b) => a - b);
+    const Y = ys.filter((y, i) => !i || y - ys[i - 1] > 1e-3), NY = Y.length;
+    const gR = (u, y) => Rb - (Rb - core) * fade(y) * (1 - sm(clamp3(u / gA, 0, 1)));
+    const seat = y => { const s = seatR(y); return Number.isFinite(s) ? clamp3(s, core * 0.8, Rb) : Rb; };
+    const radius = (kind, u, y) => (kind === 'g' ? gR(u, y) : kind === 'l' ? Rb : seat(y));
+    const pos = [], col = [], idx = [];
+    for (let j = 0; j < NY; j++) {
+      const y = Y[j], tw = y > yHel ? -(y - yHel) * Math.tan(hel * PI / 180) / R : 0;
+      const ch = 1 - 0.035 * (1 - sm(clamp3((y - y0) / Math.max(0.3, Rb * 0.04), 0, 1)));   // фаска по краю торця
+      for (let k = 0; k < z; k++) for (let i = 0; i < NP; i++) {
+        const [u, kind] = pat[i], th = o.th0 + k * step + u + tw, r = radius(kind, u, y) * ch;
+        pos.push(r * Math.cos(th), y, r * Math.sin(th));
+        const dep = clamp3((Rb - r) / Math.max(0.05, Rb - core), 0, 1), ao = kind === 's' && r < Rb - 0.01 ? 0.62 : 1 - 0.55 * Math.pow(dep, 0.8);
+        col.push(ao, ao, ao);
+      }
+    }
+    for (let j = 0; j < NY - 1; j++) for (let i = 0; i < NA; i++) {
+      const a = j * NA + i, b = a + NA, a1 = j * NA + (i + 1) % NA, b1 = a1 + NA;
+      idx.push(a, b, a1, b, b1, a1);
+    }
+    // торець: плаский, окремими вершинами
+    const base = pos.length / 3, nSide = idx.length;
+    for (let i = 0; i < NA; i++) { pos.push(pos[i * 3], Y[0], pos[i * 3 + 2]); col.push(0.82, 0.82, 0.82); }
+    const c0 = pos.length / 3; pos.push(0, Y[0], 0); col.push(0.82, 0.82, 0.82);
+    for (let i = 0; i < NA; i++) idx.push(c0, base + i, base + (i + 1) % NA);
+    const g = new T.BufferGeometry();
+    g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new T.Float32BufferAttribute(col, 3));
+    g.setIndex(idx); g.computeVertexNormals();
+    g.addGroup(0, nSide, 0); g.addGroup(nSide, idx.length - nSide, 1);   // торець — окремий матеріал (матовий, щоб не провалювався в чорне)
     return g;
   }
   function insObj(t, M, full) {
     const g = new T.Group(), face = t.type === 'iface', D = num(t.d) > 0 ? num(t.d) : face ? 80 : 20, R = D / 2;
     const z = clamp3(Math.round(num(t.z) || 2), 1, 16), ins = DB.inserts[t.insertId], code = insKey(ins && ins.code);
     const shp = (ins && ins.shape) || code[0] || (face ? 'S' : 'A');
-    const L = num(ins && ins.len) || (face ? 12.7 : D < 16 ? 10.5 : 11), th = num(ins && ins.thick) || (face ? 3.97 : 3.2);
-    const W = Math.min(shp === 'S' || shp === 'R' ? L : L * 0.64, face ? L : R * 0.9);
+    const L = num(ins && ins.len) || (face ? 12.7 : D < 16 ? 10 : 11), th = num(ins && ins.thick) || (face ? 3.97 : 3.2);
+    const Wi = shp === 'S' || shp === 'R' ? L : L * 0.62;   // APKT10 ≈ 6,7 мм, APMT1135 ≈ 6,8 мм завширшки
     const insM = /black|чорн|dark|темн/i.test(`${ins && ins.grade || ''} ${ins && ins.note || ''}`) ? M.insDark : M.ins;
     const Rs = (num(t.shank) > 0 ? num(t.shank) : face ? 27 : D) / 2;
     const brand = /vorgen/i.test(t.name || '') ? 'VORGEN' : /teknik/i.test(t.name || '') ? 'TEKNIK' : '';
-    // перша пластина — під 50° до глядача (з урахуванням повороту пози), кишеня під стружку — перед кожною пластиною
-    const th0 = 1.32, step = 2 * PI / z, alignB = m => { m.rotation.y = 0.45 * step - th0; return m; };
+    // перша пластина — під ~50° до глядача (з урахуванням повороту пози)
+    const th0 = 1.32, step = 2 * PI / z;
     const lathe = (pts, m, seg = 96) => { const p = pts.map(([x, y]) => new T.Vector2(Math.max(0.001, x), y)); const o = new T.Mesh(new T.LatheGeometry(p, seg), m); g.add(o); return o; };
-    const coolant = r => { const c = new T.Mesh(new T.CircleGeometry(r, 24), M.dark); c.rotation.x = PI / 2; c.position.y = 0.05; g.add(c); };
+    const coolant = (r, y = 0.05) => { const c = new T.Mesh(new T.CircleGeometry(r, 24), M.dark); c.rotation.x = PI / 2; c.position.y = y; g.add(c); };
+    const put = (obj, k) => { const q = new T.Group(); q.add(obj); q.rotation.y = -(th0 + k * step); g.add(q); };
     if (face) {
-      // торцева насадна (VRF45): передній ріжучий пояс з клиновими кишенями, задня ступиця ~0,65D з маркуванням,
-      // отвір під оправку з цековкою і паз під шпонку; квадратні пластини під 45° — збоку видно «ромбики»
-      const Hr = Math.max(D * 0.22, 18), Rb = R - W * 0.48, Rh = Math.max(Rs * 1.55, D * 0.325), Hh = Math.max(D * 0.17, 14), top = Hr + Hh;
-      g.add(alignB(new T.Mesh(fluted({ R: Rb, z, beta: 0, len: Hr, core: 0.78, shape: 'flat', runout: false, pocket: true }), M.steelV)));
-      lathe([[Rb * 0.995, Hr], [Rh + 2, Hr + 1.5], [Rh, Hr + 3], [Rh, top - 1.5], [Rh - 1.5, top], [Rs * 1.3, top], [Rs * 1.3, top - 4], [Rs, top - 4], [Rs, top - 12], [0.001, top - 12]], M.steel);
+      // торцева насадна (VRF45): ріжучий пояс з клиновими кишенями, квадратні пластини під 45° («ромбики» збоку),
+      // ступиця з маркуванням, отвір під оправку з пазом під шпонку
+      const W = Wi, Hr = Math.max(D * 0.22, 18), Rb = R - W * 0.5, Rh = Math.max(Rs * 1.55, D * 0.325), Hh = Math.max(D * 0.17, 14), top = Hr + Hh;
+      const c45 = Math.SQRT1_2, wf = W - L * 0.36, px = R + 0.4 - (W + L) * c45, py = -0.5 + wf * c45;
+      const A = [px, py], B = [px + c45 * wf, py - c45 * wf], C = [px + c45 * L, py + c45 * L];
+      const xL = y => (y <= A[1] ? B[0] + (A[0] - B[0]) * (y - B[1]) / (A[1] - B[1]) : A[0] + (C[0] - A[0]) * (y - A[1]) / (C[1] - A[1]));
+      const core = Math.max(Rb - Math.min(0.13 * D, Rb * 0.35), A[0] - 6);
+      g.add(new T.Mesh(insHead({ R, Rb, z, y0: 0, len: Hr, core, gA: 0.46 * step, sA: Math.min(0.3 * step, (th + 0.6) / (R - W)), th0, hi: full,
+        seatR: y => (y <= C[1] + 0.3 ? xL(Math.max(B[1], y)) - 0.35 : Infinity), fade: y => 1 - clamp3((y - C[1]) / (Hr * 0.9 - C[1]), 0, 1) ** 2, marks: [C[1] + 0.3] }), [M.steelV, M.cap]));
+      lathe([[Rb, Hr], [Rh + 2, Hr + 1.5], [Rh, Hr + 3], [Rh, top - 1.5], [Rh - 1.5, top], [Rs * 1.3, top], [Rs * 1.3, top - 4], [Rs, top - 4], [Rs, top - 12], [0.001, top - 12]], M.steel);
       const key = new T.Mesh(new T.BoxGeometry(Rh * 2 - 2, 4.2, Rs * 0.7), M.dark); key.position.y = top - 1.9; g.add(key);   // паз під шпонку
-      coolant(Rs * 0.45);
+      coolant(Rs * 0.45, 0.02);
       if (brand) g.add(etch(`${brand}  VRF45 SE12-D${fmt(D)} d${fmt(Rs * 2)} Z${String(z).padStart(2, '0')}`, Rh, Hr + Hh * 0.55, Hh * 0.42));
       for (let k = 0; k < z; k++) {
-        const q = new T.Group(), dia = new T.Group(), pl = plate(L, W, th, 'S', insM, M.screw);
-        dia.add(pl); dia.rotation.z = -PI / 4;
-        dia.position.set(R + 0.4 - (W + L) * 0.7071, -0.5 + W * 0.7071, 0); dia.rotation.y = -0.12;
-        q.add(dia); q.rotation.y = -(th0 + k * step); g.add(q);
+        const dia = new T.Group(); dia.add(plate(L, W, th, 'S', insM, M.screw));
+        dia.rotation.z = -PI / 4; dia.position.set(px, py, 0); put(dia, k);
       }
       return g;
     }
-    const Rb = Math.max(R * 0.86, R - W * 0.42);
+    // кінцева (SPAP, BAP) і насадна на різьбі (TEKNIK): пластина виступає за корпус на ~0,4–1 мм радіально і на 0,5 мм униз
+    const W = Math.min(Wi, 1.25 * R), Rb = R - clamp3(0.04 * R, 0.35, 1.2), Rseat = Math.max(0.18 * R, R - W);
+    const core = Math.max(0.15 * R, Math.min(Rseat - 0.08 * R, 0.62 * R)), y0 = 0.5;
+    const Lp = L + (shp === 'A' ? W * Math.tan(5 * PI / 180) : 0), yS = Lp + 0.35;
+    const gA = Math.min(1.9, 0.42 * step), sA = clamp3((th + 0.3) / Math.max(R - W / 2, 0.45 * R), 0.12, 0.3 * step);
+    const head = len => insHead({ R, Rb, z, y0, len, core, gA, sA, th0, hi: full, hel: 14, yHel: yS, marks: [yS],
+      seatR: y => (y < yS ? Rseat : Infinity), fade: y => (y < yS ? 1 : 1 - clamp3((y - yS) / (len - yS), 0, 1) ** 1.6) });
     if (toolMount(t) === 'screw') {
-      // насадна на різьбі (TEKNIK): головка ~0,95D з кишенями, конічна шийка з лисками під ключ, пілот і різьба M16
-      const Hh = D * 0.95, pk = Math.min(Hh * 0.75, L * 1.6), Rn = Math.min(Rb * 0.6, 11), Rt = 8, Hn = Hh + 6;
-      g.add(alignB(new T.Mesh(fluted({ R: Rb, z, beta: 0, len: pk, core: 0.68, shape: 'flat', runout: true, pocket: true }), M.steelV)));
-      lathe([[Rb * 0.965, pk], [Rb * 0.965, Hh], [Rb * 0.8, Hh + 3], [Rn, Hn]], M.steel);
-      // шийка «подвійне D» — дві лиски під ключ
+      // насадна на різьбі (TEKNIK): головка ~0,95D з канавками, конічна шийка з лисками під ключ, пілот і різьба M16
+      const Hh = D * 0.95, len = Math.min(Hh * 0.82, Lp * 2.6), Rn = Math.min(Rb * 0.6, 11), Rt = 8, Hn = Hh + 6;
+      g.add(new T.Mesh(head(len), [M.steelV, M.cap]));
+      lathe([[Rb, len], [Rb, Hh], [Rb * 0.8, Hh + 3], [Rn, Hn]], M.steel);
       const s = new T.Shape(), f = Rn * 0.82, a0 = Math.acos(f / Rn);
       s.absarc(0, 0, Rn, a0, PI - a0, false); s.lineTo(-Rn * Math.cos(a0), -Rn * Math.sin(a0)); s.absarc(0, 0, Rn, PI + a0, 2 * PI - a0, false); s.closePath();
       const nk = new T.Mesh(new T.ExtrudeGeometry(s, { depth: 9, bevelEnabled: false, curveSegments: 24 }), M.steel); nk.rotation.x = -PI / 2; nk.position.y = Hn; g.add(nk);
-      const y0 = Hn + 9, thr = [[Rn, y0], [Rt + 0.45, y0], [Rt + 0.45, y0 + 4]];
-      for (let y = y0 + 4, i = 0; y < y0 + 24; y += 1, i++) thr.push([i % 2 ? Rt : Rt - 0.75, y + 1]);   // різьба M16 (крок 2)
-      thr.push([Rt - 1, y0 + 25], [0.001, y0 + 25]);
+      const y1 = Hn + 9, thr = [[Rn, y1], [Rt + 0.45, y1], [Rt + 0.45, y1 + 4]];
+      for (let y = y1 + 4, i = 0; y < y1 + 24; y += 1, i++) thr.push([i % 2 ? Rt : Rt - 0.75, y + 1]);   // різьба M16 (крок 2)
+      thr.push([Rt - 1, y1 + 25], [0.001, y1 + 25]);
       lathe(thr, M.thread, 64);
-      coolant(Rb * 0.12);
-      if (brand) g.add(etch(brand, Rb * 0.965, Hh * 0.86, Math.min(5, Hh * 0.18)));
+      coolant(Rb * 0.12, y0 + 0.02);
+      if (brand) g.add(etch(brand, Rb, len + (Hh - len) * 0.55, Math.min(5, (Hh - len) * 0.6)));
     } else {
-      // кінцева з пластинами (SPAP): кишені лише біля пластин, вище — гладкий корпус, хвостовик з фаскою і маркуванням
-      const ol0 = num(t.ol) > 0 ? num(t.ol) : D * 5, fl = Math.min(ol0 * 0.6, L * 2.2), ol = full ? ol0 : Math.min(ol0, fl + Math.max(D * 0.9, 9));
-      const pk = Math.min(fl, L * 1.35), Rt = Math.max(Rs, Rb * 0.965), c = Math.min(Rt * 0.12, 1);
-      g.add(alignB(new T.Mesh(fluted({ R: Rb, z, beta: 0, len: pk, core: 0.62, shape: 'flat', runout: true, pocket: true }), M.steelV)));
-      lathe([[Rb * 0.965, pk], [Rb * 0.965, fl], [Rt, fl + Math.min(D * 0.35, Math.max(1, Math.abs(Rt - Rb) * 2.5))]], M.steel, 72);
-      lathe([[Rt, fl + Math.min(D * 0.35, Math.max(1, Math.abs(Rt - Rb) * 2.5))], [Rt, ol - c], [Rt - c, ol], [0.001, ol]], M.steelS, 72);
-      coolant(Rb * 0.14);
-      if (full && brand) g.add(etch(`${brand}  ${String(t.name || '').replace(/^\s*vorgen\s*/i, '').slice(0, 22)}`, Rt, fl + (ol - fl) * 0.28, Math.min(Rt * 0.9, 5)));
+      // кінцева з пластинами: канавки біля пластин гвинтом виходять на корпус, вище — шліфований хвостовик з фаскою і маркуванням
+      const ol0 = num(t.ol) > 0 ? num(t.ol) : D * 5, len = Math.min(ol0 * 0.55, Lp * 2.3 + R * 0.5), ol = full ? ol0 : Math.min(ol0, len + Math.max(D * 1.1, 10));
+      const Rt = Math.max(Rs, Rb), c = Math.min(Rt * 0.12, 1), yN = len + Math.max(1, Math.abs(Rt - Rb) * 2.5);
+      g.add(new T.Mesh(head(len), [M.steelV, M.cap]));
+      lathe([[Rb, len], [Rt, yN]], M.steel, 72);
+      lathe([[Rt, yN], [Rt, ol - c], [Rt - c, ol], [0.001, ol]], M.steelS, 72);
+      coolant(Math.min(Rb * 0.14, 1.2), y0 + 0.02);
+      if (full && brand) g.add(etch(`${brand}  ${String(t.name || '').replace(/^\s*vorgen\s*/i, '').slice(0, 22)}`, Rt, yN + (ol - yN) * 0.3, Math.min(Rt * 0.9, 5)));
     }
     for (let k = 0; k < z; k++) {
-      // пластина виступає ~0,4 мм за корпус і торець; осьовий передній кут ~6°
-      const q = new T.Group(), pl = plate(L, W, th, shp, insM, M.screw);
-      pl.position.set(R + 0.4 - W, -0.4, 0); pl.rotation.x = 0.1; q.add(pl);
-      q.rotation.y = -(th0 + k * step); g.add(q);
+      const pl = plate(L, W, th, shp, insM, M.screw); pl.position.set(R - W, 0, 0); put(pl, k);
     }
     return g;
   }
@@ -3076,14 +3421,14 @@ const matSpec = m => `${m.g === 'metal' && m.hrc ? m.hrc + ' · ' : m.g === 'met
 // ======================= Стан екрана =======================
 const S = {
   tab: 'calc', machineId: '', toolId: '', matId: 'p_wood', op: 'slot', mode: 'norm', depth: '18', engrDepth: '1', aeMm: '', cornerR: '', boreD: '', preD: '', mine: null, volCm3: '', refSub: 'calc', rcOpen: '', rc: null,
-  chamC: '0.5', thM: 'M8', thP: '', thIn: '1', slotW: '', task: '', autoTool: '',
+  chamC: '0.5', thM: 'M8', thP: '', thIn: '1', slotW: '', slotA: '', task: '', autoTool: '',
   manual: { type:'flat', d:'6', z:'2', lc:'22', tm:'carbide', angle:'90', tip:'0.2', pitch:'' },
   useVer: null, qTools: '', qIns: '', qHist: '', hRate: '', toolsSub: 'tools', pathLen: '',
   fb: [], fbBase: null, fbMine: null, fbPrev: null,   // «як пішло»: симптоми, на чому різав, виправлений режим, що було до нього
 };
 function initState() {
   const c = DB.cfg || {};
-  for (const k of ['machineId', 'toolId', 'matId', 'op', 'mode', 'depth', 'engrDepth', 'aeMm', 'cornerR', 'boreD', 'preD', 'chamC', 'thM', 'thP', 'thIn', 'slotW']) if (c[k] != null) S[k] = String(c[k]);
+  for (const k of ['machineId', 'toolId', 'matId', 'op', 'mode', 'depth', 'engrDepth', 'aeMm', 'cornerR', 'boreD', 'preD', 'chamC', 'thM', 'thP', 'thIn', 'slotW', 'slotA']) if (c[k] != null) S[k] = String(c[k]);
   if (!OPS[S.op]) S.op = 'slot';
   if (c.manual) Object.assign(S.manual, c.manual);
   if (!DB.machines[S.machineId]) S.machineId = Object.keys(DB.machines)[0];
@@ -3096,7 +3441,7 @@ function saveCfgSoon() {
   clearTimeout(cfgT);
   cfgT = setTimeout(() => {
     DB.cfg = { ...DB.cfg, machineId: S.machineId, toolId: S.toolId, matId: S.matId, op: S.op, mode: S.mode,
-      depth: S.depth, engrDepth: S.engrDepth, aeMm: S.aeMm, cornerR: S.cornerR, boreD: S.boreD, preD: S.preD, chamC: S.chamC, thM: S.thM, thP: S.thP, thIn: S.thIn, slotW: S.slotW, manual: S.manual };
+      depth: S.depth, engrDepth: S.engrDepth, aeMm: S.aeMm, cornerR: S.cornerR, boreD: S.boreD, preD: S.preD, chamC: S.chamC, thM: S.thM, thP: S.thP, thIn: S.thIn, slotW: S.slotW, slotA: S.slotA, manual: S.manual };
     Store.set('cfg', DB.cfg);
   }, 1200);
 }
@@ -3106,6 +3451,13 @@ const curMat = () => getMat(S.matId) || allMats()[0];
 
 // ======================= Розрахунок =======================
 // Додаткові параметри операції (кути, отвір, фаска, різьба): що зберегти в історії й деталі і що віддати в розрахунок
+// Паз: припуск на чистову. '' — типовий: метал 0,4 на стінку і 0,3 на дно (як у цеху на 40Х), решта 0,3 / 0,2
+const slotAllowB = a => (a <= 0 ? 0 : a < 0.3 ? a / 2 : Math.min(0.3, a - 0.1));
+const slotAllow = (src, mat) => {
+  const v = src && src.slotA, a = v === '' || v == null ? (mat && mat.g === 'metal' ? 0.4 : 0.3) : Math.max(0, num(v) || 0);
+  return [a, slotAllowB(a)];
+};
+const STD_D = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22, 25, 32, 40, 50, 63];
 function thrSpec(o) {
   const th = THREADS.find(x => x[0] === o.thM); if (!th) return null;
   const p = num(o.thP) > 0 ? num(o.thP) : th[2];
@@ -3116,6 +3468,7 @@ function opxOf(src, op) {
   if (CORNER_OPS.includes(op) && num(src.cornerR) > 0) o.cornerR = num(src.cornerR);
   if (op === 'bore' && num(src.boreD) > 0) { o.boreD = num(src.boreD); if (num(src.preD) > 0) o.preD = num(src.preD); }
   if (op === 'chamfer' && num(src.chamC) > 0) o.chamC = num(src.chamC);
+  if (op === 'slot' && num(src.slotW) > 0) { const [a, ab] = slotAllow(src, getMat(src.matId || src.mat) || curMat()); o.slotW = num(src.slotW); o.slotA = a; o.slotAb = ab; }
   if (op === 'thread' && src.thM) { const th = thrSpec(src); if (th) { o.thM = th.m; if (!th.coarse) o.thP = th.p; o.thIn = th.int ? 1 : 0; } }
   return o;
 }
@@ -3123,6 +3476,7 @@ function opxApply(o) {
   if (o.cornerR > 0) S.cornerR = String(o.cornerR);
   if (o.boreD > 0) { S.boreD = String(o.boreD); S.preD = o.preD > 0 ? String(o.preD) : ''; }
   if (o.chamC > 0) S.chamC = String(o.chamC);
+  if (o.slotW > 0) { S.slotW = String(o.slotW); S.slotA = o.slotA >= 0 ? String(o.slotA) : ''; }
   if (o.thM) { S.thM = o.thM; S.thP = o.thP > 0 ? String(o.thP) : ''; S.thIn = o.thIn === 0 ? '0' : '1'; }
 }
 // Мітчик і розвертка: подача на оберт задана (крок різьби або норма розвертки), швидкість — своя, нижча за фрезерну
@@ -3405,7 +3759,21 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed, opts =
       Deff = Math.max(0.2, Math.min(D, dAt));
     }
   }
-  const depth = vOp ? h : num(depthIn);
+  // Паз: у полях — готовий розмір з креслення. Чорнова лишає припуск на стінки (a) і дно (ab) під чистову,
+  // тож ріже паз Wr = W − 2a на глибину Hr = H − ab: прохід по центру всім Ø, далі розширення до Wr з боків
+  let slot = null;
+  if (op === 'slot' && num(opts.slotW) > 0) {
+    const Wf = num(opts.slotW), Hf = num(depthIn), a = Math.max(0, num(opts.slotA) || 0), ab = Math.max(0, num(opts.slotAb) || 0);
+    const Wr = Wf - 2 * a, Hr = Hf - ab;
+    if (!(Hf > 0)) return { error: 'Вкажи глибину паза.' };
+    if (!(Wr > 0.05) || !(Hr > 0.01)) return { error: `Припуск більший за паз ${fmt(Wf, 2)} × ${fmt(Hf, 2)} — зменш припуск.` };
+    slot = { W: Wf, H: Hf, a, ab, Wr, Hr, side: Math.max(0, (Wr - D) / 2) };
+    slot.steps = slot.side > 0.01 ? Math.ceil(slot.side / (0.45 * D) - 1e-6) : 0;
+    if (D > Wr + 0.005) say('b', a > 0 ? `Фреза Ø${fmt(D, 2)} ширша за чорновий паз ${fmt(Wr, 2)} мм (готовий ${fmt(Wf, 2)} мінус по ${fmt(a, 2)} на чистову з кожного боку) — стінки підуть у брак. Візьми фрезу до Ø${fmt(Wr, 1)}.`
+      : `Фреза Ø${fmt(D, 2)} ширша за паз ${fmt(Wf, 2)} мм — паз вийде ширшим, ніж на кресленні.`);
+    else if (a <= 0 && slot.side < 0.01) say('i', `Паз фрезою в розмір: ширина вийде Ø${fmt(D, 2)} плюс биття (зазвичай +0,01…0,05 мм). Для точного паза — чорнова вужчою фрезою з припуском і чистова по стінках.`);
+  }
+  const depth = vOp ? h : slot ? slot.Hr : num(depthIn);
   if (op !== 'f3d' && !(depth > 0)) return { error: 'Вкажи глибину обробки.' };
   // Сферична фреза ріже не повним Ø: на глибині a робочий діаметр 2·√(a·(D−a)). Оберти рахуємо від нього,
   // а стружка тонша в D/Dр разів — подачу компенсуємо (до ×1,8). Для 3D чистової беремо a ≈ 0,1·D.
@@ -3815,7 +4183,7 @@ function calc(mach, tool, mat, op, mode, depthIn, engrIn, aePctIn, fixed, opts =
   if (op === 'f3d' && ae > 0) { const R = D / 2; scallop = R - Math.sqrt(Math.max(0, R * R - ae * ae / 4)); }
 
   return {
-    op, D, Deff, z, n, F, Fz, ap: rAp(apE), apRaw: rAp(apRaw), passes, ae: rAp(ae), aePct: ae > 0 ? Math.round(ae / (vOp ? Deff : D) * 100) : NaN, cham, thr, coatK: cKv,
+    op, slot, D, Deff, z, n, F, Fz, ap: rAp(apE), apRaw: rAp(apRaw), passes, ae: rAp(ae), aePct: ae > 0 ? Math.round(ae / (vOp ? Deff : D) * 100) : NaN, cham, thr, coatK: cKv,
     total: depth, V, nIdeal, nCap, capWhy, Vreal: Math.PI * Deff * n / 1000, vMin, vMax, vCap, spindleMode, rpmMax,
     fzLo, fzHi, fzMode, fzR: res.fzR, hMax: res.hMax, thin, dK, ldK, L, ld,
     P: res.P, Pav: res.Pav, powerPct: res.powerPct, defl: res.defl, deflLim, stressPct: res.stressPct, Fr: res.Fr, checkForce, checkStress: checkForce || op === 'drill', Mc: res.Mc,
@@ -3895,7 +4263,7 @@ const fSel = (label, key, pairs, cur) =>
 
 // Підказки до вводу: що саме означає кожне число — простими словами
 const DEPTH_HINT = {
-  slot: 'Повна глибина паза — апка сама поділить на проходи. Ширина паза — щоб апка підібрала фрезу саме такого Ø.',
+  slot: 'Готовий паз з креслення — глибина і ширина. Апка візьме фрезу, вужчу за паз, поділить на проходи й залишить припуск на чистову.',
   pocket: 'Глибина кишені — апка сама поділить на проходи.',
   adaptive: 'Глибина кишені чи паза. Апка бере майже всю кромку за прохід і вузький крок — фрезу не гріє і не перевантажує.',
   contour: 'Висота стінки, яку обходиш. Зняти збоку — скільки знімає прохід зі стінки.',
@@ -3975,12 +4343,17 @@ function toolFit(t, op, mat, mach, ctx = {}) {
   if (lo > 0 && D > 0 && O.cut) s -= Math.max(0, lo / D - 3) * 4;
   const R = num(ctx.cornerR);
   if (R > 0 && CORNER_OPS.includes(op)) { if (D / 2 > R * 1.001) { ok = false; bad.push(`Ø${fmt(D, 1)} не влізе в кут R${fmt(R, 1)}`); } else s += Math.min(D, 2 * R / 1.3) * 1.2; }
-  // паз: ширину задає креслення — потрібна фреза саме такого Ø (вужча — це вже виборка в кілька проходів)
-  const sw = num(ctx.slotW);
+  // паз: ширину задає креслення. З припуском на чистову — фреза вужча за чорновий паз (найкраще ≈0,8 його ширини:
+  // прохід по центру і невеликі розширення з боків); «у розмір» — фреза саме такого Ø
+  const sw = num(ctx.slotW), sa = sw > 0 ? Math.max(0, num(ctx.slotA) || 0) : 0, swr = sw - 2 * sa;
   if (op === 'slot' && sw > 0) {
-    if (Math.abs(D - sw) <= Math.max(0.02 * sw, 0.05)) { s += 30; why.unshift(`Ø${fmt(D, 2)} = ширина паза`); }
-    else if (D < sw) { s -= 20; bad.push(`вужча за паз ${fmt(sw, 2)} — вийде виборкою`); }
-    else { ok = false; bad.push(`ширша за паз ${fmt(sw, 2)}`); }
+    if (D > swr + 0.005) { ok = false; bad.push(sa > 0 ? `ширша за чорновий паз ${fmt(swr, 2)} (по ${fmt(sa, 2)} лишається на чистову)` : `ширша за паз ${fmt(sw, 2)}`); }
+    else if (sa > 0) {
+      const k = D / swr; s += 30 - 70 * Math.abs(k - 0.8);
+      why.unshift(k > 0.97 ? `Ø${fmt(D, 2)} — чорновий паз за один прохід` : `Ø${fmt(D, 2)}: центр + по ${fmt((swr - D) / 2, 2)} з боків, ${fmt(sa, 2)} лишає на чистову`);
+    }
+    else if (Math.abs(D - sw) <= Math.max(0.02 * sw, 0.05)) { s += 30; why.unshift(`Ø${fmt(D, 2)} = ширина паза`); }
+    else { s -= 20; bad.push(`вужча за паз ${fmt(sw, 2)} — вийде виборкою`); }
   }
   if (op === 'bore') { const Dh = num(ctx.boreD); if (Dh > 0) { if (D >= Dh * 0.98) { ok = false; bad.push(`Ø${fmt(D, 1)} не менша за отвір`); } else s += 12 - 30 * Math.abs(D / Dh - 0.65); } }
   if (op === 'thread') {
@@ -4012,7 +4385,7 @@ let rankCache = null;
 function rankTools(op = S.op) {
   const mach = curMachine(), mat = curMat(), O = OPS[op];
   if (!O || !mat) return [];
-  const ctx = { depth: op === 'engrave' ? S.engrDepth : S.depth, cornerR: S.cornerR, boreD: S.boreD, thM: S.thM, thP: S.thP, thIn: S.thIn, slotW: S.slotW };
+  const ctx = { depth: op === 'engrave' ? S.engrDepth : S.depth, cornerR: S.cornerR, boreD: S.boreD, thM: S.thM, thP: S.thP, thIn: S.thIn, slotW: S.slotW, slotA: num(S.slotW) > 0 ? slotAllow(S, mat)[0] : 0 };
   const key = JSON.stringify([op, mat.id, mach.id, ctx, S.mode, Object.keys(DB.tools).length, Object.keys(DB.hist).length, DB.cfg.tol]);
   if (rankCache && rankCache.key === key) return rankCache.list;
   const list = sortedTools().map(t => ({ t, ...toolFit(t, op, mat, mach, ctx) })).sort((a, b) => b.s - a.s);
@@ -4051,7 +4424,10 @@ function chooseTask(op) {
   // ручна фреза під розмір задачі: різьбофреза ≈0,6 Ø різьби, паз — Ø як ширина
   const th = op === 'thread' ? thrSpec(S) : null;
   if (th) S.manual.d = String(Math.max(1, Math.floor(th.d * 0.6 * 2) / 2));
-  if (op === 'slot' && num(S.slotW) > 0) S.manual.d = String(num(S.slotW));
+  if (op === 'slot' && num(S.slotW) > 0) {
+    const [a] = slotAllow(S, curMat()), wr = num(S.slotW) - 2 * a;
+    S.manual.d = String(a > 0 ? (STD_D.filter(d => d <= wr * 0.85).pop() || Math.max(0.5, Math.floor(wr * 10) / 10)) : num(S.slotW));
+  }
   toast('Такої фрези в базі немає — впиши її дані або додай у «Фрези»');
 }
 function fitHTML(tool) {
@@ -4062,6 +4438,15 @@ function fitHTML(tool) {
   else if (mine && top && top.s - mine.s > 12) out = `<button class="fit alt" data-act="useBest" data-id="${top.t.id}">${ic('tip')}<span>Краще взяти <b>${esc(top.t.name)}</b>${top.why.length ? ' — ' + esc(top.why[0]) : ''}</span>${ic('chev', 'chev')}</button>`;
   if (mine && mine.bad.length) out += `<div class="fit w">${ic('alert')}<span>${esc(mine.bad.slice(0, 2).join('; '))}</span></div>`;
   return out;
+}
+// Паз: скільки лишити на чистову — кнопки під полями; без ширини — підказка
+function slotUI(tool, mat) {
+  const W = num(S.slotW), H = num(S.depth), D = num(tool.d), [a, ab] = slotAllow(S, mat);
+  if (!(W > 0)) return `<div class="hint inhint slh">${ic('info')}<span>Впиши <b>ширину готового паза</b> — апка візьме фрезу, вужчу за паз, і залишить припуск на чистову. Без ширини — паз рівно на Ø фрези.</span></div>`;
+  const wr = W - 2 * a, hr = H - ab;
+  return `<div class="qk sla"><span>Лишити на чистову</span>${[0, 0.2, 0.3, 0.4, 0.5].map(x => `<button class="${Math.abs(a - x) < 1e-6 ? 'on' : ''}" data-act="slotA" data-v="${x}">${x ? fmt(x, 2) : 'нічого'}<small>${x ? `дно ${fmt(slotAllowB(x), 2)}` : 'у розмір'}</small></button>`).join('')}</div>
+    <div class="slsum"><div><span>Готовий</span><b>${fmt(W, 2)} × ${H > 0 ? fmt(H, 2) : '—'}</b></div><i>→</i><div><span>Після чорнової</span><b>${wr > 0 ? fmt(wr, 2) : '—'} × ${hr > 0 ? fmt(hr, 2) : '—'}</b></div>
+      ${D > 0 && wr > 0 ? `<div class="${D > wr + 0.005 ? 'bad' : ''}"><span>Фреза</span><b>Ø${fmt(D, 2)}</b></div>` : ''}</div>`;
 }
 function setOp(id) {
   const prev = S.op;
@@ -4094,7 +4479,7 @@ function renderCalc() {
   if (!ops.includes(S.op)) { S.op = ops[0]; S.aeMm = ''; }
   const O = OPS[S.op], manual = tool.id === '__manual', mt = S.manual, rec = recentCombos();
   const depthKey = S.op === 'engrave' ? 'engrDepth' : 'depth';
-  const depthLbl = S.op === 'engrave' ? 'Глибина гравіювання, мм' : S.op === 'face' ? 'Зняти всього, мм' : ['drill', 'bore', 'ream'].includes(S.op) ? 'Глибина отвору, мм'
+  const depthLbl = S.op === 'slot' ? 'Глибина паза, мм' : S.op === 'engrave' ? 'Глибина гравіювання, мм' : S.op === 'face' ? 'Зняти всього, мм' : ['drill', 'bore', 'ream'].includes(S.op) ? 'Глибина отвору, мм'
     : S.op === 'tap' || S.op === 'thread' ? 'Довжина різьби, мм' : S.op === 'floor' ? 'Припуск на дні, мм' : ['contour', 'semi', 'finish'].includes(S.op) ? 'Висота стінки, мм' : 'Глибина обробки, мм';
   const tk = S.task && TASKS.some(t => t[0] === S.task) ? S.task : taskOf(S.op), tOps = TASKS.find(t => t[0] === tk)[2];
   const gs = gradeOf(mat), sts = gs ? statesOf(gs.g) : [];
@@ -4144,11 +4529,12 @@ function renderCalc() {
         <button data-act="step" data-k="${depthKey}" data-d="-1" aria-label="Менше">−</button>
         <input data-calc="${depthKey}" inputmode="decimal" autocomplete="off" value="${esc(S[depthKey])}">
         <button data-act="step" data-k="${depthKey}" data-d="1" aria-label="Більше">+</button></div></div>`}
-      ${S.op === 'slot' ? `<label class="f aebox"><span>Ширина паза</span><input data-calc="slotW" inputmode="decimal" autocomplete="off" placeholder="${D > 0 ? fmt(D, 2) : '—'}" value="${esc(S.slotW)}"></label>` : ''}
+      ${S.op === 'slot' ? `<label class="f aebox"><span>Ширина паза, мм</span><input data-calc="slotW" inputmode="decimal" autocomplete="off" placeholder="${D > 0 ? fmt(D, 2) : '—'}" value="${esc(S.slotW)}"></label>` : ''}
       ${S.op === 'bore' ? `<label class="f aebox"><span>Ø отвору, мм</span><input data-calc="boreD" inputmode="decimal" autocomplete="off" placeholder="${D > 0 ? fmt(rAp(D * 1.6), 1) : ''}" value="${esc(S.boreD)}"></label>` : ''}
       ${showAe ? `<label class="f aebox"${S.op === 'f3d' ? ' style="flex:1;width:auto"' : ''}><span>${AE_LABEL[S.op] || 'Ширина, мм'}</span><input data-calc="aeMm" inputmode="decimal" autocomplete="off" placeholder="${Number.isFinite(aeDef) ? fmt(aeDef, 2) : ''}" value="${esc(S.aeMm)}"></label>` : ''}
     </div>
     ${S.op === 'chamfer' ? `<div class="qk"><span>Фаска</span>${[0.2, 0.3, 0.5, 1, 1.5, 2].map(x => `<button class="${num(S.chamC) === x ? 'on' : ''}" data-act="chamQ" data-v="${x}">C${fmt(x, 1)}</button>`).join('')}</div>` : ''}
+    ${S.op === 'slot' ? slotUI(tool, mat) : ''}
     ${qk.length ? `<div class="qk"><span>${aeFin ? 'Припуск' : S.op === 'f3d' ? 'Крок' : 'Ширина'}</span>${qk.map(x => `<button class="${num(S.aeMm) === x ? 'on' : ''}" data-act="aeQ" data-v="${x}">${fmt(x, 2)}${aeFin ? '' : `<small>${Math.round(x / D * 100)}%</small>`}</button>`).join('')}</div>` : ''}
     <div class="hint inhint${tooDeep ? ' bad' : ''}">${tooDeep ? `Глибина більша за різальну частину фрези (${fmt(lc, 1)} мм) — не дістане. ` : ''}${esc(DEPTH_HINT[S.op] || '')}${showAe ? ' Порожня ширина — типова.' : ''}</div>
     ${showLo || showCorner || (S.op === 'bore' && !SIMPLE) ? `<div class="lorow">
@@ -4386,7 +4772,7 @@ function camHTML(r, v, mach, rng) {
   const fTxt = ms ? (v.F / 60).toFixed(v.F < 60 ? 2 : 1) : String(Math.round(v.F));
   const sc = (val, a, mx, unit, f) => (a ? `${limbSVG(val, a[0], a[1], mx)}<span>обережно ${f(a[0])} · продуктивно ${f(a[1])}${mx > 0 ? ` · межа ${f(mx)}` : ''}</span>` : '');
   const fu = x => (ms ? fmt(x / 60, x < 60 ? 2 : 1) : fmt(x));
-  return `<section class="card cam"><div class="cam-h"><div class="label">${ic('edit')}${cam === 'other' ? 'Що поставити' : `Вписати в ${CAMS[cam]}`}</div>
+  return `<section class="card cam"><div class="cam-h"><div class="label">${ic('edit')}${cam === 'other' ? 'Що поставити' : cam === 'artcam' ? 'Режим різання' : `Вписати в ${CAMS[cam]}`}</div>
       <button class="icon-btn" data-act="copyCam" aria-label="Копіювати">${ic('copy')}</button></div>
     <div class="dro">
       <div class="dro-r"><div class="dro-k"><b>S</b><span>${esc(rows[0][1])}${rows[0][0] ? `<i>${esc(rows[0][0])}</i>` : ''}</span></div>
@@ -4396,8 +4782,140 @@ function camHTML(r, v, mach, rng) {
         <div class="dro-v"><div class="tnum">${fu(v.F)}</div>${segSVG(fTxt, ms ? 4 : 5, 'droF')}<small>${ms ? 'мм/с' : 'мм/хв'}</small></div>
         ${rng ? `<div class="dro-sc">${sc(v.F, rng.F, fLim, ms ? 'мм/с' : 'мм/хв', fu)}</div>` : ''}</div>
     </div>
-    ${rows.slice(2).map(([en, uk, val, unit, rg]) => `<div class="cam-r"><div><b>${esc(uk)}</b>${en ? `<i>${esc(en)}</i>` : ''}${rg ? `<em class="rg">${esc(rg)}</em>` : ''}</div><div class="v">${esc(val)}${unit ? `<small>${esc(unit)}</small>` : ''}</div></div>`).join('')}
+    ${passHTML(r, v, mach)}
+    ${rows.slice(2).filter(x => !TILED.has(x[1]) || !passTiles(r, v, mach).length).map(([en, uk, val, unit, rg]) => `<div class="cam-r"><div><b>${esc(uk)}</b>${en && cam !== 'artcam' ? `<i>${esc(en)}</i>` : ''}${rg ? `<em class="rg">${esc(rg)}</em>` : ''}</div><div class="v">${esc(val)}${unit ? `<small>${esc(unit)}</small>` : ''}</div></div>`).join('')}
   </section>`;
+}
+// Проходи плитками під S і F: крок вниз × кількість, ширина / крок убік, врізання — те, що вписують у CAM поруч з обертами
+const TILED = new Set(['Глибина за прохід', 'Ширина зняття', 'Крок між проходами', 'Врізання по Z', 'Врізання — лише рампою', 'Врізання', 'Опускання у вибране']);
+function passTiles(r, v, mach) {
+  const op = r.op, ms = msOf(mach), fu = x => (ms ? fmt(x / 60, x < 60 ? 2 : 1) : fmt(x)), u = ms ? 'мм/с' : 'мм/хв', out = [];
+  if (['bore', 'tap', 'ream', 'thread', 'chamfer', 'drill'].includes(op)) return out;
+  const ps = v.passes || 1;
+  if (op !== 'f3d' && v.ap > 0) out.push(['Крок вниз', fmt(v.ap, 2), 'мм', ps > 1 ? `${ps} ${plural(ps, 'прохід', 'проходи', 'проходів')} до ${fmt(r.total, 2)}` : `один прохід на ${fmt(r.total, 2)}`]);
+  if (op === 'slot') out.push(['Ширина', fmt(r.slot ? r.slot.Wr : r.D, 2), 'мм', r.slot && r.slot.side > 0.01 ? `центр + по ${fmt(r.slot.side, 2)} з боків` : 'повний Ø фрези']);
+  else if (v.ae > 0 && op !== 'engrave') out.push([op === 'f3d' ? 'Крок убік' : ['semi', 'finish'].includes(op) ? 'Зняти зі стінки' : 'Крок убік', fmt(v.ae, 2), 'мм', `${Math.round(v.ae / r.D * 100)}% від Ø`]);
+  if (['z', 'ramp', 'side'].includes(r.plungeHow) && op !== 'engrave') out.push(['Врізання', r.plungeHow === 'side' ? 'збоку' : fu(v.Fz ?? r.Fz), r.plungeHow === 'side' ? '' : u,
+    r.plungeHow === 'ramp' ? `лише рампою ≤ ${fmt(r.ramp, 1)}°` : r.plungeHow === 'side' ? 'з-за краю заготовки' : op === 'floor' ? 'у вибране' : 'по Z']);
+  return out;
+}
+function passHTML(r, v, mach) {
+  const t = passTiles(r, v, mach); if (!t.length) return '';
+  return `<div class="pass c${t.length}">${t.map(([k, val, u, sub]) => `<div><span>${esc(k)}</span><b>${esc(val)}${u ? `<small>${esc(u)}</small>` : ''}</b><em>${esc(sub)}</em></div>`).join('')}</div>`;
+}
+// План паза: розріз — готовий контур, припуск штриховкою, фреза по центру, рівні проходів
+function slotSVG(s, D, ps) {
+  const m = Math.max(s.W * 0.42, 3), Wt = s.W + 2 * m, Ht = s.H * 1.32 + Math.max(1, s.H * 0.1);
+  const k = Math.min(230 / Wt, 104 / Ht), cx = 150, y0 = 26, X = x => f2(cx + x * k), Y = y => f2(y0 + y * k);
+  // припуск малюємо не тоншим за 4% ширини — інакше на телефоні штриховки не видно (підписи — справжні)
+  const av = s.a > 0 ? Math.max(s.a, s.W * 0.04) : 0, abv = s.ab > 0 ? Math.max(s.ab, s.H * 0.06) : 0, Wr = s.W - 2 * av, Hr = s.H - abv;
+  const hw = s.W / 2, hr = Wr / 2, hd = Math.min(D / s.Wr * Wr, Wr) / 2, id = 'sh' + (++svgSeq), H = f2(y0 + Ht * k + 8);
+  let lv = '';
+  for (let i = 1; i < ps; i++) lv += `M${X(-hr)} ${Y(Hr * i / ps)}H${X(hr)}`;
+  const dimW = `<path class="sp-dim" d="M${X(-hw)} ${y0 - 14}H${X(hw)}M${X(-hw)} ${y0 - 18}v8M${X(hw)} ${y0 - 18}v8"/><text class="sp-t" x="${cx}" y="${y0 - 18}" text-anchor="middle">${fmt(s.W, 2)}</text>`;
+  const xr = +X(hw + m) + 10, dimH = `<path class="sp-dim" d="M${xr} ${Y(0)}V${Y(s.H)}M${xr - 4} ${Y(0)}h8M${xr - 4} ${Y(s.H)}h8"/><text class="sp-t" x="${xr + 6}" y="${f2((+Y(0) + +Y(s.H)) / 2 + 3.5)}">${fmt(s.H, 2)}</text>`;
+  return `<svg class="slotsvg" viewBox="0 0 300 ${H}" role="img" aria-label="Розріз паза">
+    <defs><pattern id="${id}" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0v4" class="sp-hat"/></pattern></defs>
+    <path class="sp-stock" fill-rule="evenodd" d="M${X(-hw - m)} ${Y(0)}H${X(hw + m)}V${Y(Ht)}H${X(-hw - m)}ZM${X(-hw)} ${Y(0)}V${Y(s.H)}H${X(hw)}V${Y(0)}Z"/>
+    ${s.a > 0 || s.ab > 0 ? `<path fill="url(#${id})" class="sp-allow" fill-rule="evenodd" d="M${X(-hw)} ${Y(0)}V${Y(s.H)}H${X(hw)}V${Y(0)}ZM${X(-hr)} ${Y(0)}V${Y(Hr)}H${X(hr)}V${Y(0)}Z"/>` : ''}
+    ${s.side > 0.01 ? `<rect class="sp-side" x="${X(-hr)}" y="${Y(0)}" width="${f2(Wr * k)}" height="${f2(Hr * k)}"/>` : ''}
+    <rect class="sp-tool" x="${X(-hd)}" y="${Y(0)}" width="${f2(2 * hd * k)}" height="${f2(Hr * k)}"/>
+    ${lv ? `<path class="sp-lv" d="${lv}"/>` : ''}
+    <path class="sp-fin" d="M${X(-hw)} ${Y(0)}V${Y(s.H)}H${X(hw)}V${Y(0)}"/>
+    <path class="sp-top" d="M${X(-hw - m)} ${Y(0)}H${X(-hw)}M${X(hw)} ${Y(0)}H${X(hw + m)}"/>
+    ${dimW}${dimH}
+    <text class="sp-t sp-tt" x="${cx}" y="${f2(+Y(Hr / 2) + 3.5)}" text-anchor="middle">Ø${fmt(D, 1)}</text>
+  </svg>`;
+}
+function slotHTML(r, v) {
+  const s = r.slot, D = r.D, ps = v.passes || 1, fin = s.a > 0 || s.ab > 0;
+  return `<section class="card slotp"><div class="label">${ic('slot')}План паза</div>
+    ${slotSVG(s, D, ps)}
+    <div class="sp-key"><span><i class="k-t"></i>фреза, прохід по центру</span>${s.side > 0.01 ? '<span><i class="k-s"></i>розширення з боків</span>' : ''}${fin ? '<span><i class="k-a"></i>припуск на чистову</span>' : ''}</div>
+    <div class="sp-rows">
+      <div><span>Готовий паз</span><b>${fmt(s.W, 2)} × ${fmt(s.H, 2)} мм</b></div>
+      ${fin ? `<div><span>Після чорнової</span><b>${fmt(s.Wr, 2)} × ${fmt(s.Hr, 2)} мм</b><em>лишає ${fmt(s.a, 2)} на стінку і ${fmt(s.ab, 2)} на дно</em></div>` : ''}
+      <div><span>По глибині</span><b>${ps} × ${fmt(v.ap, 2)} мм</b></div>
+      <div><span>По ширині</span><b>${s.side > 0.01 ? `центр + по ${fmt(s.side, 2)} мм з боків` : 'один прохід по центру'}</b>${s.steps > 1 ? `<em>з кожного боку ${s.steps} ${plural(s.steps, 'прохід', 'проходи', 'проходів')}</em>` : ''}</div>
+    </div>
+    ${fin ? `<div class="sp-next"><span>Далі — чистова тим, що точніше</span><div class="btns">${s.a > 0 ? `<button class="btn" data-act="goFin" data-v="finish">${ic('finish')}Стінки · ${fmt(s.a, 2)}</button>` : ''}${s.ab > 0 ? `<button class="btn" data-act="goFin" data-v="floor">${ic('floor')}Дно · ${fmt(s.ab, 2)}</button>` : ''}</div></div>` : ''}
+  </section>`;
+}
+// ---------- ArtCAM: куди що вписати ----------
+// Назви — як у самому ArtCAM (англійською; у російському ArtCAM — ті самі поля), під ними — що це.
+// Подача в ArtCAM — в одиницях з поля Rate Units: за замовчуванням мм/с, тому показуємо саме в них (перемикач — у картці).
+const artMs = m => !m || m.camUnits !== 'mmmin';
+const ART_OP = {
+  slot: ['Area Clearance', 'Выборка'], pocket: ['Area Clearance', 'Выборка'], adaptive: ['Area Clearance', 'Выборка'], face: ['Area Clearance', 'Выборка, растр'],
+  floor: ['Area Clearance', 'Выборка'], contour: ['Profile Machining', 'Обработка по профилю'], semi: ['Profile Machining', 'Обработка по профилю'],
+  finish: ['Profile Machining', 'Обработка по профилю'], bore: ['Profile Machining', 'Обработка по профилю, по колу'], r3d: ['Z Level Roughing', 'Черновая обработка'],
+  f3d: ['Machine Relief', 'Обработка рельефа'], engrave: ['V-Bit Carving', 'V-гравировка'], chamfer: ['Profile Machining', 'Профиль фасочной фрезой'],
+  drill: ['Drilling', 'Сверление'], ream: ['Drilling', 'Сверление, без выведения'],
+};
+function artGuide(r, v, mach, mat) {
+  const op = r.op, ms = artMs(mach), fu = x => (ms ? fmt(x / 60, x < 60 ? 2 : 1) : fmt(x)), uu = ms ? 'мм/с' : 'мм/хв';
+  const D = r.D, s = r.slot, ps = v.passes || 1, metal = mat.g === 'metal', safe = machKind(mach) === 'metal' ? 5 : 10;
+  const tool = [], path = [], warn = [];
+  if (op === 'tap') return { none: 'ArtCAM не робить жорстке нарізання мітчиком. Задай цикл на стійці: CYCLE84 (Siemens) або G84 (Fanuc) — оберти й подача F = S × крок з картки вище.' };
+  if (op === 'thread') return { none: 'В ArtCAM немає різьбофрезерування. Зроби його в Fusion 360 (операція Thread) або підпрограмою спіраллю G2/G3 з кроком різьби.' };
+  const [en, ru] = ART_OP[op] || ART_OP.pocket;
+  path.push(['Toolpath', 'Траєкторія', en, ru]);
+  tool.push(['Diameter (D)', 'Діаметр', `${fmt(D, 2)} мм`, '']);
+  if (op !== 'drill' && op !== 'ream' && op !== 'f3d' && v.ap > 0) tool.push(['Stepdown', 'Крок вниз за прохід', `${fmt(v.ap, 2)} мм`, ps > 1 ? `${ps} ${plural(ps, 'прохід', 'проходи', 'проходів')}` : 'один прохід']);
+  const so = op === 'slot' || op === 'adaptive' ? rAp(0.4 * D) : v.ae > 0 ? v.ae : NaN;
+  if (Number.isFinite(so) && !['contour', 'semi', 'finish', 'bore', 'chamfer', 'engrave', 'drill', 'ream'].includes(op))
+    tool.push(['Stepover', 'Крок убік', `${fmt(so, 2)} мм`, `${Math.round(so / D * 100)}% від Ø`]);
+  tool.push(['Spindle Speed', 'Оберти', `${fmt(v.n)} об/хв`, '']);
+  tool.push(['Feed Rate', 'Подача', `${fu(v.F)} ${uu}`, ms ? `= ${fmt(v.F)} мм/хв` : `= ${fmt(v.F / 60, 1)} мм/с`]);
+  const fz = op === 'drill' || op === 'ream' ? v.F : v.Fz ?? r.Fz;
+  if (fz > 0) tool.push(['Plunge Rate', 'Подача врізання', `${fu(fz)} ${uu}`, r.plungeHow === 'ramp' ? 'врізання лише рампою' : r.plungeHow === 'side' ? 'заходить збоку' : '']);
+  tool.push(['Rate Units', 'Одиниці подачі', ms ? 'mm/sec' : 'mm/min', 'має збігатись з цією карткою']);
+  // глибини й припуск
+  let start = 0, fin = r.total, allow = 0, note = '';
+  if (s) { fin = s.Hr; allow = s.a; note = s.ab > 0 ? `готовий паз ${fmt(s.H, 2)} мінус ${fmt(s.ab, 2)} на дно` : ''; }
+  if (op === 'floor') { const H = num(S.depthMain) > r.total ? num(S.depthMain) : NaN; start = Number.isFinite(H) ? H - r.total : NaN; fin = H; note = Number.isFinite(H) ? '' : 'Кінцева — глибина дна; Початкова — на припуск вище'; }
+  if (op === 'semi') allow = metal ? 0.15 : 0.1;
+  if (op === 'r3d') allow = metal ? 0.3 : 0.5;
+  if (op === 'chamfer' && r.cham) fin = rAp(r.cham.toff + r.cham.a);
+  if (op !== 'f3d') {
+    path.push(['Start Depth (S)', 'Початкова глибина', Number.isFinite(start) ? `${fmt(start, 2)} мм` : 'дно − припуск', '0 — верх заготовки']);
+    path.push(['Finish Depth (F)', 'Кінцева глибина', Number.isFinite(fin) ? `${fmt(fin, 2)} мм` : 'глибина дна', note]);
+  }
+  if (!['drill', 'ream', 'engrave'].includes(op)) path.push(['Allowance', 'Припуск', `${fmt(allow, 2)} мм`, s && allow > 0 ? 'на стінки — під чистову' : op === 'semi' ? 'лишити на чистову' : op === 'finish' || op === 'floor' ? 'чистова — в розмір' : '']);
+  if (['contour', 'semi', 'finish', 'bore', 'chamfer'].includes(op)) path.push(['Profile Side', 'Сторона', op === 'bore' ? 'Inside' : 'Inside / Outside', op === 'bore' ? 'всередині кола' : 'паз, кишеня — Inside; контур деталі — Outside']);
+  if (!['drill', 'ream', 'engrave', 'f3d'].includes(op)) path.push(['Cut Direction', 'Напрямок', 'Climb', metal ? 'попутне — для металу на ЧПУ' : 'попутне — чистіший край']);
+  if (['slot', 'pocket', 'adaptive', 'floor'].includes(op)) path.push(['Strategy', 'Стратегія', 'Offset', 'зміщення по контуру']);
+  if (op === 'face') path.push(['Strategy', 'Стратегія', 'Raster', 'растр уздовж довшої сторони']);
+  if (op === 'drill') path.push(['Peck Drilling', 'Свердління з виведенням', `крок ${fmt(v.ap, 2)} мм`, 'стружка виходить, свердло не забивається']);
+  if (op === 'bore') path.push(['Ramp', 'Врізання по спіралі', `${fmt(v.ap, 2)} мм за коло`, 'Ramp along profile — по всьому колу']);
+  else if (r.plungeHow === 'ramp' && v.ap > 0) path.push(['Ramp Moves', 'Врізання рампою', `кут ≤ ${fmt(r.ramp, 1)}°`, `на ${fmt(v.ap, 2)} мм вниз — ${fmt(Math.ceil(v.ap / Math.tan((r.ramp || 3) * Math.PI / 180)))} мм ходу (зигзагом, якщо коротко)`]);
+  else if (r.plungeHow === 'side') path.push(['Lead Moves', 'Підхід', 'збоку', 'початок за межами заготовки']);
+  path.push(['Safe Z', 'Безпечна Z', `${safe} мм`, 'над заготовкою']);
+  path.push(['Tolerance', 'Допуск', '0,01 мм', '']);
+  if (op === 'adaptive') warn.push('В ArtCAM немає трохоїди: перший прохід виборки ріже повним Ø, як паз. Або постав крок вниз як для «Паз», або зроби адаптивну у Fusion 360.');
+  if (op === 'pocket' || op === 'slot') warn.push('Перший прохід виборки на кожному рівні ріже повним Ø — подачу пораховано саме під нього.');
+  return { tool, path, warn, ms };
+}
+function guideHTML(r, v, mach, mat) {
+  const cam = machCam(mach);
+  const sw = `<div class="cg-sw" role="tablist">${['artcam', 'fusion'].map(c => `<button class="${cam === c ? 'on' : ''}" data-act="camSet" data-v="${c}">${CAMS[c]}</button>`).join('')}</div>`;
+  if (cam !== 'artcam') return `<section class="card cguide"><div class="cg-h"><div class="label">${ic('edit')}Куди вписати</div>${sw}</div><div class="hint cg-hint">Назви полів Fusion 360 — сірим під рядками в картці режиму вище.</div></section>`;
+  const G = artGuide(r, v, mach, mat);
+  const row = ([en, uk, val, note]) => `<div class="cg-r"><div class="cg-k"><b>${esc(en)}</b><span>${esc(uk)}</span></div><div class="cg-v"><b>${esc(val)}</b>${note ? `<small>${esc(note)}</small>` : ''}</div></div>`;
+  const grp = (n, t, where, rows) => `<div class="cg-g"><div class="cg-gh"><i>${n}</i><div><b>${t}</b><span>${where}</span></div></div>${rows.map(row).join('')}</div>`;
+  return `<section class="card cguide"><div class="cg-h"><div class="label">${ic('edit')}ArtCAM — що куди вписати</div>${sw}</div>
+    ${G.none ? `<div class="note i">${ic('info')}<div>${esc(G.none)}</div></div>` : `
+    ${grp(1, 'Інструмент', 'База инструментов → фреза → Редактировать', G.tool)}
+    ${grp(2, 'Траєкторія', `Траектории → ${['r3d', 'f3d'].includes(r.op) ? '3D' : '2D'} → ${esc(G.path[0][2])} (${esc(G.path[0][3])})`, G.path.slice(1))}
+    <div class="cg-u"><span>Одиниці подачі у твоєму ArtCAM</span><div class="seg2">${[['mms', 'мм/с'], ['mmmin', 'мм/хв']].map(([k, n]) => `<button class="${(G.ms ? 'mms' : 'mmmin') === k ? 'on' : ''}" data-act="artU" data-v="${k}">${n}</button>`).join('')}</div></div>
+    ${G.warn.length ? `<div class="req">${G.warn.map(w => `<div class="note i">${ic('info')}<div>${esc(w)}</div></div>`).join('')}</div>` : ''}
+    <button class="btn cg-copy" data-act="copyArt">${ic('copy')}Скопіювати список</button>`}
+  </section>`;
+}
+function artText(r, v, mach, mat) {
+  const G = artGuide(r, v, mach, mat); if (G.none) return G.none;
+  const L = rows => rows.map(([en, uk, val, note]) => `${en} (${uk}): ${val}${note ? ' — ' + note : ''}`);
+  return [`ArtCAM · ${OPS[r.op].n}`, `Траєкторія: ${G.path[0][2]} (${G.path[0][3]})`, '— Інструмент —', ...L(G.tool), '— Траєкторія —', ...L(G.path.slice(1))].join('\n');
 }
 function camText(r, v, mach) {
   const { cam, rows } = camRows(r, v, mach);
@@ -4515,6 +5033,8 @@ function renderResult() {
     ${statusHTML(g, how, how === 'calc' ? limitText(g, tool) : '')}
     ${camHTML(g, vals, mach, rng)}
     ${metalMach ? `<div class="gline"><code>S${Math.round(vals.n)} M3${coolM(mat, mach, g)} <em>·</em> ${S.op === 'tap' ? `CYCLE84 · G84 F${Math.round(vals.F * 10) / 10}` : `G1 F${Math.round(vals.F)}`}</code><button class="icon-btn" data-act="copyG" aria-label="Копіювати G-код">${ic('copy')}</button></div>` : ''}
+    ${g.slot ? slotHTML(g, vals) : ''}
+    ${guideHTML(g, vals, mach, mat)}
     ${alerts.length ? `<div class="sec"><i>${sn()}</i>Зверни увагу</div><div class="req">${alerts.map((w, i) => `<div class="note ${w.t}"><span class="no">${i + 1}.</span><div>${esc(w.m)}</div></div>`).join('')}</div>` : ''}
     ${fbHTML(g, how, mat, mach)}
     <div class="actions"><button class="btn primary" data-act="saveRun">${ic("save")}Зберегти</button><button class="icon-btn" data-act="copyRun" aria-label="Копіювати все">${ic('copy')}</button><button class="btn" data-act="checkMine">${ic('edit')}Свої значення</button><button class="btn" data-act="addToPart">${ic('parts')}В деталь</button></div>
@@ -5713,7 +6233,8 @@ function rateButtons(cur) {
     `<button type="button" class="${cur === k ? 'on' : ''}" data-act="rate" data-v="${k}">${r.e} ${r.n}</button>`).join('')}</div>`;
 }
 // Подача у формах — в одиницях верстата (ArtCAM — мм/с), зберігається завжди в мм/хв
-const msOf = m => !!m && (machCam(m) === 'artcam' || m.units === 'mms');
+// мм/с на екрані: верстат у мм/с або ArtCAM, якщо для верстата не вибрано мм/хв явно
+const msOf = m => !!m && (m.units === 'mms' || (machCam(m) === 'artcam' && m.units !== 'mmmin'));
 // Подача для показу — в одиницях верстата
 const fF = (F, m) => (msOf(m) ? `${fmt(F / 60, F < 60 ? 2 : 1)} мм/с` : `${fmt(F)} мм/хв`);
 function runFields(v, op, ms) {
@@ -6623,6 +7144,7 @@ async function seedInventory() {
     const pre = Object.keys(TG).find(k => String(p.id).startsWith(k)); if (!pre) continue;
     const [target, key] = TG[pre], o = target[p.id];
     if (!o || !Object.entries(p.if || {}).every(([k, v]) => o[k] === v || num(o[k]) === num(v))) continue;
+    if ((p.ifNo || []).some(k => o[k] != null && o[k] !== '')) continue;   // лише якщо поля ще немає (користувач не вписував)
     Object.assign(o, p.set || {}); await Store.set(key + o.id, o);
   }
   // застарілі записи інвентаря (замінені новими) — прибираємо
@@ -6713,6 +7235,18 @@ const ACT = {
   useBest: el => { if (!DB.tools[el.dataset.id]) return; S.toolId = el.dataset.id; S.autoTool = el.dataset.id; S.useVer = null; S.mine = null; saveCfgSoon(); renderCalc(); haptic('sel'); },
   chamQ: el => { S.chamC = el.dataset.v; S.useVer = null; S.mine = null; saveCfgSoon(); renderCalc(); haptic('sel'); },
   thIn: el => { if (S.thIn === el.dataset.v) return; S.thIn = el.dataset.v; S.useVer = null; S.mine = null; saveCfgSoon(); renderCalc(); haptic('sel'); },
+  slotA: el => { S.slotA = el.dataset.v; rankCache = null; S.useVer = null; S.mine = null; saveCfgSoon(); renderCalc(); haptic('sel'); },
+  // з плану паза — одразу на чистову: стінки знімають припуск, дно — свій
+  goFin: el => {
+    const s = lastCalc && lastCalc.slot; if (!s) return;
+    const op = el.dataset.v; S.task = 'fin'; S.depthMain = String(s.H);
+    chooseTask(op);
+    if (op === 'finish') { S.depth = String(s.H); S.aeMm = String(s.a); } else { S.depth = String(s.ab); S.depthMain = String(s.H); }
+    S.useVer = null; S.mine = null; rankCache = null; saveCfgSoon(); renderCalc(); window.scrollTo({ top: 0, behavior: NO_MOTION ? 'auto' : 'smooth' }); haptic('sel');
+  },
+  camSet: async el => { const m = curMachine(); if (!m || m.cam === el.dataset.v) return; m.cam = el.dataset.v; await Store.set('s_' + m.id, m); renderResult(); haptic('sel'); },
+  artU: async el => { const m = curMachine(); if (!m) return; m.camUnits = el.dataset.v; await Store.set('s_' + m.id, m); renderResult(); haptic('sel'); },
+  copyArt: () => { const el = $('#result'); if (el && el._g) copyText(artText(el._g, el._vals, curMachine(), curMat()), 'Список для ArtCAM скопійовано'); },
   aeQ: el => { setCalc('aeMm', num(S.aeMm) === +el.dataset.v ? '' : el.dataset.v, true); haptic('sel'); },
   focusLo: () => {
     const i = view.querySelector('[data-calc="lo"]'); if (!i) return;
@@ -7163,11 +7697,12 @@ const Intro = (() => {
     if (phase !== 'done') return;
     if (!force && (!on() || TEST || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches))) return;
     phase = 'load'; bye = onDone || null;
+    const TM = window.__introT = { t0: performance.now() }, mark = k => { TM[k] = Math.round(performance.now() - TM.t0); };
     const me = el = document.createElement('div'); el.id = 'intro';
     const word = [...'Режими ЧПУ'].map((c, i) => `<span style="--i:${i}">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
     el.innerHTML = `<canvas aria-hidden="true"></canvas><div class="in-vig"></div><div class="in-fr"><i></i><i></i><i></i><i></i></div>
       <div class="in-st"><i></i><span>SGSK VMC1160</span><b>ОЧІКУВАННЯ</b></div>
-      <div class="in-t"><b>${word}</b><span>оберти · подача · глибина — під твій верстат</span></div>
+      <div class="in-t"><b>${word}</b><i></i><span>оберти · подача · глибина — під твій верстат</span></div>
       <div class="in-rd"><div><span>оберти</span><b>0</b><em>об/хв</em></div><div><span>подача</span><b>0</b><em>мм/хв</em></div><div><span>глибина</span><b>0</b><em>мм</em></div></div>
       <div class="in-bar"><i></i></div><button class="in-skip" type="button">Пропустити</button>`;
     document.body.appendChild(el);
@@ -7178,9 +7713,10 @@ const Intro = (() => {
     try {
       const glb = getGLB(p => { bar.style.transform = `scaleX(${Math.max(0.06, p)})`; });
       const [T, { GLTFLoader }, { RoomEnvironment }, fx] = await Promise.all([import('three'), import(`${TH}loaders/GLTFLoader.js`), import(`${TH}environments/RoomEnvironment.js`), postFx()]);
-      const buf = await glb;
+      mark('mods');
+      const buf = await glb; mark('glb');
       if (el !== me || phase !== 'load') return;
-      const gltf = await new Promise((res, rej) => new GLTFLoader().parse(buf, '', res, rej));
+      const gltf = await new Promise((res, rej) => new GLTFLoader().parse(buf, '', res, rej)); mark('parse');
       const r3 = await R3.load().catch(() => false);
       clearTimeout(slow);
       if (el !== me || phase !== 'load') return;
@@ -7193,9 +7729,11 @@ const Intro = (() => {
     try { ren = new T.WebGLRenderer({ canvas: cv, antialias: !A.EffectComposer, powerPreference: 'high-performance', stencil: false }); } catch (e) { return leave(true); }
     phase = 'prep';
     const r = ren;
-    let PR = Math.min(2, window.devicePixelRatio || 1);
+    // телефон: роздільність 1,5 (на екрані 3× різниці не видно, а пікселів — у 4 рази менше); далі — калібрування перед стартом
+    const dpr = window.devicePixelRatio || 1, phone = Math.min(innerWidth, innerHeight) < 700 && dpr >= 2;
+    let PR = Math.min(phone ? 1.5 : 2, dpr);
     r.setPixelRatio(PR); r.outputColorSpace = T.SRGBColorSpace; r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1;
-    r.shadowMap.enabled = true; r.shadowMap.type = T.PCFSoftShadowMap; r.shadowMap.autoUpdate = false;   // тінь — лише коли щось рухається
+    r.shadowMap.enabled = true; r.shadowMap.type = T.PCFShadowMap; r.shadowMap.autoUpdate = false;   // тінь — лише коли щось рухається
     const BG = 0x080b12, FOG = 0.042, sc = scene = new T.Scene(), aniso = Math.min(8, r.capabilities.getMaxAnisotropy());
     const pm = new T.PMREMGenerator(r), envT = pm.fromScene(new A.RoomEnvironment(), 0.04).texture; pm.dispose(); trash.push(envT);
     sc.environment = envT; sc.background = new T.Color(BG); sc.fog = new T.FogExp2(BG, FOG);
@@ -7307,7 +7845,7 @@ const Intro = (() => {
     const fill = new T.DirectionalLight(0xc8d6ff, 0); fill.position.set(-6, 4, 6); sc.add(fill);
     const SP = V(0.9, 7.1, 3.4), ST = V(1.45, 0.9, -0.9);
     const spot = new T.SpotLight(0xfff1de, 0, 0, 0.34, 0.6, 2); spot.position.copy(SP); spot.target.position.copy(ST);
-    spot.castShadow = true; spot.shadow.mapSize.set(1536, 1536); spot.shadow.camera.near = 2; spot.shadow.camera.far = 14; spot.shadow.bias = -0.0002; spot.shadow.normalBias = 0.02;
+    spot.castShadow = true; spot.shadow.mapSize.set(1024, 1024); spot.shadow.camera.near = 2; spot.shadow.camera.far = 14; spot.shadow.bias = -0.0002; spot.shadow.normalBias = 0.02;
     sc.add(spot, spot.target);
     const lens0 = highbay(SP.clone().add(V(0, 0.12, 0)));
     beam(SP, ST.clone().sub(SP), 0.3);
@@ -7330,10 +7868,26 @@ const Intro = (() => {
     // ще два такі верстати в глибині цеху — спрощені (без дрібних деталей), без тіней
     const lod = /Ручка|Шланг|Кабель|Аварійна|Кнопка конвеєра|Напис SGSK|Гвинти|Клавіші|Колеса|Оправка/;
     const lensB = [], pools = [];
+    // кожен фоновий верстат зливається в кілька мешів (по одному на матеріал): ~100 викликів малювання → ~15 на верстат
+    const BGU = await import(`${TH}utils/BufferGeometryUtils.js`).catch(() => null);
     for (const [x, z, ry] of [[-3.6, -8.6, 0.3], [5.4, -7.3, -0.42]]) {
       const c = model.clone(); c.position.set(x, 0, z); c.rotation.y = ry; c.updateMatrixWorld(true);
-      c.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = false; if (lod.test(nm(o))) o.visible = false; } });
-      sc.add(c);
+      const groups = new Map(), keep = [];
+      c.traverse(o => {
+        if (!o.isMesh) return;
+        o.castShadow = o.receiveShadow = false;
+        if (lod.test(nm(o)) || !o.visible) return;
+        const g = o.geometry, key = Array.isArray(o.material) ? null : `${o.material.uuid}|${Object.keys(g.attributes).sort().join(',')}|${g.index ? 1 : 0}`;
+        if (!BGU || !key) { keep.push(o); return; }
+        const gw = g.clone(); gw.applyMatrix4(o.matrixWorld); for (const k of Object.keys(gw.morphAttributes)) delete gw.morphAttributes[k];
+        (groups.get(key) || groups.set(key, { m: o.material, gs: [] }).get(key)).gs.push(gw);
+      });
+      for (const { m, gs } of groups.values()) {
+        let mg = null; try { mg = gs.length > 1 ? BGU.mergeGeometries(gs, false) : gs[0]; } catch (e) {}
+        if (mg) { sc.add(new T.Mesh(mg, m)); if (mg !== gs[0]) gs.forEach(x => x.dispose()); }
+        else gs.forEach(x => sc.add(new T.Mesh(x, m)));
+      }
+      for (const o of keep) { const k = o.clone(); k.matrixAutoUpdate = false; k.matrix.copy(o.matrixWorld); sc.add(k); }
       const ap = c.localToWorld(V(1.55, 7.1, 1.4)), to = c.localToWorld(V(1.55, 0, -0.3));
       lensB.push(highbay(ap.clone().add(V(0, 0.12, 0)))); beam(ap, to.clone().sub(ap), 0.27); pools.push(pool(to, 2.6));
     }
@@ -7676,31 +8230,66 @@ const Intro = (() => {
       cam.position.copy(cPos); cam.lookAt(cTg);
       const f = fov0 - 6 * ss(5.5, 6.6, t); if (f !== cam.fov) { cam.fov = f; cam.updateProjectionMatrix(); }
       const uS = H * PR / (2 * Math.tan(cam.fov * PI / 360)); dustM.uniforms.uS.value = uS; spl.pts.material.uniforms.uS.value = uS; mist.pts.material.uniforms.uS.value = uS;
-      if (t > 2.3 && t < 3.8) r.shadowMap.needsUpdate = true;   // рухаються двері й бабка — тінь перераховується
+      if (t > 2.3 && t < 3.8 && (++shF & 1)) r.shadowMap.needsUpdate = true;   // рухаються двері й бабка — тінь перераховується через кадр
     }
     // слабкий телефон: спершу менша роздільність, потім без світіння — аби рух лишався рівним
-    let ema = 16.7, slowN = 0, drops = 0;
+    // реагує за ~10 кадрів: якщо кадр довший за ~20 мс (60 к/с не виходить), роздільність ×0,8, а на 1,0 — без світіння
+    let ema = 16.7, slowN = 0, drops = 0, shF = 0;
     function perf(rdt) {
-      ema += (rdt - ema) * 0.08;
-      if (ema > 26) slowN++; else if (slowN > 0) slowN--;
-      if (slowN < 30 || drops >= 3) return;
+      ema += (rdt - ema) * 0.15;
+      if (ema > 20.5) slowN++; else if (slowN > 0) slowN--;
+      if (slowN < 9 || drops >= 4) return;
       slowN = 0; ema = 16.7; drops++;
-      if (PR > 1.05) { PR = Math.max(1, PR * 0.75); r.setPixelRatio(PR); if (comp) comp.setPixelRatio(PR); W = 0; }
+      if (PR > 1.05) { PR = Math.max(1, PR * 0.8); r.setPixelRatio(PR); if (comp) comp.setPixelRatio(PR); W = 0; }
       else if (comp) { comp.dispose(); comp = null; }
     }
+
+    // нерухомі деталі головного верстата теж зливаються по матеріалах — у кадрі вдвічі менше викликів малювання.
+    // Окремими лишаються двері, стіл, екран пульта і все прозоре (бабка з оправкою вже в групі head поза моделлю)
+    if (BGU) try {
+      const live = new Set([...doors.map(d => d[0]), table, sm].filter(Boolean)), groups = new Map(), drop = [];
+      model.updateMatrixWorld(true);
+      model.traverse(o => {
+        if (!o.isMesh || live.has(o) || !o.visible || Array.isArray(o.material) || o.material.transparent) return;
+        for (let p = o.parent; p && p !== model; p = p.parent) if (live.has(p)) return;   // діти дверей їздять з ними
+        const g = o.geometry, key = `${o.material.uuid}|${Object.keys(g.attributes).sort().join(',')}|${g.index ? 1 : 0}`;
+        const gw = g.clone(); gw.applyMatrix4(o.matrixWorld); for (const k of Object.keys(gw.morphAttributes)) delete gw.morphAttributes[k];
+        (groups.get(key) || groups.set(key, { m: o.material, gs: [], os: [] }).get(key)).gs.push(gw);
+        groups.get(key).os.push(o);
+      });
+      for (const { m, gs, os } of groups.values()) {
+        if (gs.length < 2) { gs[0].dispose(); continue; }
+        const mg = BGU.mergeGeometries(gs, false); gs.forEach(x => x.dispose());
+        if (!mg) continue;
+        const mm = new T.Mesh(mg, m); mm.castShadow = mm.receiveShadow = true; sc.add(mm); drop.push(...os);
+      }
+      for (const o of drop) o.parent && o.parent.remove(o);
+    } catch (e) { console.warn('злиття деталей:', e); }
 
     // ---- прогрів: усі шейдери й буфери — до старту, щоб перший кадр не смикнувся ----
     const hm = /[?&]introAt=(\d+)/.exec(location.search), hold = !!hm, stats = /[?&]introStats/.test(location.search) ? [] : null;
     fit(); update(0, 0, false, true);
+    window.__introT && (window.__introT.built = Math.round(performance.now() - window.__introT.t0));
     try { await r.compileAsync(sc, cam); } catch (e) { try { r.compile(sc, cam); } catch (x) {} }
     if (el !== me || phase !== 'prep') return;
     r.shadowMap.needsUpdate = true; draw(); draw();
+    // калібрування до старту: кілька кадрів з очікуванням GPU. Не тягне 60 к/с — роздільність і світіння знижуються одразу,
+    // а не посеред руху (перемикання на ходу саме дає ривок)
+    try {
+      const gl = r.getContext(), px = new Uint8Array(4), ms = [];
+      for (let i = 0; i < 4; i++) { const a = performance.now(); draw(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); ms.push(performance.now() - a); }
+      ms.sort((a, b) => a - b); const med = (ms[1] + ms[2]) / 2;
+      if (med > 11 && PR > 1) { PR = Math.max(1, PR * Math.sqrt(10 / med)); r.setPixelRatio(PR); if (comp) comp.setPixelRatio(PR); W = 0; fit(); }
+      if (med > 24 && comp) { comp.dispose(); comp = null; }
+      if (window.__introT) Object.assign(window.__introT, { cal: +med.toFixed(1), pr: +PR.toFixed(2), bloom: !!comp, compiled: Math.round(performance.now() - window.__introT.t0) });
+    } catch (e) {}
     // програма під заставкою встигає намалюватись до старту (і потім уже не заважає)
     await Promise.race([appWait, new Promise(res => setTimeout(res, 1500))]);
     if (el !== me || phase !== 'prep') return;
     phase = 'play'; me.classList.add('play'); if (hold) me.classList.add('hold');   // застиглий кадр для перевірки — без переходів
+    if (window.__introT) window.__introT.play = Math.round(performance.now() - window.__introT.t0);
     // перевірка: скільки коштує кожен кадр усього проходу (з очікуванням GPU)
-    if (hold) window.__intro = { T, sc, cam, by, arbor, A, tip0, tipF, TOP, R, cx, cz, bench: (t0 = 0, t1 = 6.6) => {
+    if (hold) window.__intro = { r, T, sc, cam, by, arbor, A, tip0, tipF, TOP, R, cx, cz, bench: (t0 = 0, t1 = 6.6) => {
       const gl = r.getContext(), px = new Uint8Array(4), res = [], cp = [], dir = V();
       for (let t = t0; t < t1; t += 1 / 60) {
         const a = performance.now(); step(1 / 60, t); update(t, 1 / 60, false, false); draw(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); res.push(performance.now() - a);
@@ -7757,6 +8346,8 @@ const Intro = (() => {
   R3.watch();
   try {
     await loadDB();
+    // v8.3: нове оформлення «Обсидіан» вмикається всім один раз (старі лишаються в Налаштуваннях)
+    if (!DB.cfg.lux) { DB.cfg = { ...DB.cfg, skin: 'lux', lux: 1 }; Store.set('cfg', DB.cfg); }
     applyTheme();   // оформлення з налаштувань
     // інвентар цеху — до першого показу, щоб екран не блимав порожнім верстатом
     const n = TEST ? null : await seedInventory();
@@ -7780,7 +8371,7 @@ const Intro = (() => {
     view.innerHTML = `<div class="card empty">Не вдалося завантажити: ${esc(e.message || e)}</div>`;
     Intro.appReady();
   }
-  if (TEST) window.__cnc = { calc, PRESET_MATS, GRADES, statesOf, gradeId, rankTools, toolFit, OPS_BY_TYPE, matMatch, skey, thrSpec, chooseTask, S, getMat, MODES, OPS, interp, toolSVG, insertSVG, endSVG, parseInsCode, insRange, DB, seedInventory, fixRun, lifeShare, isoLimits, partTotals, partOpCalc, RC, edgesOf };
+  if (TEST) window.__cnc = { R3, Intro, calc, PRESET_MATS, GRADES, statesOf, gradeId, rankTools, toolFit, OPS_BY_TYPE, matMatch, skey, thrSpec, chooseTask, S, getMat, MODES, OPS, interp, toolSVG, insertSVG, endSVG, parseInsCode, insRange, DB, seedInventory, fixRun, lifeShare, isoLimits, partTotals, partOpCalc, RC, edgesOf };
 })();
 })();
 </script>

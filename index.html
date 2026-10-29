@@ -8,7 +8,7 @@
 <title>Режими ЧПУ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wdth,wght@100..151,300..900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Geist:wght@400..800&family=Geist+Mono:wght@400..800&family=Handjet:wght@500..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=Roboto+Flex:wdth,wght@100..151,300..900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Geist:wght@400..800&family=Geist+Mono:wght@400..800&family=Handjet:wght@500..700&display=swap" rel="stylesheet">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js","three-mesh-bvh":"https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.7.8/build/index.module.min.js","three-bvh-csg":"https://cdn.jsdelivr.net/npm/three-bvh-csg@0.0.16/build/index.module.min.js"}}</script>
 <script>
 // заставка: модель верстата і модулі 3D починають вантажитись ще до програми, паралельно з усім іншим
@@ -672,16 +672,16 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:12;padding:8px 10px ca
 #intro.out{opacity:0;transform:scale(1.07)}
 #intro.fast{transition-duration:.45s}
 #intro .in-fr i{border-color:rgba(255,255,255,.28)}
-#intro .in-t b{font:800 29px/1.05 "Roboto Flex","Geist",sans-serif;font-stretch:145%;letter-spacing:.08em;text-transform:uppercase;color:#F4F5F7;text-shadow:0 2px 30px rgba(0,0,0,.7)}
-#intro .in-t > i{height:2px;background:linear-gradient(90deg,transparent,#E3242C 30%,#FF6E74 50%,#E3242C 70%,transparent);box-shadow:0 0 14px rgba(227,36,44,.7)}
-#intro .in-t > span{font:700 9.5px/1.5 "Roboto Flex","Geist",sans-serif;font-stretch:130%;letter-spacing:.22em;color:#9AA0A9}
-#intro .in-st{font:700 9.5px/1 "Roboto Flex","Geist",sans-serif;font-stretch:130%;letter-spacing:.18em;color:rgba(242,243,245,.9)}
-#intro .in-rd span{font:700 8.5px/1 "Roboto Flex","Geist",sans-serif;font-stretch:135%;letter-spacing:.2em;color:#FF6E74}
-#intro .in-rd b{font:650 34px/1 "Roboto Flex","Geist",sans-serif;color:#fff;text-shadow:0 0 18px rgba(255,255,255,.25)}
+#intro .in-t b{font:700 38px/1.05 -apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",sans-serif;letter-spacing:-.025em;color:#F5F7FF;text-shadow:0 2px 30px rgba(0,0,0,.7)}
+#intro .in-t > i{height:2px;background:linear-gradient(90deg,transparent,#2F7BFF 25%,#4FE3FF 50%,#2F7BFF 75%,transparent);box-shadow:0 0 16px rgba(79,170,255,.8)}
+#intro .in-t > span{font:500 13px/1.5 -apple-system,"Inter",sans-serif;letter-spacing:.01em;text-transform:none;color:rgba(225,232,250,.7)}
+#intro .in-st{font:600 11px/1 -apple-system,"Inter",sans-serif;letter-spacing:.04em;color:rgba(242,243,245,.9)}
+#intro .in-rd span{font:600 10px/1 -apple-system,"Inter",sans-serif;letter-spacing:.06em;color:#8CC0FF}
+#intro .in-rd b{font:700 34px/1 -apple-system,"SF Pro Display","Inter",sans-serif;letter-spacing:-.03em;color:#fff;text-shadow:0 0 18px rgba(255,255,255,.25)}
 #intro .in-rd em{font-family:"Roboto Flex","Geist",sans-serif;color:rgba(242,243,245,.5)}
 #intro .in-bar{height:2px;background:rgba(255,255,255,.1)}
-#intro .in-bar i{background:linear-gradient(90deg,#B5121A,#FF555C)}
-#intro .in-skip{border-radius:8px;border-color:rgba(255,255,255,.22);background:rgba(10,11,13,.6);color:#F2F3F5;font:700 9.5px/1 "Roboto Flex","Geist",sans-serif;font-stretch:130%;letter-spacing:.16em}
+#intro .in-bar i{background:linear-gradient(90deg,#2F7BFF,#4FE3FF)}
+#intro .in-skip{border-radius:999px;border-color:rgba(255,255,255,.22);background:rgba(20,26,46,.55);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:#F5F7FF;font:600 12px/1 -apple-system,"Inter",sans-serif;letter-spacing:0;text-transform:none}
 body.arrive header.top{animation:arrTop 1.1s cubic-bezier(.16,1,.3,1) .15s both}
 body.arrive nav.tabbar{animation:arrBot 1.1s cubic-bezier(.16,1,.3,1) .4s both}
 body.arrive #view > *{animation:arrUp 1.15s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(.22s + var(--i,0) * 80ms)}
@@ -1468,6 +1468,186 @@ html[data-skin="carbon"]{--r:10px;--rk:7px;--font:"Roboto Flex","Geist",system-u
 .se-b button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:46px;border:0;border-radius:14px;cursor:pointer;color:#fff;background:rgba(255,255,255,.1);font:650 14px/1 var(--sf)}
 .se-b button svg{width:18px;height:18px}
 .se-b .pri{color:#0B0C0E;background:#F5F6F8}
+/* ---- «Рідке скло»: найкраще з усього — скло iOS 26 над живим фоном, що повільно переливається; прилади-кокпіт
+   для обертів і подачі з градієнтними дугами; фреза — головна героїня з підсвіткою; рідний шрифт iPhone (SF Pro);
+   пружні натискання. Кольори: оберти — синьо-бірюзові, подача — помаранчево-жовта, «норма» — м'ятна. ---- */
+html[data-skin="liquid"]{--r:24px;--rk:14px;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif;--num:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",system-ui,sans-serif;
+  --bg:#05070F; --bg-2:#080B16; --sheet:#0B0F1E; --paper:rgba(255,255,255,.07); --paper-2:rgba(255,255,255,.1); --field:rgba(0,0,0,.28);
+  --line:rgba(255,255,255,.1); --line-2:rgba(255,255,255,.16); --edge:rgba(255,255,255,.3); --ink:#DDE4F5; --text:#F5F7FF; --muted:rgba(225,232,250,.64); --dim:rgba(225,232,250,.4);
+  --accent:#4F9DFF; --accent-t:#8CC0FF; --accent-2:#4FE3FF; --on-accent:#05070F; --accent-deep:#1E5BD8;
+  --accent-soft:rgba(79,157,255,.16); --accent-line:rgba(125,183,255,.5); --accent-fill:#FFFFFF;
+  --ok:#3DE6A0; --warn:#FFC24A; --bad:#FF5A6A; --info:#8CC0FF;
+  --key:rgba(255,255,255,.08); --key-edge:transparent; --key-hi:transparent;
+  --kshadow:inset 0 1px 0 rgba(255,255,255,.14); --pshadow:inset 0 1px 0 #fff,0 10px 26px -10px rgba(120,180,255,.75);
+  --shadow:inset 0 1px 0 rgba(255,255,255,.16),0 24px 50px -28px rgba(0,0,0,.9);
+  --glass:linear-gradient(160deg,rgba(255,255,255,.13),rgba(255,255,255,.045)); --gblur:blur(24px) saturate(1.7);
+  --dro-bg:transparent; --dro-ink:#FFFFFF; --art-bg:radial-gradient(circle at 50% 42%,rgba(120,170,255,.32),rgba(255,255,255,.03) 72%);
+  --lcd:rgba(0,0,0,.25); --lcd-sub:rgba(225,232,250,.64); --lcd-ink:#FFFFFF; --scrim:rgba(2,4,10,.62); --bg-art:none}
+:root:root[data-skin=liquid][data-theme] body{background:var(--bg);font-family:var(--font);padding-bottom:calc(98px + env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
+:root:root[data-skin=liquid][data-theme] :is(*,*::before,*::after){font-variant-numeric:tabular-nums}
+/* живий фон: три м'які плями світла повільно пливуть (лише transform — без перемальовування) */
+:root:root[data-skin=liquid][data-theme] body::before{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;
+  background:radial-gradient(34% 28% at 22% 16%,rgba(47,110,255,.7),transparent 70%),radial-gradient(30% 28% at 82% 42%,rgba(0,190,170,.38),transparent 70%),
+    radial-gradient(34% 30% at 30% 82%,rgba(118,60,255,.42),transparent 70%),radial-gradient(26% 22% at 78% 88%,rgba(255,120,60,.16),transparent 70%);
+  animation:aur 28s ease-in-out infinite alternate}
+@keyframes aur{50%{transform:translate3d(3%,-4%,0) rotate(6deg) scale(1.06)}to{transform:translate3d(-3%,3%,0) rotate(-5deg) scale(1.1)}}
+:root:root[data-skin=liquid][data-theme] :is(.sec,.label,.spec-l,.brand small,.qk > span,.f > span,.grp-h,.opsel-h em,.dro-k span,.sp-rows span,.pass span,.slsum span,.cam-r b,.tasks button,.status b small,.tags span){text-transform:none;letter-spacing:0}
+:root:root[data-skin=liquid][data-theme] body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 80% at 50% 0%,transparent 40%,rgba(2,3,8,.55))}
+/* шапка: скло, що «заморожує» все під собою */
+:root:root[data-skin=liquid][data-theme] header.top{background:rgba(6,9,20,.5);-webkit-backdrop-filter:var(--gblur);backdrop-filter:var(--gblur);border-bottom:1px solid rgba(255,255,255,.07)}
+:root:root[data-skin=liquid][data-theme] .logo{width:40px;height:40px;border-radius:13px;color:#fff;background:linear-gradient(140deg,#2F7BFF,#4FE3FF);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 8px 22px -6px rgba(47,123,255,.8)}
+:root:root[data-skin=liquid][data-theme] .logo svg{width:23px;height:23px;stroke-width:1.8;color:#fff}
+:root:root[data-skin=liquid][data-theme] .brand b{font:700 19px/1.05 var(--font);letter-spacing:-.015em}
+:root:root[data-skin=liquid][data-theme] .brand small{margin-top:4px;font:500 11.5px/1 var(--font);color:var(--muted)}
+:root:root[data-skin=liquid][data-theme] :is(.mchip,.hset){border-radius:999px;background:var(--glass);border:1px solid var(--line-2);box-shadow:var(--kshadow);-webkit-backdrop-filter:var(--gblur);backdrop-filter:var(--gblur)}
+:root:root[data-skin=liquid][data-theme] .mchip{font:600 12.5px/1 var(--font)}
+:root:root[data-skin=liquid][data-theme] .mchip i{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+:root:root[data-skin=liquid][data-theme] .ph h2{font:700 30px/1.05 var(--font);letter-spacing:-.025em}
+/* розділи: як у налаштуваннях iOS — тихий підпис, номер у скляній пігулці */
+:root:root[data-skin=liquid][data-theme] .sec{margin:24px 4px 10px;font:600 12.5px/1 var(--font);letter-spacing:.01em;color:var(--muted)}
+:root:root[data-skin=liquid][data-theme] .sec > i{min-width:0;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--text);font:700 11px/1 var(--font);box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+:root:root[data-skin=liquid][data-theme] .sec::after{background:linear-gradient(90deg,rgba(255,255,255,.14),transparent)}
+:root:root[data-skin=liquid][data-theme] .label{font:600 12.5px/1 var(--font);color:var(--muted);letter-spacing:.01em}
+:root:root[data-skin=liquid][data-theme] .label svg.i{color:var(--accent-t);stroke-width:1.8}
+/* скляні картки */
+:root:root[data-skin=liquid][data-theme] :is(.card,.tcard,.row,.opt,.skin,details.mgrp){border-radius:var(--r);background:var(--glass);border:1px solid rgba(255,255,255,.12);box-shadow:var(--shadow);-webkit-backdrop-filter:var(--gblur);backdrop-filter:var(--gblur)}
+:root:root[data-skin=liquid][data-theme] .cam{border-color:rgba(140,190,255,.22)}
+:root:root[data-skin=liquid][data-theme] :is(.cam,.cguide)::before{content:"";position:absolute;left:24px;right:24px;top:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(160,210,255,.8),transparent)}
+:root:root[data-skin=liquid][data-theme] .balloon{min-width:26px;height:26px;padding:0 7px;border-radius:999px;background:rgba(255,255,255,.1);border:0;color:var(--text);font:700 12px/1 var(--font);box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+:root:root[data-skin=liquid][data-theme] .spec-l{font:600 11.5px/1 var(--font);color:var(--muted)}
+:root:root[data-skin=liquid][data-theme] .spec-v{font:650 17px/1.2 var(--font);letter-spacing:-.01em}
+:root:root[data-skin=liquid][data-theme] .spec-s{color:var(--dim)}
+/* фреза — героїня: більша картинка з підсвіткою, ледь помітно «пливе» */
+:root:root[data-skin=liquid][data-theme] :is(.spec-art,.tc-art){border-radius:20px;background:var(--art-bg);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 14px 30px -14px rgba(60,120,255,.6)}
+:root:root[data-skin=liquid][data-theme] .spec-art{width:72px;height:72px}
+:root:root[data-skin=liquid][data-theme] .spec-art .r3i{animation:r3in .35s var(--ease) both,hover3 5s ease-in-out .4s infinite alternate}
+@keyframes hover3{to{transform:translateY(-3px) rotate(-2deg)}}
+:root:root[data-skin=liquid][data-theme] .opsel-h em{font:600 11.5px/1 var(--font);color:var(--accent-t)}
+/* задачі й перемикачі: сегменти iOS — біла пігулка на склі */
+:root:root[data-skin=liquid][data-theme] :is(.tasks,.lvlsw .seg2,.cg-sw,.cg-u .seg2,.seg,.mseg){padding:3px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 2px rgba(0,0,0,.25)}
+:root:root[data-skin=liquid][data-theme] .tasks{gap:2px;margin:2px 0 14px}
+:root:root[data-skin=liquid][data-theme] :is(.tasks button,.lvlsw .seg2 button,.cg-sw button,.cg-u .seg2 button,.seg button,.mseg button){border-radius:13px;font:600 13px/1 var(--font);color:var(--muted);transition:background .25s,color .25s,transform .2s}
+:root:root[data-skin=liquid][data-theme] :is(.tasks button.on,.lvlsw .seg2 button.on,.cg-sw button.on,.cg-u .seg2 button.on,.seg button.on,.mseg button.on){color:#05070F;background:#fff;box-shadow:0 6px 16px -6px rgba(140,190,255,.7)}
+:root:root[data-skin=liquid][data-theme] .tasks button{padding:11px 2px 12px}
+:root:root[data-skin=liquid][data-theme] .tasks button.on::after{display:none}
+:root:root[data-skin=liquid][data-theme] .mseg button b{font:650 13.5px/1.1 var(--font)}
+/* операції: скляні плитки; вибрана — біла з синім сяйвом */
+:root:root[data-skin=liquid][data-theme] .opc{padding:14px 2px 12px;border-radius:20px;background:var(--glass);border:1px solid rgba(255,255,255,.11);box-shadow:var(--kshadow);color:var(--muted);font:600 11.5px/1.15 var(--font)}
+:root:root[data-skin=liquid][data-theme] .opc svg.i{color:var(--ink);stroke-width:1.7}
+:root:root[data-skin=liquid][data-theme] .opc.on{color:#05070F;background:#fff;border-color:transparent;box-shadow:var(--pshadow)}
+:root:root[data-skin=liquid][data-theme] .opc.on svg.i{color:#1E5BD8;stroke:currentColor}
+:root:root[data-skin=liquid][data-theme] .opc.alt::after{background:var(--accent)}
+:root:root[data-skin=liquid][data-theme] :is(.qk button,.chip,.symsel button){border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);box-shadow:var(--kshadow);font-family:var(--font)}
+:root:root[data-skin=liquid][data-theme] :is(.qk button.on,.chip.on){color:#05070F;background:#fff;border-color:transparent;box-shadow:var(--pshadow)}
+:root:root[data-skin=liquid][data-theme] .qk button.on small{color:#3a4258;opacity:1}
+:root:root[data-skin=liquid][data-theme] .qk > span{font:600 11.5px/1 var(--font);color:var(--dim)}
+/* поля */
+:root:root[data-skin=liquid][data-theme] :is(input,select,textarea){border-radius:14px;background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.12);box-shadow:inset 0 1px 3px rgba(0,0,0,.35);font-family:var(--font)}
+:root:root[data-skin=liquid][data-theme] :is(input,select,textarea):focus{border-color:rgba(140,190,255,.8);box-shadow:0 0 0 4px rgba(79,157,255,.18)}
+:root:root[data-skin=liquid][data-theme] .f > span{font:600 12px/1.2 var(--font);color:var(--muted)}
+:root:root[data-skin=liquid][data-theme] .st{border-radius:18px;background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.1)}
+:root:root[data-skin=liquid][data-theme] .st button{border-radius:14px;background:rgba(255,255,255,.1);border-color:transparent;box-shadow:var(--kshadow);font:400 24px/1 var(--font);color:var(--text)}
+:root:root[data-skin=liquid][data-theme] .st input{font:650 28px/1 var(--num);letter-spacing:-.02em}
+:root:root[data-skin=liquid][data-theme] :is(.aebox input,.lorow .cornerf input){font:650 23px/1 var(--num)}
+:root:root[data-skin=liquid][data-theme] .fit{border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}
+:root:root[data-skin=liquid][data-theme] .fit.alt{border-color:rgba(140,190,255,.35);background:linear-gradient(90deg,rgba(79,157,255,.14),rgba(255,255,255,.03))}
+:root:root[data-skin=liquid][data-theme] .slh{border-color:rgba(255,255,255,.12)}
+:root:root[data-skin=liquid][data-theme] .slsum{background:rgba(0,0,0,.22);border-radius:18px}
+:root:root[data-skin=liquid][data-theme] .slsum b{font:650 22px/1 var(--num);letter-spacing:-.02em}
+:root:root[data-skin=liquid][data-theme] :is(.slsum span,.sp-rows span,.pass span,.sp-next > span){font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.01em}
+/* кнопки: головна — біла з сяйвом, решта — скляні */
+:root:root[data-skin=liquid][data-theme] :is(.btn,.icon-btn,.x){border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);box-shadow:var(--kshadow)}
+:root:root[data-skin=liquid][data-theme] .btn{font:600 14px/1.1 var(--font)}
+:root:root[data-skin=liquid][data-theme] .btn.primary{color:#05070F;background:#fff;border-color:transparent;box-shadow:var(--pshadow);font:700 14.5px/1.1 var(--font)}
+:root:root[data-skin=liquid][data-theme] .btn.primary svg.i{stroke:#05070F}
+:root:root[data-skin=liquid][data-theme] :is(.btn,.icon-btn,.x,.opc,.qk button,.chip,.msw,.tasks button,.simcard,.spec-row){transition:transform .35s cubic-bezier(.3,1.6,.5,1),background .25s,box-shadow .25s}
+:root:root[data-skin=liquid][data-theme] :is(.btn,.icon-btn,.x,.opc,.qk button,.chip,.msw,.tasks button,.simcard,.spec-row):active{transform:scale(.96);transition-duration:.1s}
+/* статус: скло з кольоровим сяйвом зліва */
+:root:root[data-skin=liquid][data-theme] .status{border-radius:var(--r);background:radial-gradient(90% 140% at 0% 50%,color-mix(in srgb,var(--c) 26%,transparent),transparent 62%),var(--glass);border:1px solid color-mix(in srgb,var(--c) 32%,rgba(255,255,255,.1));box-shadow:var(--shadow);-webkit-backdrop-filter:var(--gblur);backdrop-filter:var(--gblur)}
+:root:root[data-skin=liquid][data-theme] .status b{font:700 20px/1.05 var(--font);letter-spacing:-.015em}
+:root:root[data-skin=liquid][data-theme] .status .st-led{width:10px;height:10px;border-radius:50%;box-shadow:0 0 14px var(--c)}
+/* оберти й подача: два прилади-кокпіт із градієнтними дугами, число в центрі */
+:root:root[data-skin=liquid][data-theme] .cam-h .label{color:var(--text)}
+:root:root[data-skin=liquid][data-theme] .dro{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 10px 10px;padding:0;border:0;background:none;box-shadow:none}
+:root:root[data-skin=liquid][data-theme] .dro-r{position:relative;display:grid;grid-template-columns:100%;padding:6px 6px 10px;border-radius:22px;background:radial-gradient(80% 70% at 50% 45%,rgba(255,255,255,.06),rgba(0,0,0,.18));border:1px solid rgba(255,255,255,.08)}
+:root:root[data-skin=liquid][data-theme] .dro-r + .dro-r{border-top:1px solid rgba(255,255,255,.08)}
+:root:root[data-skin=liquid][data-theme] .gauge{display:block;grid-area:1/1;width:100%}
+:root:root[data-skin=liquid][data-theme] .gauge svg{display:block;width:100%;height:auto;overflow:visible}
+:root:root[data-skin=liquid][data-theme] .gauge line{stroke:rgba(200,215,255,.22);stroke-width:1.1}
+:root:root[data-skin=liquid][data-theme] .gauge line.M{stroke:rgba(220,230,255,.6);stroke-width:1.8}
+:root:root[data-skin=liquid][data-theme] .gauge line.r{stroke:rgba(255,90,106,.7)}
+:root:root[data-skin=liquid][data-theme] .gauge text{display:none}
+:root:root[data-skin=liquid][data-theme] .gauge line:not(.M){display:none}
+:root:root[data-skin=liquid][data-theme] .g-bg{fill:none;stroke:rgba(255,255,255,.07);stroke-width:11;stroke-linecap:round}
+:root:root[data-skin=liquid][data-theme] .g-band{fill:none;stroke:var(--ok);stroke-width:2.4;opacity:.8;stroke-linecap:round}
+:root:root[data-skin=liquid][data-theme] .g-red{fill:none;stroke:var(--bad);stroke-width:2.4;stroke-linecap:round}
+:root:root[data-skin=liquid][data-theme] .g-val{fill:none;stroke-width:11;stroke-linecap:round;stroke-dasharray:calc(var(--d1) * 1px) 999px;animation:gval 1.2s cubic-bezier(.22,1,.36,1) both;filter:drop-shadow(0 0 6px var(--gc,rgba(79,157,255,.8)))}
+:root:root[data-skin=liquid][data-theme] .dro-r:first-child .g-val{--gc:rgba(79,190,255,.85)}
+:root:root[data-skin=liquid][data-theme] .dro-r:last-child .g-val{--gc:rgba(255,150,60,.85)}
+:root:root[data-skin=liquid][data-theme] .g-ndl{display:none}
+:root:root[data-skin=liquid][data-theme] .dro-k{grid-area:1/1;align-self:end;justify-self:center;display:flex;align-items:baseline;gap:5px;margin-bottom:2px}
+:root:root[data-skin=liquid][data-theme] .dro-k b{font:800 11px/1 var(--font);color:var(--accent-2)}
+:root:root[data-skin=liquid][data-theme] .dro-r:last-child .dro-k b{color:#FFB547}
+:root:root[data-skin=liquid][data-theme] .dro-k span{font:600 10px/1.15 var(--font);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
+:root:root[data-skin=liquid][data-theme] .dro-k span i{display:none}
+:root:root[data-skin=liquid][data-theme] .dro-v{grid-area:1/1;align-self:center;margin-top:12%;display:flex;flex-direction:column;align-items:center;gap:3px}
+:root:root[data-skin=liquid][data-theme] .tnum{font:700 32px/1 var(--num);letter-spacing:-.035em;color:#fff;text-shadow:0 0 22px rgba(160,200,255,.35);animation:numIn .7s cubic-bezier(.2,.9,.25,1) both}
+@keyframes numIn{from{opacity:0;transform:translateY(8px) scale(.94);filter:blur(4px)}}
+:root:root[data-skin=liquid][data-theme] .dro-v small{font:600 11px/1 var(--font);color:var(--muted)}
+:root:root[data-skin=liquid][data-theme] .dro-sc{grid-area:2/1;margin-top:4px}
+:root:root[data-skin=liquid][data-theme] .dro-sc svg{display:none}
+:root:root[data-skin=liquid][data-theme] .dro-sc span{display:block;text-align:center;font:500 9.5px/1.35 var(--font);color:var(--dim)}
+:root:root[data-skin=liquid][data-theme] .pass{margin:0 10px 10px;background:rgba(0,0,0,.2);border-radius:20px;border:1px solid rgba(255,255,255,.07)}
+:root:root[data-skin=liquid][data-theme] .pass span{color:var(--muted)}
+:root:root[data-skin=liquid][data-theme] .pass b{font:700 25px/1 var(--num);letter-spacing:-.025em}
+:root:root[data-skin=liquid][data-theme] .pass b small{font:600 11px/1 var(--font);color:var(--muted)}
+:root:root[data-skin=liquid][data-theme] .cam-r .v{font:650 20px/1 var(--num);letter-spacing:-.02em}
+:root:root[data-skin=liquid][data-theme] .cam-r b{font:600 14px/1.25 var(--font)}
+:root:root[data-skin=liquid][data-theme] .gline{border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.25);border-radius:18px}
+:root:root[data-skin=liquid][data-theme] .gline code{font:600 13px/1.3 var(--mono);color:var(--ink)}
+:root:root[data-skin=liquid][data-theme] .gline code em{color:var(--accent-2)}
+:root:root[data-skin=liquid][data-theme] .sp-rows > div{background:rgba(255,255,255,.05)}
+:root:root[data-skin=liquid][data-theme] .sp-rows b{font:650 18px/1.12 var(--num)}
+:root:root[data-skin=liquid][data-theme] .cg-g{border-radius:20px}
+:root:root[data-skin=liquid][data-theme] .cg-gh{background:rgba(0,0,0,.2)}
+:root:root[data-skin=liquid][data-theme] .cg-gh > i{font:700 12px/1 var(--font);color:#05070F;background:#fff;border-color:transparent}
+:root:root[data-skin=liquid][data-theme] .cg-gh b{font:700 15px/1.1 var(--font)}
+:root:root[data-skin=liquid][data-theme] .cg-v b{font:650 20px/1.05 var(--num)}
+/* зауваження */
+:root:root[data-skin=liquid][data-theme] .note{border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-left:3px solid var(--c);-webkit-backdrop-filter:var(--gblur);backdrop-filter:var(--gblur)}
+:root:root[data-skin=liquid][data-theme] .note.b{background:linear-gradient(90deg,color-mix(in srgb,var(--bad) 16%,transparent),rgba(255,255,255,.05))}
+:root:root[data-skin=liquid][data-theme] .msw{border-radius:18px;background:var(--glass);border-color:rgba(255,255,255,.12);box-shadow:var(--kshadow)}
+:root:root[data-skin=liquid][data-theme] .msw.on{color:var(--text);border-color:rgba(160,205,255,.6);background:linear-gradient(160deg,rgba(79,157,255,.22),rgba(255,255,255,.05));box-shadow:0 10px 24px -12px rgba(79,157,255,.8)}
+/* списки фрез: скляні картки, фреза підсвічена */
+:root:root[data-skin=liquid][data-theme] .tcard{border-radius:26px}
+:root:root[data-skin=liquid][data-theme] .tcard::after{font:600 11px/1 var(--font);color:var(--dim)}
+:root:root[data-skin=liquid][data-theme] .tags span{padding:5px 9px;border-radius:999px;border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.06);font:600 11.5px/1 var(--font)}
+:root:root[data-skin=liquid][data-theme] .tags span.a{color:#05070F;background:#fff;border-color:transparent}
+:root:root[data-skin=liquid][data-theme] .search{border-radius:999px;background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.12)}
+:root:root[data-skin=liquid][data-theme] .grp-h{font:600 12.5px/1 var(--font);color:var(--muted)}
+:root:root[data-skin=liquid][data-theme] details.how summary{font:650 15px/1.2 var(--font)}
+:root:root[data-skin=liquid][data-theme] details.tips summary em{color:#05070F;background:#fff}
+/* нижня панель: плаваюча скляна капсула, вибране — скляна «лінза» */
+:root:root[data-skin=liquid][data-theme] nav.tabbar{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));padding:6px;border-radius:30px;border:1px solid rgba(255,255,255,.14);
+  background:rgba(14,18,34,.55);-webkit-backdrop-filter:blur(28px) saturate(1.8);backdrop-filter:blur(28px) saturate(1.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 18px 40px rgba(0,0,0,.5)}
+:root:root[data-skin=liquid][data-theme] .tabs-in button{gap:4px;border-radius:24px;background:none;border:0;box-shadow:none;color:var(--dim);font:600 10px/1 var(--font)}
+:root:root[data-skin=liquid][data-theme] .tabs-in button.on{color:#fff;background:rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+:root:root[data-skin=liquid][data-theme] .tabs-in button.on svg.i{color:#fff}
+:root:root[data-skin=liquid][data-theme] .tabs-in svg.i{stroke-width:1.8}
+:root:root[data-skin=liquid][data-theme] .tabs-in button::before{display:none}
+/* шторки, тости, 3D */
+:root:root[data-skin=liquid][data-theme] .panel{background:rgba(12,16,30,.82);border-top:1px solid rgba(255,255,255,.14);-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6);border-radius:28px 28px 0 0}
+:root:root[data-skin=liquid][data-theme] .panel-head b{font:700 20px/1.1 var(--font);letter-spacing:-.015em}
+:root:root[data-skin=liquid][data-theme] .opt.on{border-color:rgba(160,205,255,.6);background:linear-gradient(160deg,rgba(79,157,255,.22),rgba(255,255,255,.05))}
+:root:root[data-skin=liquid][data-theme] .opt-ic{background:var(--art-bg);border-radius:16px}
+:root:root[data-skin=liquid][data-theme] .toast{border-radius:18px;background:rgba(20,26,46,.86);border:1px solid rgba(255,255,255,.14);border-left:3px solid var(--accent-2);color:var(--text);-webkit-backdrop-filter:var(--gblur);backdrop-filter:var(--gblur)}
+:root:root[data-skin=liquid][data-theme] .r3btn{color:#05070F;background:#fff;box-shadow:var(--pshadow)}
+:root:root[data-skin=liquid][data-theme] .v3c{border-radius:26px;background:radial-gradient(120% 80% at 50% 35%,rgba(90,140,255,.25),rgba(0,0,0,.3))}
+:root:root[data-skin=liquid][data-theme] .banner{border-radius:20px;border:1px solid rgba(255,194,74,.4);background:linear-gradient(90deg,rgba(255,194,74,.14),rgba(255,255,255,.04))}
+:root:root[data-skin=liquid][data-theme] .simcard{border-radius:var(--r);border-color:rgba(255,255,255,.14);background:radial-gradient(120% 160% at 0% 50%,rgba(79,157,255,.32),transparent 58%),var(--glass);-webkit-backdrop-filter:var(--gblur);backdrop-filter:var(--gblur)}
+:root:root[data-skin=liquid][data-theme] .sim-play{box-shadow:0 0 0 6px rgba(255,255,255,.08),0 10px 30px -6px rgba(79,157,255,.9)}
+:root:root[data-skin=liquid][data-theme] .sim-go{background:rgba(255,255,255,.12)}
 /* ---- вибір оформлення в налаштуваннях ---- */
 .skins{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
 .skin{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;cursor:pointer;color:var(--text);border-radius:var(--r);background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
@@ -1505,7 +1685,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '9.1';
+const APP_VER = '9.2';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
@@ -2085,14 +2265,15 @@ async function copyText(text, okMsg) {
 // ======================= Тема =======================
 // Оформлення: «Студія» йде за темою Telegram, «Неон» завжди темний, «Сталь» завжди світла; «Пульт» — попередній дизайн
 const SKINS = {
-  carbon: { n: 'Карбон', s: 'Нове: приладова панель дорогого верстата — графіт і карбон, титанові клавіші, прилади зі стрілкою, широкі літери.', mode: 'dark', sw: ['#0A0B0D', '#1C1F23', '#D9DCE1', '#E3242C'], fresh: true },
+  liquid: { n: 'Рідке скло', s: 'Нове: скло iOS над живим фоном, прилади-кокпіт для обертів і подачі, рідний шрифт iPhone, пружні натискання.', mode: 'dark', sw: ['#05070F', '#2F7BFF', '#4FE3FF', '#FF9A3D'], fresh: true },
+  carbon: { n: 'Карбон', s: 'приладова панель дорогого верстата — графіт і карбон, титанові клавіші, прилади зі стрілкою, широкі літери.', mode: 'dark', sw: ['#0A0B0D', '#1C1F23', '#D9DCE1', '#E3242C'] },
   lux: { n: 'Обсидіан', s: 'Чорний камінь, золото «шампань» тонкими лініями, класичні цифри з засічками.', mode: 'dark', sw: ['#09090A', '#161617', '#C8A35B'] },
   studio: { n: 'Студія', s: 'Світла й повітряна, синій акцент — як продукти Apple. У темній темі Telegram — нічна синя.', mode: 'auto', sw: ['#EEF2F7', '#FFFFFF', '#2563FF'] },
   neon: { n: 'Неон', s: 'Глибока ніч, бірюзово-фіолетове світіння, скляні картки.', mode: 'dark', sw: ['#07061A', '#1C1945', '#22D3EE', '#A78BFA'] },
   graphite: { n: 'Графіт', s: 'Нейтральний темний, яскравий лаймовий акцент, великі цифри — спортивний стиль.', mode: 'dark', sw: ['#0F1011', '#202125', '#C6F432'] },
   paper: { n: 'Папір', s: 'Теплий світлий фон, чорний текст, один червоний акцент — найкраще читається на сонці.', mode: 'light', sw: ['#F3EFE7', '#FFFDF9', '#D63B22'] },
 };
-const DEFAULT_SKIN = 'carbon';
+const DEFAULT_SKIN = 'liquid';
 const skinOf = () => (SKINS[DB.cfg && DB.cfg.skin] ? DB.cfg.skin : DEFAULT_SKIN);
 function applyTheme() {
   const skin = skinOf();
@@ -5866,7 +6047,7 @@ function gaugeSVG(val, lo, hi, max, key, k = 1) {
   const lo2 = Math.min(lo, hi), hi2 = Math.max(lo, hi);
   return `<svg viewBox="0 0 200 172" aria-hidden="true"><path class="g-bg" d="${arc(-135, 135, R - 3)}"/>
     ${lo2 > 0 && hi2 > 0 ? `<path class="g-band" d="${arc(A(lo2), A(hi2), R + 4)}"/>` : ''}${red < 999 ? `<path class="g-red" d="${arc(red, 135, R + 4)}"/>` : ''}
-    <path class="g-val" pathLength="270" d="${arc(-135, 135, R - 3)}" style="--d0:${f1(a0 + 135)};--d1:${f1(a1 + 135)}"/>${t}${lab}
+    <defs><linearGradient id="gg${key}" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="${key === 'F' ? '#FF6A1A' : '#2F6BFF'}"/><stop offset="1" stop-color="${key === 'F' ? '#FFD34D' : '#4FE3FF'}"/></linearGradient></defs><path class="g-val" stroke="url(#gg${key})" pathLength="270" d="${arc(-135, 135, R - 3)}" style="--d0:${f1(a0 + 135)};--d1:${f1(a1 + 135)}"/>${t}${lab}
     <g class="g-ndl" style="--a0:${f1(a0)}deg;--a1:${f1(a1)}deg"><path d="M98.2 ${cy - R + 34}L99.3 ${cy - R + 4}h1.4L101.8 ${cy - R + 34}z"/></g></svg>`;
 }
 let droTested = false;
@@ -9629,7 +9810,7 @@ const Intro = (() => {
   try {
     await loadDB();
     // v8.3: нове оформлення «Обсидіан» вмикається всім один раз (старі лишаються в Налаштуваннях)
-    if (!DB.cfg.carbon) { DB.cfg = { ...DB.cfg, skin: 'carbon', lux: 1, carbon: 1 }; Store.set('cfg', DB.cfg); }
+    if (!DB.cfg.liquid) { DB.cfg = { ...DB.cfg, skin: 'liquid', lux: 1, carbon: 1, liquid: 1 }; Store.set('cfg', DB.cfg); }
     applyTheme();   // оформлення з налаштувань
     // інвентар цеху — до першого показу, щоб екран не блимав порожнім верстатом
     const n = TEST ? null : await seedInventory();

@@ -1,9 +1,14 @@
 {
-  "ver": 5,
+  "ver": 6,
   "retire": ["inv_h_03"],
   "patch": [
     { "id": "inv_t_em6", "ifNo": ["coat"], "set": { "coat": "TiSiN" } },
-    { "id": "inv_m_sgsk", "if": { "cam": "fusion" }, "set": { "cam": "artcam" } }
+    { "id": "inv_m_sgsk", "if": { "cam": "fusion" }, "set": { "cam": "artcam" } },
+    { "id": "inv_t_mslong12", "if": { "lc": 120 }, "set": { "lc": 65, "helixAngle": 45 } },
+    { "id": "inv_t_mslong12", "if": { "lo": 30, "loGuess": true }, "set": { "lo": 70 } },
+    { "id": "inv_t_mslong12", "ifNo": ["coat"], "set": { "coat": "TiSiN" } },
+    { "id": "inv_t_mslong12", "if": { "name": "MSLONG Ø12×120×150 4F" }, "set": { "name": "MSLONG Ø12×150 4F HRC55", "note": "Монолітна чорнова зі стружколомом, HRC55, бронзове покриття. Маркування Φ12×12D×150L-4F: 12D — хвостовик Ø12, 150 — загальна довжина. Різальна частина за фото ≈65 мм — переміряй. Виліт не менший за різальну частину (≈70), інакше цанга тисне на канавки." } },
+    { "id": "inv_i_seet", "ifNo": ["col"], "set": { "col": "dark" } }
   ],
   "about": "Інвентар цеху: верстати, пластини, фрези і перевірені режими. Апка додає звідси лише те, чого ще немає в базі.",
   "machines": [
@@ -18,7 +23,7 @@
       "note": "Портальний фрезер cnc-motors.com.ua, рейка по X, Т-пазовий стіл, керування на Linux (LinuxCNC). Модель і шпиндель невідомі — цифри обережні. Сфотографуй табличку шпинделя: Змінити → «Табличка шпинделя»." }
   ],
   "inserts": [
-    { "id": "inv_i_seet", "code": "SEET12T3-SM", "maker": "AGIR", "grade": "AU2035BZ", "shape": "S", "len": 12, "thick": 3.97,
+    { "id": "inv_i_seet", "code": "SEET12T3-SM", "maker": "AGIR", "grade": "AU2035BZ", "shape": "S", "col": "dark", "len": 12, "thick": 3.97,
       "iso": ["P", "M", "K", "S", "H"], "vc": [100, 250], "fz": [0.08, 0.3], "ap": [0.4, 3], "apMax": 3, "qty": 22,
       "note": "Для торцевої Vorgen VRF45 Ø125. Етикетка: P15–P30, M20–M35, K10–K20, S05–S20, H05–H15. Кількість — дві повні коробки по 10 + 2 шт, перерахуй." },
     { "id": "inv_i_apkt", "code": "APKT1003PDSR-CM", "maker": "AGIR", "grade": "AU2035BZ", "shape": "A", "len": 10, "thick": 3.18,
@@ -53,9 +58,9 @@
     { "id": "inv_t_vrf125", "name": "Vorgen VRF45 SE12T3 Ø125", "type": "iface", "d": 125, "z": 8, "kappa": 45, "shank": 40, "lo": 50, "loGuess": true,
       "insertId": "inv_i_seet", "mach": "inv_m_sgsk",
       "note": "Торцева 45°, D125 d40 Z08, 8 пластин SEET12T3, гвинти VRV06 M3,5, ключ T15. На оправці BT40 під d40." },
-    { "id": "inv_t_mslong12", "name": "MSLONG Ø12×120×150 4F", "type": "rough", "d": 12, "z": 4, "lc": 120, "ol": 150, "shank": 12, "lo": 30, "loGuess": true,
-      "tm": "carbide", "mach": "inv_m_sgsk",
-      "note": "Монолітна чорнова зі стружколомом, HRC55. Довга — виліт не більше 30 мм, інакше вібрація викришить сплав. Розміри з чату — перевір маркування." },
+    { "id": "inv_t_mslong12", "name": "MSLONG Ø12×150 4F HRC55", "type": "rough", "d": 12, "z": 4, "lc": 65, "ol": 150, "shank": 12, "lo": 70, "loGuess": true,
+      "tm": "carbide", "coat": "TiSiN", "helixAngle": 45, "mach": "inv_m_sgsk",
+      "note": "Монолітна чорнова зі стружколомом, HRC55, бронзове покриття. Маркування Φ12×12D×150L-4F: 12D — хвостовик Ø12, 150 — загальна довжина. Різальна частина за фото ≈65 мм — переміряй. Виліт не менший за різальну частину (≈70), інакше цанга тисне на канавки." },
     { "id": "inv_t_em6", "name": "Фреза ТС Ø6 4F", "type": "flat", "d": 6, "z": 4, "shank": 6, "tm": "carbide", "helix": "up", "coat": "TiSiN", "mach": "inv_m_sgsk",
       "note": "Монолітна, для контуру й розточування отворів. Довжину різальної частини і виліт впиши з тубуса." },
     { "id": "inv_t_dr6", "name": "Свердло ТС Ø6", "type": "drill", "d": 6, "z": 2, "tm": "carbide", "mach": "inv_m_sgsk",

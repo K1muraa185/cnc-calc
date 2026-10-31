@@ -1484,12 +1484,12 @@ html[data-skin="liquid"]{--r:24px;--rk:14px;
   --glass:linear-gradient(160deg,rgba(255,255,255,.13),rgba(255,255,255,.045)); --gblur:blur(24px) saturate(1.7);
   --dro-bg:transparent; --dro-ink:#FFFFFF; --art-bg:radial-gradient(circle at 50% 42%,rgba(120,170,255,.32),rgba(255,255,255,.03) 72%);
   --lcd:rgba(0,0,0,.25); --lcd-sub:rgba(225,232,250,.64); --lcd-ink:#FFFFFF; --scrim:rgba(2,4,10,.62); --bg-art:none}
-:root:root[data-skin=liquid][data-theme] body{background:var(--bg);font-family:var(--font);padding-bottom:calc(98px + env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
+:root:root[data-skin=liquid][data-theme] body{background:transparent;font-family:var(--font);padding-bottom:calc(98px + env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
 :root:root[data-skin=liquid][data-theme] :is(*,*::before,*::after){font-variant-numeric:tabular-nums}
 /* живий фон: три м'які плями світла повільно пливуть (лише transform — без перемальовування) */
 :root:root[data-skin=liquid][data-theme] body::before{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;
-  background:radial-gradient(34% 28% at 22% 16%,rgba(47,110,255,.7),transparent 70%),radial-gradient(30% 28% at 82% 42%,rgba(0,190,170,.38),transparent 70%),
-    radial-gradient(34% 30% at 30% 82%,rgba(118,60,255,.42),transparent 70%),radial-gradient(26% 22% at 78% 88%,rgba(255,120,60,.16),transparent 70%);
+  background:radial-gradient(36% 28% at 22% 16%,rgba(47,110,255,.62),transparent 70%),radial-gradient(32% 28% at 84% 40%,rgba(0,190,170,.34),transparent 70%),
+    radial-gradient(36% 30% at 26% 80%,rgba(118,60,255,.4),transparent 70%),radial-gradient(28% 22% at 80% 90%,rgba(255,120,60,.16),transparent 70%);
   animation:aur 28s ease-in-out infinite alternate}
 @keyframes aur{50%{transform:translate3d(3%,-4%,0) rotate(6deg) scale(1.06)}to{transform:translate3d(-3%,3%,0) rotate(-5deg) scale(1.1)}}
 :root:root[data-skin=liquid][data-theme] :is(.sec,.label,.spec-l,.brand small,.qk > span,.f > span,.grp-h,.opsel-h em,.dro-k span,.sp-rows span,.pass span,.slsum span,.cam-r b,.tasks button,.status b small,.tags span){text-transform:none;letter-spacing:0}
@@ -1621,6 +1621,7 @@ html[data-skin="liquid"]{--r:24px;--rk:14px;
 :root:root[data-skin=liquid][data-theme] .msw.on{color:var(--text);border-color:rgba(160,205,255,.6);background:linear-gradient(160deg,rgba(79,157,255,.22),rgba(255,255,255,.05));box-shadow:0 10px 24px -12px rgba(79,157,255,.8)}
 /* списки фрез: скляні картки, фреза підсвічена */
 :root:root[data-skin=liquid][data-theme] .tcard{border-radius:26px}
+:root:root[data-skin=liquid][data-theme] .hcard .stamp{top:12px;right:12px;transform:none;padding:4px 9px;border-width:1px;border-radius:999px;font:700 10px/1 var(--font);letter-spacing:.02em;background:color-mix(in srgb,var(--c) 16%,transparent)}
 :root:root[data-skin=liquid][data-theme] .tcard::after{font:600 11px/1 var(--font);color:var(--dim)}
 :root:root[data-skin=liquid][data-theme] .tags span{padding:5px 9px;border-radius:999px;border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.06);font:600 11.5px/1 var(--font)}
 :root:root[data-skin=liquid][data-theme] .tags span.a{color:#05070F;background:#fff;border-color:transparent}
@@ -1685,7 +1686,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const IN_TG = !!(tg && tg.initData);
 const tgv = v => !!(IN_TG && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v));
 const CLOUD = tgv('6.9') && !!tg.CloudStorage;
-const APP_VER = '9.2';
+const APP_VER = '9.3';
 const TEST = /[?&]test\b/.test(location.search);
 
 // Розпізнавання фото — офіційний SDK Anthropic, вантажиться лише коли потрібен
